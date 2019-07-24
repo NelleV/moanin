@@ -10,11 +10,11 @@ vignette: >
 The package moanin was developped to provide a simple and efficient workflow
 for time-course gene expression data. To use this package, install it with
 
-```{r eval=FALSE}
+```{r eval=TRUE}
 # install devtools
 install.packages("devtools")
-# use devtools to install superheat
-devtools::install_github("fixme")
+# use devtools to install moanin
+devtools::install_github("NelleV/moanin")
 ```
 
 Next, load the package into your namespace
