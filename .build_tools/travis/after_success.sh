@@ -29,8 +29,8 @@ upload_files() {
 if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
     # cp -r scripts/reports/*.html /tmp/html_outputs
     # cp -r scripts/reports/*.pdf /tmp/html_outputs
-    cd /tmp/html_outputs
-    # setup_git
-    # commit_website_files
-    # upload_files
+    # cd /tmp/html_outputs
+    setup_git
+    commit_website_files
+    upload_files
 fi;
