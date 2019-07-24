@@ -1,0 +1,2 @@
+library(covr)
+report()
