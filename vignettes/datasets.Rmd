@@ -1,0 +1,42 @@
+---
+title: "Datasets"
+output: rmarkdown::html_vignette
+vignette: >
+      %\VignetteEngine{knitr::knitr}
+      %\VignetteIndexEntry{Datasets}
+      %\usepackage[UTF-8]{inputenc}
+---
+
+```{r echo=FALSE}
+library(knitr)
+library(kableExtra)
+```
+
+The package comes with a couple of datasets:
+
+    - shoemaker2015
+
+# Time-course data of mice lung samples exposed to different influenza strains
+
+```{r}
+library(moanin)
+data(shoemaker2015)
+
+data = shoemaker2015$data
+meta = shoemaker2015$meta
+```
+
+Here's the firt 10 lines of the data named `matrix`
+```{r echo=FALSE}
+data = data[1:10, ]
+meta = meta[1:10, ]
+kable(data) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+```
+
+and the first 10 lines of the metadata `data.frame`.
+```{r echo=FALSE}
+kable(meta) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+```
+

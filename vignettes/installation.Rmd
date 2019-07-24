@@ -1,0 +1,24 @@
+---
+title: "Installation"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::knitr}
+    %\VignetteIndexEntry{Installation}
+      %\usepackage[UTF-8]{inputenc}
+---
+
+The package moanin was developped to provide a simple and efficient workflow
+for time-course gene expression data. To use this package, install it with
+
+```{r eval=FALSE}
+# install devtools
+install.packages("devtools")
+# use devtools to install superheat
+devtools::install_github("fixme")
+```
+
+Next, load the package into your namespace
+
+```{r}
+library(moanin)
+```
