@@ -17,17 +17,16 @@ setup_git() {
 }
 
 commit_website_files() {
-  git add . *.html
-  git commit --message "Travis build: $TRAVIS_BUILD_NUMBER"
+  # Use force to add the files and commit them.
+  git add man/
+  git commit --message "Travis building documentation: $TRAVIS_BUILD_NUMBER"  || echo "No changes to commit"
 }
 
 upload_files() {
-  git remote add origin-pages https://${GH_TOKEN}@github.com/NelleV/2019timecourse-rnaseq-pipeline_html_outputs.git > /dev/null 2>&1
-  git push --quiet --set-upstream origin-pages master 
+  git push origin master 
 }
 
 if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
-    # git clone https://${GH_TOKEN}@github.com/NelleV/2019timecourse-rnaseq-pipeline_html_outputs.git /tmp/html_outputs
     # cp -r scripts/reports/*.html /tmp/html_outputs
     # cp -r scripts/reports/*.pdf /tmp/html_outputs
     cd /tmp/html_outputs
