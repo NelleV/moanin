@@ -60,7 +60,7 @@ plot_centroids = function(centroids, splines_model, colors=NULL, smooth=FALSE, l
         plot_centroid_individual(as.vector(centroids[i, ]),
 				 splines_model, colors=colors,
 				 smooth=smooth,
-				 title=name_centroid,
+				 main=name_centroid,
                  xaxt=if(!i %in% bottomPlots) "n" else "s",
                  yaxt=if(!i %in% sidePlots & simpleY) "n" else "s", ...
                  )
@@ -93,8 +93,7 @@ plot_genes = function(data, splines_model, colors=NULL, smooth=FALSE,...){
 }
 
 
-plot_centroid_individual = function(centroid, splines_model, colors, smooth=FALSE,
-				    title=NULL,...){
+plot_centroid_individual = function(centroid, splines_model, colors, smooth=FALSE,...){
     meta = splines_model$meta
     groups = levels(meta$Group)
 
@@ -104,7 +103,7 @@ plot_centroid_individual = function(centroid, splines_model, colors, smooth=FALS
         centroid = t(as.matrix(centroid))
     }
 
-    graphics::plot(xrange, yrange, type="n", main=title,...)
+    graphics::plot(xrange, yrange, type="n", ...)
     if(smooth){
 	# FIXME this is supposed to be on the fitted lines, but I'm not able
 	# to get this to work fine in R.
