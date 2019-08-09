@@ -22,7 +22,7 @@
 #' @param mfrow a vector of integers of length 2 defining the grid of plots to be created (see \code{\link{par}}). If missing, the function will set a value.
 
 #' @export
-plot_centroids = function(centroids, splines_model, colors=NULL, smooth=FALSE, legend=TRUE, legendArgs=NULL,simpleY=TRUE, mar=c(2.5, 2.5, 3.0, 1.0),mfrow=NULL,...){
+plot_centroids = function(centroids, splines_model, colors=NULL, smooth=FALSE, legend=TRUE, legendArgs=NULL, subset=NULL, simpleY=TRUE, mar=c(2.5, 2.5, 3.0, 1.0),mfrow=NULL, addToPlot=NULL,...){
     n_centroids = dim(centroids)[1]
     n_plots<-if(legend) n_centroids+1 else n_centroids
     if(!is.null(mfrow)){
@@ -48,6 +48,7 @@ plot_centroids = function(centroids, splines_model, colors=NULL, smooth=FALSE, l
     name_centroids = row.names(centroids)
     name_centroid = NULL
     
+    ##For legend:
     if(is.null(colors)){
         groups = levels(meta$Group)
         colors = viridis::viridis(length(groups))
@@ -59,11 +60,19 @@ plot_centroids = function(centroids, splines_model, colors=NULL, smooth=FALSE, l
     	}
         plot_centroid_individual(as.vector(centroids[i, ]),
 				 splines_model, colors=colors,
-				 smooth=smooth,
+				 smooth=smooth, subset=subset,
 				 main=name_centroid,
                  xaxt=if(!i %in% bottomPlots) "n" else "s",
                  yaxt=if(!i %in% sidePlots & simpleY) "n" else "s", ...
                  )
+                 
+        if(is.function(addToPlot)){
+            addToPlot()
+        }
+        ### Why does this only work in the first plot???
+        # if(!is.null(addToPlot)){
+        #     eval(addToPlot,envir = new.env())
+        # }
         if(!i %in% bottomPlots) axis(1, labels=FALSE)
         if(!i %in% sidePlots & simpleY) axis(2, labels=FALSE)
         
@@ -71,6 +80,7 @@ plot_centroids = function(centroids, splines_model, colors=NULL, smooth=FALSE, l
     if(legend){
         plot.new()
         plot.window(xlim=c(0,1), ylim=c(0,1), bty="n",xaxt="n",yaxt="n")
+        if(!is.null(subset)) colors = colors[names(colors) %in% subset]
         do.call("legend",c(list(x="center",
             legend=names(colors),fill=colors,bty="n"),legendArgs))
     }
@@ -93,15 +103,18 @@ plot_genes = function(data, splines_model, colors=NULL, smooth=FALSE,...){
 }
 
 
-plot_centroid_individual = function(centroid, splines_model, colors, smooth=FALSE,...){
+plot_centroid_individual = function(centroid, splines_model, colors, smooth=FALSE, subset=NULL, ...){
     meta = splines_model$meta
     groups = levels(meta$Group)
-
+    if(!is.null(subset)){
+        if(!all(subset %in% groups)) warning("subset argument given by user does not match names of groups, will be ignored")
+        else groups<-groups[groups %in% subset]
+    }
     xrange = range(meta$Timepoint)
-    yrange = range(centroid)
     if(is.null(dim(centroid))){
         centroid = t(as.matrix(centroid))
     }
+    yrange = range(centroid[,meta$Group %in% groups])
 
     graphics::plot(xrange, yrange, type="n", ...)
     if(smooth){
