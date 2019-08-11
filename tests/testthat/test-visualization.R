@@ -25,5 +25,7 @@ test_that("visualization::plot_centroids", {
 
     expect_silent(plot_centroids(data, splines_model))
     expect_silent(plot_centroids(data, splines_model, smooth=TRUE))
+    expect_error(plot_centroids(data, splines_model, smooth=TRUE, mfrow=c(1,1)))
+    expect_silent(plot_centroids(data, splines_model, smooth=TRUE, mfrow=c(1,1), legend=FALSE))
 
 })
