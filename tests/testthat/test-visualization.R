@@ -23,6 +23,7 @@ test_that("visualization::plot_splines_data", {
 
     splines_model = create_splines_model(meta)
 
+    # Plot only one gene
     expect_silent(plot_splines_data(data, splines_model))
     expect_silent(plot_splines_data(data, splines_model, smooth=TRUE))
     expect_error(plot_splines_data(data, splines_model,
@@ -31,4 +32,12 @@ test_that("visualization::plot_splines_data", {
 				    smooth=TRUE, mfrow=c(1, 1),
 				    legend=FALSE))
 
+    # Plot several genes, using subset_data
+    data = as.matrix(shoemaker2015$data[1:5,])
+    subset_data = row.names(data)[2:5]
+    expect_silent(plot_splines_data(data, splines_model,
+				    subset_data=subset_data))
+
+    expect_error(plot_splines_data(data, splines_model,
+				   subset_data=c(subset_data, "not_a_gene")))
 })

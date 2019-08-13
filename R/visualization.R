@@ -23,6 +23,8 @@
 #' @param subset_conditions list
 #'   if provided, only plots the subset of conditions provided. Else, plots
 #'   all conditions
+#' @param subset_data list
+#'   if provided, only plots  the subset of data (ie, the rows) provided.
 #' @param mfrow a vector of integers of length 2 defining the grid of
 #'   plots to be created (see \code{\link{par}}). If missing, the
 #'   function will set a value.
@@ -30,10 +32,23 @@
 #'  (Will be sent to all plot commands)
 #' @export
 plot_splines_data = function(data, splines_model, colors=NULL, smooth=FALSE,
-			  legend=TRUE, legendArgs=NULL, subset_conditions=NULL,
-			  simpleY=TRUE,
-			  mar=c(2.5, 2.5, 3.0, 1.0),
-			  mfrow=NULL, addToPlot=NULL, ...){
+			     legend=TRUE, legendArgs=NULL, subset_conditions=NULL,
+			     subset_data=NULL,
+			     simpleY=TRUE,
+			     mar=c(2.5, 2.5, 3.0, 1.0),
+			     mfrow=NULL, addToPlot=NULL, ...){
+
+    # Start by subsetting the data
+    if(!is.null(subset_data)){
+	mask = subset_data %in% row.names(data)
+	if(!all(mask)){
+	    msg = paste0(
+		"Some elements of subset_data are not match row.names of data.")
+	    stop(msg)
+	}
+	data = data[subset_data, ]
+    }
+
     n_observations = dim(data)[1]
     n_plots = if(legend) n_observations+1 else n_observations
     if(!is.null(mfrow)){
@@ -79,9 +94,9 @@ plot_splines_data = function(data, splines_model, colors=NULL, smooth=FALSE,
 
     # Now plot the different data
     for(i in 1:n_observations){
-    	if(!is.null(plot_names)){
-    	    name = plot_names[i]
-    	}
+	if(!is.null(plot_names)){
+	    name = plot_names[i]
+	}
         plot_centroid_individual(
 	    as.vector(data[i, ]),
 	    splines_model, colors=colors,
@@ -130,21 +145,23 @@ plot_centroid_individual = function(centroid, splines_model,
 			    colors, smooth=FALSE, subset_conditions=NULL, ...){
     meta = splines_model$meta
     groups = levels(meta$Group)
+
     if(!is.null(subset_conditions)){
         if(!all(subset_conditions %in% groups)){
 	    msg = paste0(
 		"subset_conditions argument given by user does not match names",
-		" of groups, will be ignored")
-	    warning(msg)
+		" of groups.")
+	    stop(msg)
         }else{
-	    groups = groups[groups %in% subset_conditions]
+	    groups = subset_conditions
 	}
     }
+
     xrange = range(meta$Timepoint)
     if(is.null(dim(centroid))){
         centroid = t(as.matrix(centroid))
     }
-    yrange = range(centroid[,meta$Group %in% groups])
+    yrange = range(centroid[, meta$Group %in% groups])
 
     graphics::plot(xrange, yrange, type="n", ...)
     if(smooth){
@@ -170,7 +187,7 @@ plot_centroid_individual = function(centroid, splines_model,
         time = meta$Timepoint[mask]
         indx = order(time)
         graphics::lines(time[indx], centroid[mask][indx], type="p",
-		        col=color, pch=16,
+			col=color, pch=16,
 			lwd=0)
 	if(smooth){
 	    mask = meta_prediction$Group == group
