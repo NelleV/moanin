@@ -10,7 +10,7 @@ vignette: >
 The package moanin was developped to provide a simple and efficient workflow
 for time-course gene expression data. To use this package, install it with
 
-```{r eval=TRUE}
+```{r eval=FALSE}
 # install devtools
 install.packages("devtools")
 # use devtools to install moanin

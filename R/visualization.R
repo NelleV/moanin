@@ -2,39 +2,59 @@
 # library(graphics)
 
 
-#' Plotting centroids
+#' Plotting splines
 #'
-#' @param centroids matrix (k, t) containing the centroids
+#' @param data matrix (k, t) containing the data (such as centroids or data) 
 #' @param splines_model splines_model
 #' @param meta	data.frame (t, n) containing the metadata.
 #' @param colors vector, optional, default NULL
 #'		vector of colors
 #' @param smooth boolean, optional, default: FALSE
 #'  Whether to smooth the centroids or not.
-#' @param mar vector of margins to set the space around each plot (see \code{\link{par}})
+#' @param mar vector of margins to set the space around each plot
+#'   (see \code{\link{par}})
 #' @param legend boolean whether to include a legend (default:TRUE)
-#' @param legendArgs list of arguments to be passed to legend command (if \code{legend=TRUE})
+#' @param legendArgs list of arguments to be passed to legend command
+#'    (if \code{legend=TRUE})
+#' @param simpleY boolean, if true, will minimize the annotation of the
+#'   y axis to  only label the axis in the exterior plots (the x-axis
+#'   is always assumed to be the same across all plots and will always
+#'    be simplified)
+#' @param subset_conditions list
+#'   if provided, only plots the subset of conditions provided. Else, plots
+#'   all conditions
+#' @param mfrow a vector of integers of length 2 defining the grid of
+#'   plots to be created (see \code{\link{par}}). If missing, the
+#'   function will set a value.
 #' @param ... arguments to be passed to the individual plot commands
 #'  (Will be sent to all plot commands)
-#' @param simpleY boolean, if true, will minimize the annotation of the y axis to 
-#'  only label the axis in the exterior plots (the x-axis is always assumed to be the 
-#'  same across all plots and will always be simplified)
-#' @param mfrow a vector of integers of length 2 defining the grid of plots to be created (see \code{\link{par}}). If missing, the function will set a value.
-
 #' @export
-plot_centroids = function(centroids, splines_model, colors=NULL, smooth=FALSE, legend=TRUE, legendArgs=NULL, subset=NULL, simpleY=TRUE, mar=c(2.5, 2.5, 3.0, 1.0),mfrow=NULL, addToPlot=NULL,...){
-    n_centroids = dim(centroids)[1]
-    n_plots<-if(legend) n_centroids+1 else n_centroids
+plot_splines_data = function(data, splines_model, colors=NULL, smooth=FALSE,
+			  legend=TRUE, legendArgs=NULL, subset_conditions=NULL,
+			  simpleY=TRUE,
+			  mar=c(2.5, 2.5, 3.0, 1.0),
+			  mfrow=NULL, addToPlot=NULL, ...){
+    n_observations = dim(data)[1]
+    n_plots = if(legend) n_observations+1 else n_observations
     if(!is.null(mfrow)){
-        if(mfrow[1]*mfrow[2] < n_plots) stop(sprintf("Invalid value for argument mfrow. Should result in grid for at least %s plots (including a plot for the legend, if legend=TRUE)", n_plots))
+        if(mfrow[1]*mfrow[2] < n_plots){
+	    msg = sprintf(
+		paste0(
+		    "Invalid value for argument mfrow. Should result in ",
+		    "grid for at least %s plots (including a plot for the ",
+		    "legend, if legend=TRUE)"),
+		n_plots) 
+	    stop()
+	}
     }
+
     else{
         if(n_plots <= 3){ 
-            mfrow<-c(n_plots, 1)
+            mfrow = c(n_plots, 1)
         }else if(n_plots <= 6){
-            mfrow=c(ceiling(n_plots / 2), 2)
+            mfrow = c(ceiling(n_plots / 2), 2)
         }else if(n_plots <= 12){
-            mfrow=c(ceiling(n_plots / 3), 3)
+            mfrow = c(ceiling(n_plots / 3), 3)
         }else{
             nrow = round(n_plots ** 0.5)
             ncol = ceiling(n_plots / nrow)
@@ -42,73 +62,83 @@ plot_centroids = function(centroids, splines_model, colors=NULL, smooth=FALSE, l
         }        
     }
     graphics::par(mfrow=mfrow, mar=mar)
-    bottomPlots<-seq(to=n_centroids,by=1,length=mfrow[2])
-    sidePlots<-seq(from=1,to=n_centroids,by=mfrow[2])
+    bottomPlots = seq(to=n_observations, by=1, length=mfrow[2])
+    sidePlots = seq(from=1, to=n_observations, by=mfrow[2])
 
-    name_centroids = row.names(centroids)
-    name_centroid = NULL
-    
-    ##For legend:
+   
+    ## For legend:
     if(is.null(colors)){
+	meta = splines_model$meta
         groups = levels(meta$Group)
         colors = viridis::viridis(length(groups))
         names(colors) = groups
     }
-    for(i in 1:n_centroids){
-    	if(!is.null(name_centroids)){
-    	    name_centroid = name_centroids[i]
+
+    plot_names = row.names(data)
+    name = NULL 
+
+    # Now plot the different data
+    for(i in 1:n_observations){
+    	if(!is.null(plot_names)){
+    	    name = plot_names[i]
     	}
-        plot_centroid_individual(as.vector(centroids[i, ]),
-				 splines_model, colors=colors,
-				 smooth=smooth, subset=subset,
-				 main=name_centroid,
-                 xaxt=if(!i %in% bottomPlots) "n" else "s",
-                 yaxt=if(!i %in% sidePlots & simpleY) "n" else "s", ...
-                 )
+        plot_centroid_individual(
+	    as.vector(data[i, ]),
+	    splines_model, colors=colors,
+	    smooth=smooth,
+	    subset_conditions=subset_conditions,
+	    main=name,
+            xaxt=if(!i %in% bottomPlots) "n" else "s",
+            yaxt=if(!i %in% sidePlots & simpleY) "n" else "s", ...)
                  
         if(is.function(addToPlot)){
             addToPlot()
         }
-        ### Why does this only work in the first plot???
-        # if(!is.null(addToPlot)){
-        #     eval(addToPlot,envir = new.env())
-        # }
-        if(!i %in% bottomPlots) axis(1, labels=FALSE)
-        if(!i %in% sidePlots & simpleY) axis(2, labels=FALSE)
+
+        if(!i %in% bottomPlots){
+	    axis(1, labels=FALSE)
+	}
+
+        if(!i %in% sidePlots & simpleY){
+	    axis(2, labels=FALSE)
+	}
         
     }
+
     if(legend){
         plot.new()
-        plot.window(xlim=c(0,1), ylim=c(0,1), bty="n",xaxt="n",yaxt="n")
-        if(!is.null(subset)) colors = colors[names(colors) %in% subset]
-        do.call("legend",c(list(x="center",
-            legend=names(colors),fill=colors,bty="n"),legendArgs))
+        plot.window(
+	    xlim=c(0,1),
+	    ylim=c(0,1),
+	    bty="n",
+	    xaxt="n",
+	    yaxt="n")
+
+        if(!is.null(subset_conditions)){
+	    colors = colors[names(colors) %in% subset_conditions]
+	}
+        do.call(
+	    "legend",
+	    c(list(x="center",
+		   legend=names(colors),
+		   fill=colors, bty="n"),
+		   legendArgs))
     }
 }
 
-
-#' Plotting data
-#'
-#' @param data matrix (k, t) containing the centroids
-#' @param splines_model splines_model
-#' @param meta	data.frame (t, n) containing the metadata.
-#' @param colors vector, optional, default NULL
-#'		vector of colors
-#' @param smooth boolean, optional, default: FALSE
-#'  Whether to smooth the centroids or not.
-#' @param ... arguments passed to plot_centroids
-#' @export
-plot_genes = function(data, splines_model, colors=NULL, smooth=FALSE,...){
-    plot_centroids(data, splines_model, colors=colors, smooth=smooth,simpleY=FALSE,...)
-}
-
-
-plot_centroid_individual = function(centroid, splines_model, colors, smooth=FALSE, subset=NULL, ...){
+plot_centroid_individual = function(centroid, splines_model,
+			    colors, smooth=FALSE, subset_conditions=NULL, ...){
     meta = splines_model$meta
     groups = levels(meta$Group)
-    if(!is.null(subset)){
-        if(!all(subset %in% groups)) warning("subset argument given by user does not match names of groups, will be ignored")
-        else groups<-groups[groups %in% subset]
+    if(!is.null(subset_conditions)){
+        if(!all(subset_conditions %in% groups)){
+	    msg = paste0(
+		"subset_conditions argument given by user does not match names",
+		" of groups, will be ignored")
+	    warning(msg)
+        }else{
+	    groups = groups[groups %in% subset_conditions]
+	}
     }
     xrange = range(meta$Timepoint)
     if(is.null(dim(centroid))){
@@ -160,6 +190,4 @@ plot_gene_splines = function(data, meta, gene_name, colors=NULL){
 		    gene_name, "' is not in the data", sep="")
     }
     gene_data = data[gene_name, ]
-
-
 }
