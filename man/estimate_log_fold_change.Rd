@@ -5,7 +5,7 @@
 \title{Estimates log fold change}
 \usage{
 estimate_log_fold_change(data, splines_model, contrasts,
-  method = "epicon")
+  method = "timecourse")
 }
 \arguments{
 \item{data}{The data in a matrix}
@@ -14,7 +14,7 @@ estimate_log_fold_change(data, splines_model, contrasts,
 
 \item{contrasts}{The contrasts to consider}
 
-\item{method}{["sum", "max", "min", "timely", "epicon"]}
+\item{method}{["sum", "max", "min", "timely", "timecourse", "epicon"]}
 }
 \description{
 Estimates log fold change

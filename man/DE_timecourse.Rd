@@ -13,7 +13,9 @@ DE_timecourse(data, splines_model, contrasts, center = FALSE,
 \item{splines_model}{splines_model
 Object containing all related information to the splines model used.}
 
-\item{contrasts}{Contrast using \code{makeContrasts} from \code{limma}.}
+\item{contrasts}{Contrasts, either provided as a vector of strings, or a
+matrix of contrasts coefficients obtained using \code{makeContrasts}
+from \code{limma}.}
 
 \item{center}{boolean, whether to center the data matrix}
 
