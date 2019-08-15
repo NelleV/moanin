@@ -15,12 +15,17 @@ test_that("Estimating log fold change smoke tests", {
     data = data[1:10, ]
     methods = moanin:::ALL_LFC_METHODS
 
-    contrasts = limma::makeContrasts(contrasts="C-K",
+    contrast_formula = c("C-K")
+    contrasts = limma::makeContrasts(contrasts=contrast_formula,
 				     levels=meta$Group)
     for(method in methods){
         expect_silent(
 	    estimate_log_fold_change(
 		data, splines_model, contrasts, method=method))
+	expect_silent(
+	    estimate_log_fold_change(
+		data, splines_model, contrast_formula, method=method))
+
     }
 
     # Now same test, but several contrasts
