@@ -48,3 +48,18 @@ test_that("validation:check_is_2d", {
     expect_silent(check_is_2d(as.data.frame(data_2d)))
     expect_error(check_is_2d(1:9))
 })
+
+
+test_that("validation:is_contrasts", {
+    data(shoemaker2015)
+    meta = shoemaker2015$meta
+    contrasts = c("M-VL", "M-C")
+
+    expect_silent(
+	is_contrasts(contrasts, meta))
+    contrasts = limma::makeContrasts(
+	contrasts=contrasts, levels=levels(meta$Group))
+
+    expect_silent(
+	is_contrasts(contrasts, meta))
+})

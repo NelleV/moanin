@@ -152,7 +152,9 @@ summarise = function(basis, ng_levels) {
 #' @param data The data matrix.
 #' @param splines_model splines_model
 #'	Object containing all related information to the splines model used.
-#' @param contrasts Contrast using \code{makeContrasts} from \code{limma}.
+#' @param contrasts Contrasts, either provided as a vector of strings, or a
+#'	matrix of contrasts coefficients obtained using \code{makeContrasts}
+#'	from \code{limma}.
 #' @param center boolean, whether to center the data matrix
 #' @param use_voom_weights boolean, optional, default: TRUE
 #'	Whether to use voom weights.
@@ -169,6 +171,7 @@ DE_timecourse = function(data, splines_model,
     ng_labels = meta$Group
 
     check_data_meta(data, meta)
+    contrasts = is_contrasts(contrasts, meta)
 
     if(use_voom_weights){
         y = edgeR::DGEList(counts=counts)
