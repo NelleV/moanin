@@ -4,13 +4,13 @@
 \alias{fit_predict_splines}
 \title{Fit and predict splines}
 \usage{
-fit_predict_splines(data, splines_model, weights = NULL,
+fit_predict_splines(data, moanin_model, weights = NULL,
   meta_prediction = NULL)
 }
 \arguments{
 \item{data}{the data}
 
-\item{splines_model}{splines_model}
+\item{moanin_model}{moanin_model}
 
 \item{weights}{weights}
 }

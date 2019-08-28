@@ -6,15 +6,15 @@ ALL_LFC_METHODS = c("sum", "max", "timely", "timecourse",
 #' Estimates log fold change
 #'
 #' @param data The data in a matrix
-#' @param splines_model 
+#' @param moanin_model 
 #' @param contrasts The contrasts to consider
 #' @param method ["sum", "max", "min", "timely", "timecourse", "epicon"]
 #'
 #' @export
-estimate_log_fold_change = function(data, splines_model, 
+estimate_log_fold_change = function(data, moanin_model, 
 				    contrasts, method="timecourse"){
     # Should check that data and meta is sorted identically
-    meta = splines_model$meta
+    meta = moanin_model$meta
     # Should check that the method is a known method
 
     contrasts = is_contrasts(contrasts, meta)

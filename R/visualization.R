@@ -5,7 +5,7 @@
 #' Plotting splines
 #'
 #' @param data matrix (k, t) containing the data (such as centroids or data) 
-#' @param splines_model splines_model
+#' @param moanin_model moanin_model
 #' @param meta	data.frame (t, n) containing the metadata.
 #' @param colors vector, optional, default NULL
 #'		vector of colors
@@ -31,7 +31,7 @@
 #' @param ... arguments to be passed to the individual plot commands
 #'  (Will be sent to all plot commands)
 #' @export
-plot_splines_data = function(data, splines_model, colors=NULL, smooth=FALSE,
+plot_splines_data = function(data, moanin_model, colors=NULL, smooth=FALSE,
 			     legend=TRUE, legendArgs=NULL, subset_conditions=NULL,
 			     subset_data=NULL,
 			     simpleY=TRUE,
@@ -83,7 +83,7 @@ plot_splines_data = function(data, splines_model, colors=NULL, smooth=FALSE,
    
     ## For legend:
     if(is.null(colors)){
-	meta = splines_model$meta
+	meta = moanin_model$meta
         groups = levels(meta$Group)
         colors = viridis::viridis(length(groups))
         names(colors) = groups
@@ -99,7 +99,7 @@ plot_splines_data = function(data, splines_model, colors=NULL, smooth=FALSE,
 	}
         plot_centroid_individual(
 	    as.vector(data[i, ]),
-	    splines_model, colors=colors,
+	    moanin_model, colors=colors,
 	    smooth=smooth,
 	    subset_conditions=subset_conditions,
 	    main=name,
@@ -141,9 +141,9 @@ plot_splines_data = function(data, splines_model, colors=NULL, smooth=FALSE,
     }
 }
 
-plot_centroid_individual = function(centroid, splines_model,
+plot_centroid_individual = function(centroid, moanin_model,
 			    colors, smooth=FALSE, subset_conditions=NULL, ...){
-    meta = splines_model$meta
+    meta = moanin_model$meta
     groups = levels(meta$Group)
 
     if(!is.null(subset_conditions)){
@@ -167,13 +167,13 @@ plot_centroid_individual = function(centroid, splines_model,
     if(smooth){
 	# FIXME this is supposed to be on the fitted lines, but I'm not able
 	# to get this to work fine in R.
-	meta_prediction = create_meta_prediction(splines_model)
+	meta_prediction = create_meta_prediction(moanin_model)
 	centroid_fitted = fit_predict_splines(
-	    centroid, splines_model,
+	    centroid, moanin_model,
 	    meta_prediction=meta_prediction)
     }else{
 	centroid_fitted = fit_predict_splines(
-	    centroid, splines_model)
+	    centroid, moanin_model)
     }
 
 

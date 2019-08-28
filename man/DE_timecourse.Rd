@@ -4,13 +4,13 @@
 \alias{DE_timecourse}
 \title{Run edge with contrasts.}
 \usage{
-DE_timecourse(data, splines_model, contrasts, center = FALSE,
+DE_timecourse(data, moanin_model, contrasts, center = FALSE,
   use_voom_weights = TRUE)
 }
 \arguments{
 \item{data}{The data matrix.}
 
-\item{splines_model}{splines_model
+\item{moanin_model}{moanin_model
 Object containing all related information to the splines model used.}
 
 \item{contrasts}{Contrasts, either provided as a vector of strings, or a

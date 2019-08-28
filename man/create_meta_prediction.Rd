@@ -4,10 +4,10 @@
 \alias{create_meta_prediction}
 \title{Create prediction meta data from splines model}
 \usage{
-create_meta_prediction(splines_model, num_timepoints = 100)
+create_meta_prediction(moanin_model, num_timepoints = 100)
 }
 \arguments{
-\item{splines_model}{a Splines model object}
+\item{moanin_model}{a Splines model object}
 
 \item{num_timepoints}{integer, optional, default: 100
 Number of timepoints to use for the prediction metadata}

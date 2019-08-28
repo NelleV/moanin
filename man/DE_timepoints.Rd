@@ -4,12 +4,12 @@
 \alias{DE_timepoints}
 \title{Fit weekly differential expression analysis}
 \usage{
-DE_timepoints(data, splines_model, contrasts, use_voom_weights = TRUE)
+DE_timepoints(data, moanin_model, contrasts, use_voom_weights = TRUE)
 }
 \arguments{
 \item{data}{Gene expression data}
 
-\item{splines_model}{splines_model}
+\item{moanin_model}{moanin_model}
 
 \item{contrasts}{Contrast to use.}
 

@@ -8,17 +8,17 @@ library(stats)
 #' Fit splines
 #'
 #' @param data the data
-#' @param splines_model splines_model 
+#' @param moanin_model moanin_model 
 #' @param weights weigts
 #'
 #' @return beta coefficients
 #'
 #' @export
-fit_splines = function(data, splines_model, weights=NULL){
-    basis = splines_model$basis
+fit_splines = function(data, moanin_model, weights=NULL){
+    basis = moanin_model$basis
     n = ncol(basis)
     nr = nrow(data)
-    basis = splines_model$basis 
+    basis = moanin_model$basis 
 
     if(!is.null(weights)){
 	beta = matrix(nrow=nr, ncol=n)
@@ -35,30 +35,30 @@ fit_splines = function(data, splines_model, weights=NULL){
 #' Fit and predict splines
 #'
 #' @param data the data
-#' @param splines_model splines_model
+#' @param moanin_model moanin_model
 #' @param weights weights
 #'
 #' @return y_fitted the fitted y values
 #'
 #' @export
-fit_predict_splines = function(data, splines_model, weights=NULL, meta_prediction=NULL){
-    basis = splines_model$basis
-    meta = splines_model$meta
+fit_predict_splines = function(data, moanin_model, weights=NULL, meta_prediction=NULL){
+    basis = moanin_model$basis
+    meta = moanin_model$meta
     if(!is.null(weights)){
 	stop("moanin::fit_predict_splines: not implemented")
     }
     if(is.null(meta_prediction)){
         y_fitted = t(stats::lm.fit(basis, t(data))$fitted.values)
     }else{
-	degrees_of_freedom = splines_model$degrees_of_freedom
+	degrees_of_freedom = moanin_model$degrees_of_freedom
 	fitting_data = t(as.matrix(data))
 	formula_data = list(
 	    "Group"=meta$Group,
 	    "Timepoint"=meta$Timepoint,
 	    "fitting_data"=fitting_data,
-	    "degrees_of_freedom"=splines_model$degrees_of_freedom)
+	    "degrees_of_freedom"=moanin_model$degrees_of_freedom)
 
-	updated_formula = stats::update(splines_model$formula, fitting_data ~ .)
+	updated_formula = stats::update(moanin_model$formula, fitting_data ~ .)
 	model = stats::lm(updated_formula, formula_data)	
 	y_fitted = stats::predict(model, meta_prediction)
     }
@@ -68,16 +68,16 @@ fit_predict_splines = function(data, splines_model, weights=NULL, meta_predictio
 
 #' Create prediction meta data from splines model
 #'
-#' @param splines_model a Splines model object
+#' @param moanin_model a Splines model object
 #' @param num_timepoints integer, optional, default: 100
 #'	Number of timepoints to use for the prediction metadata
 #'
 #' @export
-create_meta_prediction = function(splines_model, num_timepoints=100){
-    # Create splines_model for prediction
+create_meta_prediction = function(moanin_model, num_timepoints=100){
+    # Create moanin_model for prediction
     timepoints_pred = NULL
     groups_pred = NULL
-    meta = droplevels(splines_model$meta)
+    meta = droplevels(moanin_model$meta)
     groups = levels(meta$Group) 
     for(group in groups){
 	mask = meta$Group == group

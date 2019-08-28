@@ -8,7 +8,7 @@ test_that("time-course DE analysis", {
     data = shoemaker2015$data
     meta = shoemaker2015$meta
 
-    splines_model = create_splines_model(meta)
+    moanin_model = create_moanin_model(meta)
 
     # Limit ourselves to the top 5000 genes
     data = data[1:5000, ]
@@ -20,7 +20,7 @@ test_that("time-course DE analysis", {
 	levels=levels(meta$Group))
 
     expect_silent(moanin::DE_timecourse(
-	as.matrix(data), splines_model, contrasts=contrast,
+	as.matrix(data), moanin_model, contrasts=contrast,
 	use_voom_weights=FALSE))
 
     # Now test with several contrasts
@@ -30,7 +30,7 @@ test_that("time-course DE analysis", {
 	levels=levels(meta$Group))
 
     expect_silent(moanin::DE_timecourse(
-    	as.matrix(data), splines_model, contrasts=contrast,
+    	as.matrix(data), moanin_model, contrasts=contrast,
 	use_voom_weights=FALSE))
 
 })
