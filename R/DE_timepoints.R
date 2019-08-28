@@ -46,9 +46,9 @@ DE_timepoints = function(data, moanin_model,
 	de_analysis = data.frame(row.names=row.names(data))
 
         base_colname = gsub(" ", "", contrast_formula, fixed=TRUE)
-	colname_pval = paste(base_colname, "-pval", sep="")
-	colname_qval = paste(base_colname, "-qval", sep="")
-	colname_lfc = paste(base_colname, "-lfc", sep="")
+	colname_pval = paste(base_colname, "_pval", sep="")
+	colname_qval = paste(base_colname, "_qval", sep="")
+	colname_lfc = paste(base_colname, "_lfc", sep="")
 
         tt = limma::topTable(
             fit2, coef=ii, number=length(rownames(fit2$coef)),
