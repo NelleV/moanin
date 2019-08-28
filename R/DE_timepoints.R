@@ -6,15 +6,15 @@ library("edgeR")
 #' Fit weekly differential expression analysis
 #'
 #' @param data Gene expression data
-#' @param splines_model splines_model
+#' @param moanin_model moanin_model
 #' @param contrasts Contrast to use.
 #' @param use_voom_weights boolean: whether to use voom weights or not
 #'
 #' @export
-DE_timepoints = function(data, splines_model,
+DE_timepoints = function(data, moanin_model,
 			 contrasts,
 			 use_voom_weights=TRUE){
-    meta = splines_model$meta
+    meta = moanin_model$meta
 
     design = stats::model.matrix(~WeeklyGroup + 0, data=meta)
 
@@ -71,17 +71,17 @@ DE_timepoints = function(data, splines_model,
 #'
 #' @param group1 First group to consider
 #' @param group2 Second group to consider
-#' @param splines_model splines model object
+#' @param moanin_model splines model object
 #'
 #' @examples
 #' data(shoemaker2015)
 #' meta = shoemaker2015$meta
-#' splines_model = moanin::create_splines_model(meta)
-#' contrasts = create_timepoints_contrasts("C", "M", splines_model)
+#' moanin_model = moanin::create_moanin_model(meta)
+#' contrasts = create_timepoints_contrasts("C", "M", moanin_model)
 #'
 #' @export
-create_timepoints_contrasts = function(group1, group2, splines_model){
-    meta = splines_model$meta
+create_timepoints_contrasts = function(group1, group2, moanin_model){
+    meta = moanin_model$meta
     meta = meta[meta$Group %in% c(group1, group2),]
     all_timepoints = sort(unique(meta$Timepoint))
     contrasts = rep(NA, length(all_timepoints))

@@ -4,14 +4,14 @@
 \alias{create_timepoints_contrasts}
 \title{Creates pairwise contrasts for all timepoints}
 \usage{
-create_timepoints_contrasts(group1, group2, splines_model)
+create_timepoints_contrasts(group1, group2, moanin_model)
 }
 \arguments{
 \item{group1}{First group to consider}
 
 \item{group2}{Second group to consider}
 
-\item{splines_model}{splines model object}
+\item{moanin_model}{splines model object}
 }
 \description{
 Creates pairwise contrasts for all timepoints
@@ -19,7 +19,7 @@ Creates pairwise contrasts for all timepoints
 \examples{
 data(shoemaker2015)
 meta = shoemaker2015$meta
-splines_model = moanin::create_splines_model(meta)
-contrasts = create_timepoints_contrasts("C", "M", splines_model)
+moanin_model = moanin::create_moanin_model(meta)
+contrasts = create_timepoints_contrasts("C", "M", moanin_model)
 
 }

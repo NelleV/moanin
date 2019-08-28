@@ -150,7 +150,7 @@ summarise = function(basis, ng_levels) {
 #' Run edge with contrasts.
 #' 
 #' @param data The data matrix.
-#' @param splines_model splines_model
+#' @param moanin_model moanin_model
 #'	Object containing all related information to the splines model used.
 #' @param contrasts Contrasts, either provided as a vector of strings, or a
 #'	matrix of contrasts coefficients obtained using \code{makeContrasts}
@@ -159,13 +159,13 @@ summarise = function(basis, ng_levels) {
 #' @param use_voom_weights boolean, optional, default: TRUE
 #'	Whether to use voom weights.
 #' @export
-DE_timecourse = function(data, splines_model,
+DE_timecourse = function(data, moanin_model,
 			 contrasts,
 			 center=FALSE,
 			 use_voom_weights=TRUE){
 
-    basis = splines_model$basis
-    meta = splines_model$meta
+    basis = moanin_model$basis
+    meta = moanin_model$meta
 
     ng = nlevels(meta$Group)
     ng_labels = meta$Group
@@ -189,7 +189,7 @@ DE_timecourse = function(data, splines_model,
 	basis = t(center_data(t(basis)))
     }
 
-    beta = fit_splines(y, splines_model, weights=weights)
+    beta = fit_splines(y, moanin_model, weights=weights)
 
     if(dim(contrasts)[1] != ng){
 	stop("The contrast coef vector should be of the same size" +

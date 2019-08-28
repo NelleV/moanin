@@ -4,13 +4,13 @@
 \alias{estimate_log_fold_change}
 \title{Estimates log fold change}
 \usage{
-estimate_log_fold_change(data, splines_model, contrasts,
+estimate_log_fold_change(data, moanin_model, contrasts,
   method = "timecourse")
 }
 \arguments{
 \item{data}{The data in a matrix}
 
-\item{splines_model}{}
+\item{moanin_model}{}
 
 \item{contrasts}{The contrasts to consider}
 

@@ -5,7 +5,7 @@ library(splines)
 #' Performs splines clustering using K-means
 #'
 #' @param data matrix containg the data. Data needs to be in log scale.
-#' @param splines_model splines_model 
+#' @param moanin_model moanin_model 
 #' @param n_clusters int optional, default: 10
 #' @param init	["kmeans++", "random", "optimal_init"]
 #' @param n_init int, optional, default: 10
@@ -18,19 +18,19 @@ library(splines)
 #' @param rescale   boolean, optional, default: TRUE
 #'	Whether to rescale the data or not.
 #' @export
-splines_kmeans = function(data, splines_model, n_clusters=10,
+splines_kmeans = function(data, moanin_model, n_clusters=10,
 			  init="kmeans++",
 			  n_init=10,
 			  max_iter=300,
 			  random_seed=NULL,
 			  fit_splines=TRUE,
 			  rescale=TRUE){
-    meta = splines_model$meta
-    basis = splines_model$basis
+    meta = moanin_model$meta
+    basis = moanin_model$basis
     check_data_meta(data, meta)
 
     if(fit_splines){
-        fitted_data = fit_predict_splines(data, splines_model)
+        fitted_data = fit_predict_splines(data, moanin_model)
     }else{
 	fitted_data = data
     }
@@ -48,7 +48,7 @@ splines_kmeans = function(data, splines_model, n_clusters=10,
 	fitted_data, n_clusters, num_init=n_init, max_iters=max_iter,
 	seed=random_seed, initializer=init)
     kmeans_clusters$centroids = rescale_values(
-	kmeans_clusters$centroids, splines_model)
+	kmeans_clusters$centroids, moanin_model)
     names(kmeans_clusters$clusters) = row.names(data)
 
     # Give names to clusters
@@ -56,7 +56,7 @@ splines_kmeans = function(data, splines_model, n_clusters=10,
     row.names(kmeans_clusters$centroids) = cluster_names
     colnames(kmeans_clusters$centroids) = colnames(data)
 
-    kmeans_clusters$splines_model = splines_model
+    kmeans_clusters$moanin_model = moanin_model
     kmeans_clusters$fit_splines = fit_splines
     kmeans_clusters$rescale = rescale
     return(kmeans_clusters)
@@ -64,16 +64,16 @@ splines_kmeans = function(data, splines_model, n_clusters=10,
 
 
 splines_kmeans_prediction = function(data, kmeans_clusters){
-    splines_model = kmeans_clusters$splines_model
+    moanin_model = kmeans_clusters$moanin_model
     fit_splines = kmeans_clusters$fit_splines
     rescale = kmeans_clusters$rescale
 
-    meta = splines_model$meta
-    basis = splines_model$basis
+    meta = moanin_model$meta
+    basis = moanin_model$basis
     check_data_meta(data, meta)
 
     if(fit_splines){
-        fitted_data = fit_predict_splines(data, splines_model)
+        fitted_data = fit_predict_splines(data, moanin_model)
     }else{
 	fitted_data = data
     }

@@ -11,8 +11,8 @@ test_that("cluster::splines_kmeans", {
     random_seed = 42
 
     data = data[1:500, ]
-    splines_model = create_splines_model(meta)
-    expect_silent(moanin::splines_kmeans(data, splines_model, n_init=1,
+    moanin_model = create_moanin_model(meta)
+    expect_silent(moanin::splines_kmeans(data, moanin_model, n_init=1,
 				         random_seed=random_seed))
 })
 
@@ -24,9 +24,9 @@ test_that("cluster::splines_kmeans_score_and_label", {
     random_seed = 42
 
     data = data[1:500, ]
-    splines_model = create_splines_model(meta)
+    moanin_model = create_moanin_model(meta)
     clustering_results = moanin::splines_kmeans(
-	data, splines_model, n_init=1,
+	data, moanin_model, n_init=1,
 	random_seed=random_seed)
 
     expect_silent(splines_kmeans_score_and_label(data, clustering_results))

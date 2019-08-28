@@ -4,12 +4,12 @@
 \alias{fit_splines}
 \title{Fit splines}
 \usage{
-fit_splines(data, splines_model, weights = NULL)
+fit_splines(data, moanin_model, weights = NULL)
 }
 \arguments{
 \item{data}{the data}
 
-\item{splines_model}{splines_model}
+\item{moanin_model}{moanin_model}
 
 \item{weights}{weigts}
 }

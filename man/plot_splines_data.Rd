@@ -4,7 +4,7 @@
 \alias{plot_splines_data}
 \title{Plotting splines}
 \usage{
-plot_splines_data(data, splines_model, colors = NULL, smooth = FALSE,
+plot_splines_data(data, moanin_model, colors = NULL, smooth = FALSE,
   legend = TRUE, legendArgs = NULL, subset_conditions = NULL,
   subset_data = NULL, simpleY = TRUE, mar = c(2.5, 2.5, 3, 1),
   mfrow = NULL, addToPlot = NULL, ...)
@@ -12,7 +12,7 @@ plot_splines_data(data, splines_model, colors = NULL, smooth = FALSE,
 \arguments{
 \item{data}{matrix (k, t) containing the data (such as centroids or data)}
 
-\item{splines_model}{splines_model}
+\item{moanin_model}{moanin_model}
 
 \item{colors}{vector, optional, default NULL
 vector of colors}
