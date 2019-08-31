@@ -9,6 +9,8 @@ build:
 install: doc-doxygen
 	$(RSCRIPT) .scripts/install_package.R
 
+install-extra:
+	$(RSCRIPT) .scripts/install_extra_dependencies.R
 
 check:
 	$(RSCRIPT) .scripts/check_package.R

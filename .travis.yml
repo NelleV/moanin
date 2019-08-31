@@ -10,9 +10,6 @@ before_install:
 script:
     - docker run -ti -v $(pwd):/home/rstudio/repo -w /home/rstudio/repo nellev/rbio /bin/bash -e ".build_tools/travis/test_script.sh"
 
-after_success: 
-    if: branch = master
-        source .build_tools/travis/after_success.sh
 
 deploy:
   provider: pages
