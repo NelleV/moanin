@@ -196,7 +196,7 @@ DE_timecourse = function(data, moanin_model,
 	     " as the number of groups")
     }
 
-    pvalues = data.frame(row.names=row.names(data))
+    results = data.frame(row.names=row.names(data))
     for(col in 1:ncol(contrasts)){
 	contrast = contrasts[, col]
 
@@ -216,9 +216,17 @@ DE_timecourse = function(data, moanin_model,
 			      n_samples=n_samples_fit,
 			      n_groups=n_groups,
 			      degrees_of_freedom=degrees_of_freedom)
-	pvalues[contrast_name] = pval
+
+	colname_qval = paste(contrast_name, "_qval", sep="")
+	colname_pval = paste(contrast_name, "_pval", sep="")
+
+	results[colname_pval] = pval
+	qval = stats::p.adjust(pval, method="BH")
+	dim(qval) = dim(pval)
+	results[colname_qval] = qval
     }
-    return(pvalues)
+
+    return(results)
 }
 
 
