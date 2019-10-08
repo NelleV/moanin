@@ -62,5 +62,7 @@ create_moanin_model = function(meta, formula=NULL, basis=NULL,
     splines_model$"basis" = basis
     splines_model$"meta" = meta
     splines_model$"formula" = formula
+    class(splines_model) = "moanin_model"
+    
     return(splines_model)
 }
