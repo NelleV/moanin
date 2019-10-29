@@ -171,6 +171,8 @@ DE_timecourse = function(data, moanin_model,
     ng_labels = meta$Group
 
     check_data_meta(data, meta)
+    data = as.matrix(data)
+
     contrasts = is_contrasts(contrasts, meta)
 
     if(use_voom_weights){

@@ -5,7 +5,7 @@
 \title{Assign score and labels from raw data}
 \usage{
 splines_kmeans_score_and_label(data, kmeans_clusters,
-  percentage_genes_to_label = 0.5)
+  percentage_genes_to_label = 0.5, rescale_separately_on = NULL)
 }
 \arguments{
 \item{data}{array or dataframe.
@@ -16,6 +16,9 @@ List returned by moanin::splines_kmeans}
 
 \item{percentage_genes_to_label}{float, optional, default: 0.5
 Percentage of genes to label.}
+
+\item{rescale_separately_on, }{string, optional, default: NULL
+When provided, will rescale separately different groups of data.}
 }
 \description{
 Assign score and labels from raw data

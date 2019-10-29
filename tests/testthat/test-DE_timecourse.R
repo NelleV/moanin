@@ -32,5 +32,10 @@ test_that("time-course DE analysis", {
     expect_silent(moanin::DE_timecourse(
     	as.matrix(data), moanin_model, contrasts=contrast,
 	use_voom_weights=FALSE))
+    
+    # Check that the names of the columns make sense.
+    de_results = moanin::DE_timecourse(
+	as.matrix(data), moanin_model, contrasts=contrast,
+	use_voom_weights=FALSE)
 
 })
