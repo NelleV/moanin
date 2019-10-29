@@ -18,7 +18,6 @@ fit_splines = function(data, moanin_model, weights=NULL){
     basis = moanin_model$basis
     n = ncol(basis)
     nr = nrow(data)
-    basis = moanin_model$basis 
 
     if(!is.null(weights)){
 	beta = matrix(nrow=nr, ncol=n)
@@ -107,7 +106,7 @@ rescale_values = function(y, meta=NULL, group=NULL){
     }else{
 	factors_to_consider = levels(unlist(meta[group]))
 	for(factor in factors_to_consider){
-	    mask = meta["Group"] == factor
+	    mask = meta[group] == factor
 	    ymin = row_min(y[, mask]) 
 	    y[, mask] = y[, mask] - ymin
 	    ymax = row_max(y[, mask])
@@ -149,6 +148,11 @@ align_data_onto_centroid = function(data, centroid, positive_scaling=TRUE){
     if(n_samples != length(centroid)){
 	stop("align_data_onto_centroid: problem in dimensions")
     }
+
+    # No clue why sometimes the vector/matrix is not numeric
+    if(!is.numeric(centroid)){
+	centroid = as.numeric(centroid)
+    }
     centered_centroid = centroid - mean(centroid)
     # Identify if some rows of the data are only zeros.
     only_zero_genes = rowSums(abs(data)) == 0
@@ -158,26 +162,32 @@ align_data_onto_centroid = function(data, centroid, positive_scaling=TRUE){
     if(positive_scaling){
         scaling_factors[scaling_factors < 0] = 0
     }
+
     # Now replace the scaling factors of only 0 genes by 0
     scaling_factors[only_zero_genes] = 0
-    shift_factors = rowMeans(
-	rep(centroid, each=n_genes) - rep(scaling_factors, times=n_samples) * data)
 
-    data_fitted = rep(scaling_factors, times=n_samples) * data
-    data_fitted = (data_fitted + rep(shift_factors, times=n_samples))
+    # Estimate the shift factors now
+    shift_factors = apply(
+	scaling_factors * data,
+	1,
+	function(x) mean(centroid - x)) 
+
+    data_fitted = (scaling_factors * data + shift_factors)
     return(data_fitted)
 }
 
 
 score_genes_centroid = function(data, centroid, positive_scaling=TRUE, scale=TRUE){
     n_genes = dim(data)[1]
+    centroid = as.numeric(centroid)
+
     data_fitted = align_data_onto_centroid(
 	data, centroid, positive_scaling=positive_scaling)
 
     scores = apply(
 	data_fitted,
 	1,
-	function(y){sqrt(sum((centroid - y)^2))})
+	function(y) sum((centroid - y)**2))
 
     if(scale){
 	all_zeros_gene = matrix(0, 1, dim(data)[2])
@@ -185,7 +195,7 @@ score_genes_centroid = function(data, centroid, positive_scaling=TRUE, scale=TRU
 	    all_zeros_gene,
 	    centroid,
 	    positive_scaling=positive_scaling)
-	score = sqrt(sum((centroid - all_zeros_gene)**2))
+	score = sum((centroid - all_zeros_gene)**2)
 	max_score = score
     }else{
 	max_score = 1

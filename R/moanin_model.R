@@ -55,7 +55,9 @@ create_moanin_model = function(meta, formula=NULL, basis=NULL,
 		~Group + Group:splines::ns(Timepoint, df=degrees_of_freedom) + 0)
 	}
 	basis = stats::model.matrix(formula, data=meta)
-    } 
+    }else{
+	basis = as.matrix(basis)
+    }
 
     splines_model = list()
     splines_model$degrees_of_freedom = degrees_of_freedom

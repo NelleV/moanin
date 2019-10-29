@@ -102,26 +102,56 @@ splines_kmeans_prediction = function(data, kmeans_clusters){
 #'	List returned by moanin::splines_kmeans
 #' @param percentage_genes_to_label float, optional, default: 0.5
 #'	Percentage of genes to label.
+#' @param rescale_separately_on, string, optional, default: NULL
+#'	When provided, will rescale separately different groups of data.
 #' @export
-splines_kmeans_score_and_label = function(data, kmeans_clusters, percentage_genes_to_label=0.5){
+splines_kmeans_score_and_label = function(data, kmeans_clusters, percentage_genes_to_label=0.5,
+					  rescale_separately_on=NULL){
 
     n_clusters = dim(kmeans_clusters$centroids)[1]
     all_scores = matrix(NA, nrow=dim(data)[1], ncol=n_clusters)
 
+
+    if(!is.null(rescale_separately_on)){
+        groups = levels(meta[, rescale_separately_on])
+    }
+
     for(k in 1:n_clusters){
-	scores = score_genes_centroid(
-	    data,
-	    kmeans_clusters$centroids[k,])
-	all_scores[, k] = scores
+	# By default, should not rescale separately on any columns.
+	if(is.null(rescale_separately_on)){
+	
+	    scores = score_genes_centroid(
+		data,
+		kmeans_clusters$centroids[k,],
+		scale=FALSE)
+
+	    all_scores[, k] = scores /  max(scores)
+	}else{
+	    scores = NULL
+	    for(group in groups){
+		mask = meta[, rescale_separately_on] == group
+		partial_scores = score_genes_centroid(
+		    data[, mask],
+		    kmeans_clusters$centroids[k, mask],
+		    scale=FALSE)
+		if(is.null(scores)){
+		    scores = partial_scores
+		}else{
+		    scores = scores + partial_scores
+		}
+	    }	
+	    all_scores[, k] = scores / max(scores)
+	}
     }
 
     # Give names to rows
     all_scores = as.matrix(all_scores)
     row.names(all_scores) = row.names(data) 
+    scores = apply(all_scores, 1, min)
 
     # Only assign labels to X% of the genes
-    max_score = stats::quantile(rowMin(all_scores), c(percentage_genes_to_label))
-    genes_to_not_consider = rowMin(all_scores) >= max_score
+    max_score = stats::quantile(scores, c(percentage_genes_to_label))
+    genes_to_not_consider = scores >= max_score
     labels = apply(all_scores, 1, which.min)
     labels[genes_to_not_consider] = NA
     names(labels) = row.names(data)
