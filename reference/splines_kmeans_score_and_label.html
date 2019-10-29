@@ -125,7 +125,7 @@
     </div>
 
     <pre class="usage"><span class='fu'>splines_kmeans_score_and_label</span>(<span class='no'>data</span>, <span class='no'>kmeans_clusters</span>,
-  <span class='kw'>percentage_genes_to_label</span> <span class='kw'>=</span> <span class='fl'>0.5</span>)</pre>
+  <span class='kw'>percentage_genes_to_label</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>rescale_separately_on</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -144,6 +144,11 @@ List returned by moanin::splines_kmeans</p></td>
       <th>percentage_genes_to_label</th>
       <td><p>float, optional, default: 0.5
 Percentage of genes to label.</p></td>
+    </tr>
+    <tr>
+      <th>rescale_separately_on, </th>
+      <td><p>string, optional, default: NULL
+When provided, will rescale separately different groups of data.</p></td>
     </tr>
     </table>
     
