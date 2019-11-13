@@ -176,7 +176,7 @@ DE_timecourse = function(data, moanin_model,
     contrasts = is_contrasts(contrasts, meta)
 
     if(use_voom_weights){
-        y = edgeR::DGEList(counts=counts)
+        y = edgeR::DGEList(counts=data)
 	y = edgeR::calcNormFactors(y, method="upperquartile")
         v = limma::voom(y, contrasts, plot=FALSE)
 	weights = limma::lmFit(v)
