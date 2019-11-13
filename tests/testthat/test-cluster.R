@@ -32,5 +32,13 @@ test_that("cluster::splines_kmeans_score_and_label", {
     expect_silent(splines_kmeans_score_and_label(data, clustering_results))
     scores_and_labels = splines_kmeans_score_and_label(data, clustering_results)
     expect_equal(row.names(data), row.names(scores_and_labels$scores))
+
+    # Set a max score that we know is belove the max score found automatically
+    max_score = max(scores_and_labels$scores) / 2
+    scores_and_labels = splines_kmeans_score_and_label(
+	data, clustering_results, max_score=(max_score))
+    labels = scores_and_labels$labels
+    scores = rowMin(scores_and_labels$scores[!is.na(labels), ])
+    expect_true(max(scores) <= max_score)
 })
 
