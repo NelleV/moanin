@@ -125,7 +125,8 @@
     </div>
 
     <pre class="usage"><span class='fu'>splines_kmeans_score_and_label</span>(<span class='no'>data</span>, <span class='no'>kmeans_clusters</span>,
-  <span class='kw'>percentage_genes_to_label</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>rescale_separately_on</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+  <span class='kw'>percentage_genes_to_label</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>max_score</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>rescale_separately_on</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -143,7 +144,15 @@ List returned by moanin::splines_kmeans</p></td>
     <tr>
       <th>percentage_genes_to_label</th>
       <td><p>float, optional, default: 0.5
-Percentage of genes to label.</p></td>
+Percentage of genes to label. If max_score is provided, will label
+genes that are either in the top `percentage_genes_to_label` or with a
+score below `max_score`.</p></td>
+    </tr>
+    <tr>
+      <th>max_score</th>
+      <td><p>optional, default: Null
+When provided, will only label genes below that score. If NULL, ignore
+this option.</p></td>
     </tr>
     <tr>
       <th>rescale_separately_on, </th>
