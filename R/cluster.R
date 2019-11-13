@@ -101,11 +101,17 @@ splines_kmeans_prediction = function(data, kmeans_clusters){
 #' @param kmeans_clusters list of list
 #'	List returned by moanin::splines_kmeans
 #' @param percentage_genes_to_label float, optional, default: 0.5
-#'	Percentage of genes to label.
+#'	Percentage of genes to label. If max_score is provided, will label
+#'	genes that are either in the top `percentage_genes_to_label` or with a
+#'	score below `max_score`.
+#' @param max_score optional, default: Null
+#'	When provided, will only label genes below that score. If NULL, ignore
+#'	this option.
 #' @param rescale_separately_on, string, optional, default: NULL
 #'	When provided, will rescale separately different groups of data.
 #' @export
 splines_kmeans_score_and_label = function(data, kmeans_clusters, percentage_genes_to_label=0.5,
+					  max_score=NULL,
 					  rescale_separately_on=NULL){
 
     n_clusters = dim(kmeans_clusters$centroids)[1]
@@ -150,11 +156,25 @@ splines_kmeans_score_and_label = function(data, kmeans_clusters, percentage_gene
     scores = apply(all_scores, 1, min)
 
     # Only assign labels to X% of the genes
-    max_score = stats::quantile(scores, c(percentage_genes_to_label))
+    max_score_data = stats::quantile(scores, c(percentage_genes_to_label))
+    if(!is.null(max_score)){
+	max_score = min(max_score_data, max_score)
+    }else{
+	max_score = max_score_data
+    }
     genes_to_not_consider = scores >= max_score
     labels = apply(all_scores, 1, which.min)
     labels[genes_to_not_consider] = NA
     names(labels) = row.names(data)
+
+    if(max_score == 1){
+	msg = paste(
+	    "moanin::splines_kmeans_score_and_label is labeling genes",
+	    " with a score of 1. This implies that no good fit for ",
+	    "those genes are found and the assignement is random.",
+	    sep="")
+	warning(msg)
+    }
 
     return(list("labels"=labels, "scores"=all_scores))
 }
