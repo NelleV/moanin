@@ -176,5 +176,5 @@ splines_kmeans_score_and_label = function(data, kmeans_clusters, percentage_gene
 	warning(msg)
     }
 
-    return(list("labels"=labels, "scores"=all_scores))
+    return(list("labels"=labels, "scores"=all_scores, "max_score"=max_score))
 }
