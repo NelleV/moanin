@@ -1,0 +1,46 @@
+authors:
+    Nelle Varoquaux:
+        href: https://nellev.github.io/
+
+reference:
+    - title: "Datasets"
+      contents:
+        - shoemaker2015
+    - title: "Working with functions and splines"
+      desc: >
+        How to represent your time-course data with functions and work with
+        them.
+      contents:
+        - create_moanin_model
+        - fit_splines
+        - fit_predict_splines
+        - plot_splines_data
+
+    - title: "Differential expression analysis on timecourse data"
+      desc: >
+        Functions to perform week-by-week and overall differential expression
+        analysis.
+      contents:
+        - DE_timecourse
+        - DE_timepoints
+        - create_timepoints_contrasts
+        - estimate_log_fold_change
+
+    - title: "Clustering"
+      contents:
+        - splines_kmeans
+        - splines_kmeans_score_and_label
+        - plot_model_explorer
+        - get_auc_similarity_scores
+        - consensus_matrix
+        - plot_cdf_consensus
+    - title: "Downstream analyis"
+      contents:
+        - find_enriched_go_terms
+        - create_go_term_mapping
+
+    - title: "Miscellenaous"
+      contents:
+        - pvalues_fisher_method
+        - expression_filtering
+
