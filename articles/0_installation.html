@@ -54,10 +54,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/datasets.html">Datasets</a>
+      <a href="../articles/0_installation.html">Installation</a>
     </li>
     <li>
-      <a href="../articles/installation.html">Installation</a>
+      <a href="../articles/1_datasets.html">Datasets</a>
     </li>
   </ul>
 </li>
@@ -79,19 +79,43 @@
             
       
       
-      <div class="hidden name"><code>installation.Rmd</code></div>
+      <div class="hidden name"><code>0_installation.Rmd</code></div>
 
     </div>
 
     
     
-<p>The package moanin was developped to provide a simple and efficient workflow for time-course gene expression data. To use this package, install it with</p>
+<p>The package moanin was developped to provide a simple and efficient workflow for time-course gene expression data. It depends on packages from <a href="https://www.bioconductor.org/">bioconductor</a> and <a href="https://cran.r-project.org/">CRAN</a>.</p>
+<ul>
+<li>
+<p>CRAN packages:</p>
+<ul>
+<li>MASS (&gt;= 1.0.0)</li>
+<li>viridis</li>
+<li>ClusterR</li>
+<li>zoo</li>
+</ul>
+</li>
+<li>
+<p>Bioconductor packages:</p>
+<ul>
+<li>edge (&gt;= 2.4.0)</li>
+<li>limma</li>
+<li>edgeR</li>
+<li>reshape2</li>
+<li>NMI</li>
+<li>topGO</li>
+</ul>
+</li>
+</ul>
+<p>To use this package, install it with</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="co"># install devtools</span></a>
 <a class="sourceLine" id="cb1-2" title="2"><span class="kw"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"devtools"</span>)</a>
 <a class="sourceLine" id="cb1-3" title="3"><span class="co"># use devtools to install moanin</span></a>
 <a class="sourceLine" id="cb1-4" title="4">devtools<span class="op">::</span><span class="kw"><a href="https://rdrr.io/pkg/devtools/man/reexports.html">install_github</a></span>(<span class="st">"NelleV/moanin"</span>)</a></code></pre></div>
-<p>Next, load the package into your namespace</p>
+<p>Next, load the package into your namespace:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(moanin)</a></code></pre></div>
+<p>And you are ready to go!</p>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -102,7 +126,7 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Nelle Varoquaux.</p>
+  <p>Developed by <a href="https://nellev.github.io/">Nelle Varoquaux</a>.</p>
 </div>
 
 <div class="pkgdown">

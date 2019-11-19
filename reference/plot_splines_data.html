@@ -89,10 +89,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/datasets.html">Datasets</a>
+      <a href="../articles/0_installation.html">Installation</a>
     </li>
     <li>
-      <a href="../articles/installation.html">Installation</a>
+      <a href="../articles/1_datasets.html">Datasets</a>
     </li>
   </ul>
 </li>
@@ -193,19 +193,39 @@ function will set a value.</p></td>
       <td><p>arguments to be passed to the individual plot commands
 (Will be sent to all plot commands)</p></td>
     </tr>
-    <tr>
-      <th>meta</th>
-      <td><p>data.frame (t, n) containing the metadata.</p></td>
-    </tr>
     </table>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='co'># First, load some data and create a moanin model</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>shoemaker2015</span>)
+<span class='no'>data</span> <span class='kw'>=</span> <span class='no'>shoemaker2015</span>$<span class='no'>data</span>
+<span class='no'>meta</span> <span class='kw'>=</span> <span class='no'>shoemaker2015</span>$<span class='no'>meta</span>
+<span class='no'>moanin_model</span> <span class='kw'>=</span> <span class='fu'><a href='create_moanin_model.html'>create_moanin_model</a></span>(<span class='no'>meta</span>, <span class='kw'>degrees_of_freedom</span><span class='kw'>=</span><span class='fl'>6</span>)
+
+<span class='co'># The moanin model contains all the information for plotting purposes. The</span>
+<span class='co'># plot_splines_function will automatically fit the splines from the</span>
+<span class='co'># information contained in the moanin model</span>
+<span class='fu'>plot_splines_data</span>(
+<span class='no'>data</span>, <span class='no'>moanin_model</span>,
+<span class='kw'>subset_data</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"AK050122"</span>, <span class='st'>"AK043921"</span>),
+<span class='kw'>mfrow</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>, <span class='fl'>2</span>))</div><div class='output co'>#&gt; <span class='message'>Registered S3 methods overwritten by 'ggplot2':</span>
+#&gt; <span class='message'>  method         from </span>
+#&gt; <span class='message'>  [.quosures     rlang</span>
+#&gt; <span class='message'>  c.quosures     rlang</span>
+#&gt; <span class='message'>  print.quosures rlang</span></div><div class='input'>
+<span class='co'># The splines can also be smoothed</span>
+<span class='fu'>plot_splines_data</span>(<span class='no'>data</span>, <span class='no'>moanin_model</span>,
+             <span class='kw'>subset_data</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"AK050122"</span>, <span class='st'>"AK043921"</span>),
+             <span class='kw'>smooth</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>mfrow</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>, <span class='fl'>2</span>))</div><div class='img'><img src='plot_splines_data-1.png' alt='' width='700' height='433' /></div><div class='img'><img src='plot_splines_data-2.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+            
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>
@@ -213,7 +233,7 @@ function will set a value.</p></td>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Nelle Varoquaux.</p>
+  <p>Developed by <a href='https://nellev.github.io/'>Nelle Varoquaux</a>.</p>
 </div>
 
 <div class="pkgdown">

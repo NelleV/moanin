@@ -89,10 +89,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/datasets.html">Datasets</a>
+      <a href="../articles/0_installation.html">Installation</a>
     </li>
     <li>
-      <a href="../articles/installation.html">Installation</a>
+      <a href="../articles/1_datasets.html">Datasets</a>
     </li>
   </ul>
 </li>
@@ -149,6 +149,14 @@
     <p>y_fitted the fitted y values</p>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'> <span class='co'># Load data and create moanin_model</span>
+ <span class='fu'><a href='https://rdrr.io/r/base/load.html'>load</a></span>(<span class='no'>shoemaker2015</span>)</div><div class='output co'>#&gt; <span class='error'>Error in load(shoemaker2015): bad 'file' argument</span></div><div class='input'> <span class='no'>data</span> <span class='kw'>=</span> <span class='no'>shoemaker2015</span>$<span class='no'>data</span>
+ <span class='no'>meta</span> <span class='kw'>=</span> <span class='no'>shoemaker2015</span>$<span class='no'>meta</span>
+ <span class='no'>moanin_model</span> <span class='kw'>=</span> <span class='fu'><a href='create_moanin_model.html'>create_moanin_model</a></span>(<span class='no'>meta</span>, <span class='kw'>degrees_of_freedom</span><span class='kw'>=</span><span class='fl'>6</span>)
+
+ <span class='co'># Fit the splines model and returned fitted values</span>
+ <span class='no'>fitted_data</span> <span class='kw'>=</span> <span class='fu'>fit_predict_splines</span>(<span class='no'>data</span>, <span class='no'>moanin_model</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -156,7 +164,9 @@
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-          </ul>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>
@@ -164,7 +174,7 @@
 
       <footer>
       <div class="copyright">
-  <p>Developed by Nelle Varoquaux.</p>
+  <p>Developed by <a href='https://nellev.github.io/'>Nelle Varoquaux</a>.</p>
 </div>
 
 <div class="pkgdown">

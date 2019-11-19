@@ -2,6 +2,6 @@ pandoc: 2.2.1
 pkgdown: 1.4.1
 pkgdown_sha: ~
 articles:
-  datasets: datasets.html
-  installation: installation.html
+  0_installation: 0_installation.html
+  1_datasets: 1_datasets.html
 
