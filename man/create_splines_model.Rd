@@ -26,3 +26,4 @@ formula is provided}
 This model is used to conserve information relating to the model, such as
 the formula, the basis, the meta data.
 }
+\keyword{internal}

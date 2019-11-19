@@ -15,6 +15,8 @@
 #' @param degrees_of_freedom int, optional, default: 4
 #'	Number of degrees of freedom to use if neither the basis nor the
 #'	formula is provided	 
+#' @export
+#' @keywords internal
 create_splines_model = function(meta, formula=NULL, basis=NULL,
 				degrees_of_freedom=4){
     .Deprecated(new="create_moanin_model")
@@ -39,6 +41,7 @@ create_splines_model = function(meta, formula=NULL, basis=NULL,
 #'	formula is provided	 
 #'
 #' @return An object containing the following information:
+#'
 #'	- The basis: a matrix of shape (degrees_of_freedom, n_samples)
 #'	- The metadata: a data.frame of shape (n_samples, n_metadat)
 #'	- The formula used, when provided.

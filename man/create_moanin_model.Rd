@@ -24,6 +24,7 @@ formula is provided}
 }
 \value{
 An object containing the following information:
+
 - The basis: a matrix of shape (degrees_of_freedom, n_samples)
 - The metadata: a data.frame of shape (n_samples, n_metadat)
 - The formula used, when provided.
