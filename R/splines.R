@@ -39,6 +39,15 @@ fit_splines = function(data, moanin_model, weights=NULL){
 #'
 #' @return y_fitted the fitted y values
 #'
+#' @examples
+#'  # Load data and create moanin_model
+#'  load(shoemaker2015)
+#'  data = shoemaker2015$data
+#'  meta = shoemaker2015$meta
+#'  moanin_model = create_moanin_model(meta, degrees_of_freedom=6)
+#'  
+#'  # Fit the splines model and returned fitted values
+#'  fitted_data = fit_predict_splines(data, moanin_model)
 #' @export
 fit_predict_splines = function(data, moanin_model, weights=NULL, meta_prediction=NULL){
     basis = moanin_model$basis
@@ -71,6 +80,7 @@ fit_predict_splines = function(data, moanin_model, weights=NULL, meta_prediction
 #' @param num_timepoints integer, optional, default: 100
 #'	Number of timepoints to use for the prediction metadata
 #'
+#' @keywords internal
 #' @export
 create_meta_prediction = function(moanin_model, num_timepoints=100){
     # Create moanin_model for prediction

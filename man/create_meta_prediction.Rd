@@ -15,3 +15,4 @@ Number of timepoints to use for the prediction metadata}
 \description{
 Create prediction meta data from splines model
 }
+\keyword{internal}

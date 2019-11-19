@@ -7,7 +7,7 @@ vignette: >
       %\usepackage[UTF-8]{inputenc}
 ---
 
-```{r echo=FALSE}
+```{r echo=FALSE, message=FALSE}
 library(knitr)
 library(kableExtra)
 ```
@@ -16,7 +16,7 @@ The package comes with a couple of datasets:
 
     - shoemaker2015
 
-# Time-course data of mice lung samples exposed to different influenza strains
+## Time-course data of mice lung samples exposed to different influenza strains
 
 ```{r}
 library(moanin)

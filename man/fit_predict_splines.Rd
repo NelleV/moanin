@@ -20,3 +20,13 @@ y_fitted the fitted y values
 \description{
 Fit and predict splines
 }
+\examples{
+ # Load data and create moanin_model
+ load(shoemaker2015)
+ data = shoemaker2015$data
+ meta = shoemaker2015$meta
+ moanin_model = create_moanin_model(meta, degrees_of_freedom=6)
+ 
+ # Fit the splines model and returned fitted values
+ fitted_data = fit_predict_splines(data, moanin_model)
+}
