@@ -1,3 +1,5 @@
 docs
 *.Rproj
 *.pdf
+*.swo
+*.swp

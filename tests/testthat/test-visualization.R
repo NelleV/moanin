@@ -40,4 +40,15 @@ test_that("visualization::plot_splines_data", {
 
     expect_error(plot_splines_data(data, moanin_model,
 				   subset_data=c(subset_data, "not_a_gene")))
+
+
+    # Check that some options make sense
+    expect_error(plot_splines_data(data, moanin_model,
+				   subset_data,
+				   mfrow=c(1, 1)))
+		
+    expect_error(plot_splines_data(data, moanin_model,
+				   subset_data,
+				   mfrow=c(1)))
+
 })

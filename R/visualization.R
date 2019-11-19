@@ -6,7 +6,6 @@
 #'
 #' @param data matrix (k, t) containing the data (such as centroids or data) 
 #' @param moanin_model moanin_model
-#' @param meta	data.frame (t, n) containing the metadata.
 #' @param colors vector, optional, default NULL
 #'		vector of colors
 #' @param smooth boolean, optional, default: FALSE
@@ -30,6 +29,26 @@
 #'   function will set a value.
 #' @param ... arguments to be passed to the individual plot commands
 #'  (Will be sent to all plot commands)
+#'
+#' @examples
+#' # First, load some data and create a moanin model
+#' data(shoemaker2015)
+#' data = shoemaker2015$data
+#' meta = shoemaker2015$meta
+#' moanin_model = create_moanin_model(meta, degrees_of_freedom=6)
+#'
+#' # The moanin model contains all the information for plotting purposes. The
+#' # plot_splines_function will automatically fit the splines from the
+#' # information contained in the moanin model
+#' plot_splines_data(
+#'	data, moanin_model,
+#'	subset_data=c("AK050122", "AK043921"),
+#'	mfrow=c(2, 2))
+#'
+#' # The splines can also be smoothed
+#' plot_splines_data(data, moanin_model,
+#'		     subset_data=c("AK050122", "AK043921"),
+#'		     smooth=TRUE, mfrow=c(2, 2))
 #' @export
 plot_splines_data = function(data, moanin_model, colors=NULL, smooth=FALSE,
 			     legend=TRUE, legendArgs=NULL, subset_conditions=NULL,
@@ -52,6 +71,13 @@ plot_splines_data = function(data, moanin_model, colors=NULL, smooth=FALSE,
     n_observations = dim(data)[1]
     n_plots = if(legend) n_observations+1 else n_observations
     if(!is.null(mfrow)){
+	if(length(mfrow) != 2){
+	    msg = sprintf(
+		paste0("Invalid value for argument mfrow. Should be a vector of length 2.",
+		       "A vector of length %s was provided.", length(mfrow)))
+	    stop(msg)
+
+	}
         if(mfrow[1]*mfrow[2] < n_plots){
 	    msg = sprintf(
 		paste0(
@@ -59,11 +85,9 @@ plot_splines_data = function(data, moanin_model, colors=NULL, smooth=FALSE,
 		    "grid for at least %s plots (including a plot for the ",
 		    "legend, if legend=TRUE)"),
 		n_plots) 
-	    stop()
+	    stop(msg)
 	}
-    }
-
-    else{
+    }else{
         if(n_plots <= 3){ 
             mfrow = c(n_plots, 1)
         }else if(n_plots <= 6){

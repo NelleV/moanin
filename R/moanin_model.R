@@ -15,7 +15,6 @@
 #' @param degrees_of_freedom int, optional, default: 4
 #'	Number of degrees of freedom to use if neither the basis nor the
 #'	formula is provided	 
-#' @export
 create_splines_model = function(meta, formula=NULL, basis=NULL,
 				degrees_of_freedom=4){
     .Deprecated(new="create_moanin_model")
@@ -38,6 +37,25 @@ create_splines_model = function(meta, formula=NULL, basis=NULL,
 #' @param degrees_of_freedom int, optional, default: 4
 #'	Number of degrees of freedom to use if neither the basis nor the
 #'	formula is provided	 
+#'
+#' @return An object containing the following information:
+#'	- The basis: a matrix of shape (degrees_of_freedom, n_samples)
+#'	- The metadata: a data.frame of shape (n_samples, n_metadat)
+#'	- The formula used, when provided.
+#'	- The number of degrees of freedom.
+#'
+#' @examples
+#' # Load some data
+#' data(shoemaker2015)
+#' meta = shoemaker2015$meta
+#'
+#' # Use the default options
+#' moanin = create_moanin_model(meta)
+#' print(dim(moanin$basis))
+#'
+#' # Change the number of degrees of freedom
+#' moanin = create_moanin_model(meta, degrees_of_freedom=6)
+#' print(dim(moanin$basis))
 #' @export
 create_moanin_model = function(meta, formula=NULL, basis=NULL,
 				degrees_of_freedom=4){

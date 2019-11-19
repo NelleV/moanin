@@ -22,7 +22,27 @@ A basis object.}
 Number of degrees of freedom to use if neither the basis nor the
 formula is provided}
 }
+\value{
+An object containing the following information:
+- The basis: a matrix of shape (degrees_of_freedom, n_samples)
+- The metadata: a data.frame of shape (n_samples, n_metadat)
+- The formula used, when provided.
+- The number of degrees of freedom.
+}
 \description{
 This model is used to conserve information relating to the model, such as
 the formula, the basis, the meta data.
+}
+\examples{
+# Load some data
+data(shoemaker2015)
+meta = shoemaker2015$meta
+
+# Use the default options
+moanin = create_moanin_model(meta)
+print(dim(moanin$basis))
+
+# Change the number of degrees of freedom
+moanin = create_moanin_model(meta, degrees_of_freedom=6)
+print(dim(moanin$basis))
 }
