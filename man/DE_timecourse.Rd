@@ -4,8 +4,13 @@
 \alias{DE_timecourse}
 \title{Run edge with contrasts.}
 \usage{
-DE_timecourse(data, moanin_model, contrasts, center = FALSE,
-  use_voom_weights = TRUE)
+DE_timecourse(
+  data,
+  moanin_model,
+  contrasts,
+  center = FALSE,
+  use_voom_weights = TRUE
+)
 }
 \arguments{
 \item{data}{The data matrix.}

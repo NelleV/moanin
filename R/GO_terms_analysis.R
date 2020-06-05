@@ -11,7 +11,6 @@ library(topGO)
 #'	Whether to use the weighted algorithm or not.
 #' @param node_size integer, optional, default: 10
 #'	Consider only GO terms with node_size number of genes.
-#' @param ontology: BP, CC, NF
 #' @export
 find_enriched_go_terms = function(assignments, gene_id_to_go,
 				  ontology="BP", 
@@ -36,7 +35,7 @@ find_enriched_go_terms = function(assignments, gene_id_to_go,
     GOdata = new("topGOdata", ontology=ontology, allGenes=assignments,
 		 nodeSize=node_size,
 		 geneSel=getTopDiffGenes,
-		 annot=annFUN.gene2GO, gene2GO=gene_id_to_go)
+		 annot=topGO::annFUN.gene2GO, gene2GO=gene_id_to_go)
 
     if(weighted){
         resultFisher = topGO::runTest(GOdata, algorithm="classic", statistic="fisher")

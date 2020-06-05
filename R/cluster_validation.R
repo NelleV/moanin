@@ -70,15 +70,11 @@ plot_cdf_consensus = function(labels){
 #' Plot AUC consensus matrix
 #'
 #' @param labels list of lables
+#' @param method method for calculation of similarity, one of "consensus" or "nmi"
 #'
 #' @export
-get_auc_similarity_scores = function(labels, method="consensus"){
-    if(!(method %in% c("consensus", "nmi"))){
-	msg = paste(
-	    "moanin::get_auc_similarity_score.",
-	    "Unknown similarity measure provided", method)
-	stop(msg)
-    }
+get_auc_similarity_scores = function(labels, method=c("consensus", "nmi")){
+    method<-match.arg(method)
 
     all_labels = labels
     n_clusters = names(all_labels)

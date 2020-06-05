@@ -4,9 +4,17 @@
 \alias{splines_kmeans}
 \title{Performs splines clustering using K-means}
 \usage{
-splines_kmeans(data, moanin_model, n_clusters = 10, init = "kmeans++",
-  n_init = 10, max_iter = 300, random_seed = NULL,
-  fit_splines = TRUE, rescale = TRUE)
+splines_kmeans(
+  data,
+  moanin_model,
+  n_clusters = 10,
+  init = "kmeans++",
+  n_init = 10,
+  max_iter = 300,
+  random_seed = NULL,
+  fit_splines = TRUE,
+  rescale = TRUE
+)
 }
 \arguments{
 \item{data}{matrix containg the data. Data needs to be in log scale.}

@@ -36,12 +36,13 @@ fit_splines = function(data, moanin_model, weights=NULL){
 #' @param data the data
 #' @param moanin_model moanin_model
 #' @param weights weights
+#' @param meta_prediction optional
 #'
 #' @return y_fitted the fitted y values
 #'
 #' @examples
 #'  # Load data and create moanin_model
-#'  load(shoemaker2015)
+#'  data(shoemaker2015)
 #'  data = shoemaker2015$data
 #'  meta = shoemaker2015$meta
 #'  moanin_model = create_moanin_model(meta, degrees_of_freedom=6)

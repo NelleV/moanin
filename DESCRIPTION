@@ -12,6 +12,7 @@ Imports: MASS (>= 1.0.0),
 	 edgeR,
 	 stats,
 	 graphics,
+     methods,
 	 grDevices,
 	 reshape2,
 	 NMI,
@@ -30,4 +31,4 @@ VignetteBuilder: knitr
 License: BSD 3-clause License + file LICENSE
 Encoding: UTF-8
 LazyData: false
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0

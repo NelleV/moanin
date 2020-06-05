@@ -4,8 +4,7 @@
 \alias{fit_predict_splines}
 \title{Fit and predict splines}
 \usage{
-fit_predict_splines(data, moanin_model, weights = NULL,
-  meta_prediction = NULL)
+fit_predict_splines(data, moanin_model, weights = NULL, meta_prediction = NULL)
 }
 \arguments{
 \item{data}{the data}
@@ -13,6 +12,8 @@ fit_predict_splines(data, moanin_model, weights = NULL,
 \item{moanin_model}{moanin_model}
 
 \item{weights}{weights}
+
+\item{meta_prediction}{optional}
 }
 \value{
 y_fitted the fitted y values
@@ -22,7 +23,7 @@ Fit and predict splines
 }
 \examples{
  # Load data and create moanin_model
- load(shoemaker2015)
+ data(shoemaker2015)
  data = shoemaker2015$data
  meta = shoemaker2015$meta
  moanin_model = create_moanin_model(meta, degrees_of_freedom=6)

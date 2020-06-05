@@ -4,8 +4,12 @@
 \alias{create_splines_model}
 \title{Create a splines model}
 \usage{
-create_splines_model(meta, formula = NULL, basis = NULL,
-  degrees_of_freedom = 4)
+create_splines_model(
+  meta,
+  formula = NULL,
+  basis = NULL,
+  degrees_of_freedom = 4
+)
 }
 \arguments{
 \item{meta}{data.frame containing the metadata. Metadata needs to contain

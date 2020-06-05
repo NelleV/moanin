@@ -3,3 +3,4 @@ docs
 *.pdf
 *.swo
 *.swp
+.Rproj.user

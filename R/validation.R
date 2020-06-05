@@ -120,7 +120,7 @@ is_contrasts = function(contrasts, meta){
 	    msg = paste(
 		"When contrasts provided is a matrix, it should contain the",
 		"same number of rows as the number of groups. Provided:",
-		dim(contrats[1]), "expected:", n_groups)
+		dim(contrasts[1]), "expected:", n_groups)
 	    stop(msg)
 	}
 

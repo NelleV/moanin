@@ -4,9 +4,13 @@
 \alias{splines_kmeans_score_and_label}
 \title{Assign score and labels from raw data}
 \usage{
-splines_kmeans_score_and_label(data, kmeans_clusters,
-  percentage_genes_to_label = 0.5, max_score = NULL,
-  rescale_separately_on = NULL)
+splines_kmeans_score_and_label(
+  data,
+  kmeans_clusters,
+  percentage_genes_to_label = 0.5,
+  max_score = NULL,
+  rescale_separately_on = NULL
+)
 }
 \arguments{
 \item{data}{array or dataframe.

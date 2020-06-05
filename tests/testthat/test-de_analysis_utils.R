@@ -13,7 +13,7 @@ test_that("Estimating log fold change smoke tests", {
 
     # Reduce the data set
     data = data[1:10, ]
-    methods = moanin:::ALL_LFC_METHODS
+    methods = eval(formals(estimate_log_fold_change)$method)
 
     contrast_formula = c("C-K")
     contrasts = limma::makeContrasts(contrasts=contrast_formula,

@@ -4,10 +4,12 @@
 \alias{get_auc_similarity_scores}
 \title{Plot AUC consensus matrix}
 \usage{
-get_auc_similarity_scores(labels, method = "consensus")
+get_auc_similarity_scores(labels, method = c("consensus", "nmi"))
 }
 \arguments{
 \item{labels}{list of lables}
+
+\item{method}{method for calculation of similarity, one of "consensus" or "nmi"}
 }
 \description{
 Plot AUC consensus matrix
