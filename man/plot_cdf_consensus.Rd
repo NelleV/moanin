@@ -7,8 +7,24 @@
 plot_cdf_consensus(labels)
 }
 \arguments{
-\item{labels}{list of labels}
+\item{labels}{a list. Each element of
+the list is a matrix that gives the results of a clustering routine in each
+column (see \code{\link{consensus_matrix}}). Usually each column would be
+the result of running the clustering on a subsample or bootstrap resample
+of the data.}
+}
+\value{
+list of the cdf values calculated, of same length as that of
+  \code{labels}.
 }
 \description{
 Plot CDF consensus matrix
+}
+\details{
+For each element of the list \code{labels}, the function calculates
+  the consensus between the clusterings in the matrix, i.e. the number of
+  times that pairs of rows are in the same cluster for different clusterings
+  (columns) of the matrix using the \code{\link{consensus_matrix}} function.
+  Then the set of values (the N(N-1) values in the upper triangle of the
+  matrix), are converted into a cdf function.
 }

@@ -17,6 +17,14 @@ library(splines)
 #'	Whether to fit splines or not.
 #' @param rescale   boolean, optional, default: TRUE
 #'	Whether to rescale the data or not.
+#'	@return A list in the format returned by \code{\link[ClusterR]{KMeans_rcpp}},
+#'	  with the following elements added or changed:
+#'\itemize{
+#'\item{\code{centroids}}{The centroids are rescaled so that they range from 0-1}
+#'\item{\code{moanin_model}}{The given moanin_model}
+#'\item{\code{fit_splines}}{The value of \code{fit_splines} given to the function }
+#'\item{\code{rescale}}{The value of \code{rescale} given to the function }
+#'}	
 #' @export
 splines_kmeans = function(data, moanin_model, n_clusters=10,
 			  init="kmeans++",
@@ -109,6 +117,16 @@ splines_kmeans_prediction = function(data, kmeans_clusters){
 #'	this option.
 #' @param rescale_separately_on, string, optional, default: NULL
 #'	When provided, will rescale separately different groups of data.
+#'	@return A list consisting of
+#'	\itemize{
+#'	\item{\code{labels}}{the label or cluster assigned to each gene based on the
+#'	cluster with the best (i.e. lowest) score, with no label given to genes that
+#'	do not have a score lower than a specified quantity}
+#'	\item{\code{scores}}{the matrix of size n_cluster x n_genes, containing for 
+#'	each gene and each cluster, the goodness of fit score}
+#'	\item{\code{max_score}}{The required cutoff for a gene receiving an
+#'	assignment}
+#'  }
 #' @export
 splines_kmeans_score_and_label = function(data, kmeans_clusters, percentage_genes_to_label=0.5,
 					  max_score=NULL,

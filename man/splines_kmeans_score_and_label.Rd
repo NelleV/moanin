@@ -31,6 +31,18 @@ this option.}
 \item{rescale_separately_on, }{string, optional, default: NULL
 When provided, will rescale separately different groups of data.}
 }
+\value{
+A list consisting of
+\itemize{
+\item{\code{labels}}{the label or cluster assigned to each gene based on the
+cluster with the best (i.e. lowest) score, with no label given to genes that
+do not have a score lower than a specified quantity}
+\item{\code{scores}}{the matrix of size n_cluster x n_genes, containing for 
+each gene and each cluster, the goodness of fit score}
+\item{\code{max_score}}{The required cutoff for a gene receiving an
+assignment}
+ }
+}
 \description{
 Assign score and labels from raw data
 }
