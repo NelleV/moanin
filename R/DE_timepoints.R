@@ -1,12 +1,13 @@
-library("limma")
-library("stats")
-library("edgeR")
-
 
 #' Fit weekly differential expression analysis
 #'
 #' @inheritParams DE_timecourse
-#'
+#' @return A \code{data.frame} with two columns for each of the contrasts given
+#'   in \code{contrasts}, corresponding to the raw p-value of the contrast for
+#'   that gene (\code{_pval}) and the adjusted p-value (\code{_qval}). The
+#'   adjusted p-values are FDR-adjusted based on the Benjamini-Hochberg method,
+#'   as implemented in \code{\link[stats]{p.adjust}}. The adjustment is done
+#'   across all p-values for all contrasts calculated.
 #' @export
 DE_timepoints = function(data, moanin_model,
 			 contrasts,
@@ -66,10 +67,19 @@ DE_timepoints = function(data, moanin_model,
 
 #' Creates pairwise contrasts for all timepoints
 #'
-#' @param group1 First group to consider
-#' @param group2 Second group to consider
+#' @param group1 First group to consider, character value that must match a
+#'   value contained in \code{moanin_model$meta}.
+#' @param group2 Second group to consider, character value that must match a
+#'   value contained in \code{moanin_model$meta}.
 #' @inheritParams DE_timecourse
-#'
+#' @details This function creates contrasts comparing two groups for every
+#'   timepoint in the format needed for \code{\link{DE_timepoints}} (i.e.
+#'   \code{\link[limma]{makeContrasts}}, to which the contrasts are ultimately
+#'   passed). The time points are determined by the meta data in the
+#'   \code{moanin_object} provided by the user.
+#' @return a character vector with each element of the vector corresponding to a
+#'   contrast to be compared.
+#' @seealso \code{\link{DE_timepoints}},  \code{\link[limma]{makeContrasts}}
 #' @examples
 #' data(shoemaker2015)
 #' meta = shoemaker2015$meta

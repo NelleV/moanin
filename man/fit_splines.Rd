@@ -11,8 +11,9 @@ fit_splines(data, moanin_model, weights = NULL)
 samples on the columns.}
 
 \item{moanin_model}{object of class \code{moanin_model}, an object containing
-all related information to the splines model used. See
-\code{\link{create_moanin_model}} for more details.}
+all related information for time course data and the splines model that
+will be used (if applicable). See \code{\link{create_moanin_model}} for
+more details.}
 
 \item{weights}{weigts}
 }

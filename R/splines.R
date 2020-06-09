@@ -76,7 +76,7 @@ fit_predict_splines = function(data, moanin_model, weights=NULL, meta_prediction
 #' Create prediction meta data from splines model
 #'
 #' @inheritParams DE_timecourse
-#' @param num_timepoints integer, optional, default: 100
+#' @param num_timepoints integer, optional, default: 100.
 #'	Number of timepoints to use for the prediction metadata
 #'
 #' @keywords internal

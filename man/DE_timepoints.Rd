@@ -11,15 +11,26 @@ DE_timepoints(data, moanin_model, contrasts, use_voom_weights = TRUE)
 samples on the columns.}
 
 \item{moanin_model}{object of class \code{moanin_model}, an object containing
-all related information to the splines model used. See
-\code{\link{create_moanin_model}} for more details.}
+all related information for time course data and the splines model that
+will be used (if applicable). See \code{\link{create_moanin_model}} for
+more details.}
 
 \item{contrasts}{Contrasts, either provided as a vector of strings, or a
-matrix of contrasts coefficients obtained using \code{makeContrasts}
-from \code{limma}.}
+matrix of contrasts coefficients obtained using
+\code{\link[limma]{makeContrasts}} from the package \code{limma}. If given
+as a character string, will be passed to \code{\link[limma]{makeContrasts}}
+to be converted into such a matrix.}
 
 \item{use_voom_weights}{boolean, optional, default: TRUE. 
 Whether to use voom weights.}
+}
+\value{
+A \code{data.frame} with two columns for each of the contrasts given
+  in \code{contrasts}, corresponding to the raw p-value of the contrast for
+  that gene (\code{_pval}) and the adjusted p-value (\code{_qval}). The
+  adjusted p-values are FDR-adjusted based on the Benjamini-Hochberg method,
+  as implemented in \code{\link[stats]{p.adjust}}. The adjustment is done
+  across all p-values for all contrasts calculated.
 }
 \description{
 Fit weekly differential expression analysis

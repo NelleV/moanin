@@ -24,8 +24,9 @@ plot_splines_data(
 \item{data}{matrix containing the data to be plotted (such as centroids or data), where each row of the data provided will be plotted as a separate plot.}
 
 \item{moanin_model}{object of class \code{moanin_model}, an object containing
-all related information to the splines model used. See
-\code{\link{create_moanin_model}} for more details.}
+all related information for time course data and the splines model that
+will be used (if applicable). See \code{\link{create_moanin_model}} for
+more details.}
 
 \item{colors}{vector, optional, default NULL
 vector of colors}

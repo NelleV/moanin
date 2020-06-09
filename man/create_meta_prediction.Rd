@@ -8,10 +8,11 @@ create_meta_prediction(moanin_model, num_timepoints = 100)
 }
 \arguments{
 \item{moanin_model}{object of class \code{moanin_model}, an object containing
-all related information to the splines model used. See
-\code{\link{create_moanin_model}} for more details.}
+all related information for time course data and the splines model that
+will be used (if applicable). See \code{\link{create_moanin_model}} for
+more details.}
 
-\item{num_timepoints}{integer, optional, default: 100
+\item{num_timepoints}{integer, optional, default: 100.
 Number of timepoints to use for the prediction metadata}
 }
 \description{

@@ -152,14 +152,27 @@ summarise = function(basis, ng_levels) {
 #' @param data The data matrix, where genes (features) are on the rows and
 #'   samples on the columns.
 #' @param moanin_model object of class \code{moanin_model}, an object containing
-#'  all related information to the splines model used. See
-#'  \code{\link{create_moanin_model}} for more details.
-#' @param contrasts Contrasts, either provided as a vector of strings, or a
-#'	matrix of contrasts coefficients obtained using \code{makeContrasts}
-#'	from \code{limma}.
+#'   all related information for time course data and the splines model that
+#'   will be used (if applicable). See \code{\link{create_moanin_model}} for
+#'   more details.
+#'@param contrasts Contrasts, either provided as a vector of strings, or a
+#'  matrix of contrasts coefficients obtained using
+#'  \code{\link[limma]{makeContrasts}} from the package \code{limma}. If given
+#'  as a character string, will be passed to \code{\link[limma]{makeContrasts}}
+#'  to be converted into such a matrix.
 #' @param center boolean, whether to center the data matrix
 #' @param use_voom_weights boolean, optional, default: TRUE. 
 #'	Whether to use voom weights.
+#' @seealso \code{\link[limma]{makeContrasts}}, \code{\link{create_moanin_model}}, \code{\link{DE_timepoints}}, \code{\link[edge]{edge}}
+#' @return A \code{data.frame} with two columns for each of the contrasts given
+#'   in \code{contrasts}, corresponding to the raw p-value of the contrast for
+#'   that gene (\code{_pval}) and the adjusted p-value (\code{_qval}). The
+#'   adjusted p-values are FDR-adjusted based on the Benjamini-Hochberg method,
+#'   as implemented in \code{\link[stats]{p.adjust}}. The adjustment is done
+#'   across all p-values for all contrasts calculated.
+#' @details The implementation of the spline fit and the calculation of p-values
+#'   was based on code from \code{\link[edge]{edge}}, and expanded to
+#'   enable handling of comparisons of groups via contrasts.
 #' @export
 DE_timecourse = function(data, moanin_model,
 			 contrasts,
@@ -179,57 +192,57 @@ DE_timecourse = function(data, moanin_model,
 
     if(use_voom_weights){
         y = edgeR::DGEList(counts=data)
-	y = edgeR::calcNormFactors(y, method="upperquartile")
+        y = edgeR::calcNormFactors(y, method="upperquartile")
         v = limma::voom(y, contrasts, plot=FALSE)
-	weights = limma::lmFit(v)
+        weights = limma::lmFit(v)
     }else{
-	weights = NULL
+        weights = NULL
     }
 
     y = data
 
     if(center){
-	y = center_data(y)
-	basis = t(center_data(t(basis)))
+        y = center_data(y)
+        basis = t(center_data(t(basis)))
     }
-
+    
     beta = fit_splines(y, moanin_model, weights=weights)
-
+    
     if(dim(contrasts)[1] != ng){
-	stop("The contrast coef vector should be of the same size" +
-	     " as the number of groups")
+        stop("The contrast coef vector should be of the same size" +
+                 " as the number of groups")
     }
-
+    
     results = data.frame(row.names=row.names(data))
     for(col in 1:ncol(contrasts)){
-	contrast = contrasts[, col]
-
-	# Create the name of the column
-	contrast_name = colnames(contrasts)[col]
-	contrast_name = gsub(" ", "", contrast_name, fixed=TRUE)
-
-	# Get the number of samples used for this particular contrast:
-	groups_of_interest = names(contrast)[contrast != 0]
-	n_samples_fit = sum(with(meta, Group %in% groups_of_interest))
-	n_groups = length(groups_of_interest)
-	degrees_of_freedom = dim(basis)[2] / ng
-
-	beta_null = compute_beta_null(basis, beta, contrast)
-
-	pval = compute_pvalue(basis, y, beta, beta_null, ng_labels, weights=weights,
-			      n_samples=n_samples_fit,
-			      n_groups=n_groups,
-			      degrees_of_freedom=degrees_of_freedom)
-
-	colname_qval = paste(contrast_name, "_qval", sep="")
-	colname_pval = paste(contrast_name, "_pval", sep="")
-
-	results[colname_pval] = pval
-	qval = stats::p.adjust(pval, method="BH")
-	dim(qval) = dim(pval)
-	results[colname_qval] = qval
+        contrast = contrasts[, col]
+        
+        # Create the name of the column
+        contrast_name = colnames(contrasts)[col]
+        contrast_name = gsub(" ", "", contrast_name, fixed=TRUE)
+        
+        # Get the number of samples used for this particular contrast:
+        groups_of_interest = names(contrast)[contrast != 0]
+        n_samples_fit = sum(with(meta, Group %in% groups_of_interest))
+        n_groups = length(groups_of_interest)
+        degrees_of_freedom = dim(basis)[2] / ng
+        
+        beta_null = compute_beta_null(basis, beta, contrast)
+        
+        pval = compute_pvalue(basis, y, beta, beta_null, ng_labels, weights=weights,
+                              n_samples=n_samples_fit,
+                              n_groups=n_groups,
+                              degrees_of_freedom=degrees_of_freedom)
+        
+        colname_qval = paste(contrast_name, "_qval", sep="")
+        colname_pval = paste(contrast_name, "_pval", sep="")
+        
+        results[colname_pval] = pval
+        qval = stats::p.adjust(pval, method="BH")
+        dim(qval) = dim(pval)
+        results[colname_qval] = qval
     }
-
+    
     return(results)
 }
 
