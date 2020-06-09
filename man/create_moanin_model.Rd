@@ -7,31 +7,39 @@
 create_moanin_model(meta, formula = NULL, basis = NULL, degrees_of_freedom = 4)
 }
 \arguments{
-\item{meta}{data.frame containing the metadata. Metadata needs to contain
-column "Group" and "Timepoint"}
+\item{meta}{\code{data.frame} containing the metadata in columns, and rows
+corresponding to different samples. Metadata needs to contain the columns
+"Group" and "Timepoint".}
 
-\item{formula}{formula object, optional, default: NUlL
-Formula of the splines, e.g:
-    formula = ~Group:splines::ns(Timepoint, df=4) + Group + 0}
+\item{formula}{formula object, optional, default: NUlL. Used to construct splines from the data in \code{meta}. See details.}
 
-\item{basis}{matrix, optional, default: NULL
-A basis object.}
+\item{basis}{matrix, optional, default: NULL. A basis matrix, where each row
+corresponds to the evaluation of a sample on the basis function (thus one
+column for each basis function).}
 
-\item{degrees_of_freedom}{int, optional, default: 4
-Number of degrees of freedom to use if neither the basis nor the
-formula is provided}
+\item{degrees_of_freedom}{int, optional, default: 4. Number of degrees of
+freedom to use if neither the basis nor the formula is provided}
 }
 \value{
-An object containing the following information:
-
-- The basis: a matrix of shape (degrees_of_freedom, n_samples)
-- The metadata: a data.frame of shape (n_samples, n_metadat)
-- The formula used, when provided.
-- The number of degrees of freedom.
+An object of class \code{moanin_model}; a list with the following elements:
+\itemize{
+\item{\code{basis}}{A basis matrix, where each row
+ corresponds to the evaluation of a sample on the basis function (thus one
+ column for each basis function). }
+\item{\code{meta}}{The data frame provided by user to \code{meta}}
+\item{\code{degrees_of_freedom}}{The degrees of freedom provided by the user}
+\item{\code{formula}}{The formula used to construct the basis matrix 
+(unless basis matrix is provided by the user).}
+}
 }
 \description{
 This model is used to conserve information relating to the model, such as
 the formula, the basis, the meta data.
+}
+\details{
+If neither \code{formula} nor \code{basis} is given, then by default,
+ the function will create a basis matrix based on the formula:
+ \preformatted{formula = ~Group:ns(Timepoint, df=4) + Group + 0}
 }
 \examples{
 # Load some data

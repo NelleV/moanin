@@ -2,7 +2,7 @@
 % Please edit documentation in R/moanin_model.R
 \name{create_splines_model}
 \alias{create_splines_model}
-\title{Create a splines model}
+\title{Create a moanin_model object}
 \usage{
 create_splines_model(
   meta,
@@ -12,22 +12,13 @@ create_splines_model(
 )
 }
 \arguments{
-\item{meta}{data.frame containing the metadata. Metadata needs to contain
-column "Group" and "Timepoint"}
-
-\item{formula}{formula object, optional, default: NUlL
-Formula of the splines, e.g:
-    formula = ~Group:splines::ns(Timepoint, df=4) + Group + 0}
-
-\item{basis}{matrix, optional, default: NULL
-A basis object.}
-
-\item{degrees_of_freedom}{int, optional, default: 4
-Number of degrees of freedom to use if neither the basis nor the
-formula is provided}
+\item{inheritParams}{create_moanin_model}
 }
 \description{
-This model is used to conserve information relating to the model, such as
-the formula, the basis, the meta data.
+This function creates a moanin_model object, used to conserve information
+relating to the model, such as the formula, the basis, the meta data.
+}
+\details{
+This function is depricated. Users should use \code{\link{create_moanin_model}}
 }
 \keyword{internal}

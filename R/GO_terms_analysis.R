@@ -84,10 +84,13 @@ find_enriched_go_terms = function(assignments, gene_id_to_go,
 
 #' Create the Gene to GO Term mapping
 #'
-#' @param genes dataframe, with `gene_col` and a column corresponding to the
-#'  `go_id`
-#' @param gene_col the column of the genes data frame that contains the
-#'  correct gene reference. By default, is refseq_mrna
+#' @param genes dataframe, with two required columns. The first gives the RefSeq
+#'   gene names, with column name by the argument \code{gene_col}. The other
+#'   column must be named \code{go_id} and give the genes GO id.
+#' @param gene_col the name of the column of the \code{genes} data frame that contains the
+#'  correct gene reference. By default, is "refseq_mrna".
+#' @return a list giving the gene to GO id in the format required by \code{\link[topGO]{topGOdata-class}}.
+#' @seealso \code{\link{find_enriched_go_terms}}, \code{\link[topGO]{topGOdata-class}}
 #' @export
 create_go_term_mapping = function(genes, gene_col="refseq_mrna"){
     gene_id_go_mapping = NULL
