@@ -4,8 +4,13 @@
 \alias{find_enriched_go_terms}
 \title{Find enriched GO terms}
 \usage{
-find_enriched_go_terms(assignments, gene_id_to_go, ontology = "BP",
-  weighted = FALSE, node_size = 10)
+find_enriched_go_terms(
+  assignments,
+  gene_id_to_go,
+  ontology = "BP",
+  weighted = FALSE,
+  node_size = 10
+)
 }
 \arguments{
 \item{assignments}{boolean named vector}
@@ -20,8 +25,6 @@ Whether to use the weighted algorithm or not.}
 
 \item{node_size}{integer, optional, default: 10
 Consider only GO terms with node_size number of genes.}
-
-\item{ontology:}{BP, CC, NF}
 }
 \description{
 Find enriched GO terms

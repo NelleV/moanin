@@ -27,6 +27,7 @@
 #' @param mfrow a vector of integers of length 2 defining the grid of
 #'   plots to be created (see \code{\link{par}}). If missing, the
 #'   function will set a value.
+#' @param addToPlot A function that will be called after the plotting, allowing the user to add more to the plot.
 #' @param ... arguments to be passed to the individual plot commands
 #'  (Will be sent to all plot commands)
 #'
@@ -50,6 +51,9 @@
 #'		     subset_data=c("AK050122", "AK043921"),
 #'		     smooth=TRUE, mfrow=c(2, 2))
 #' @export
+#' @importFrom graphics axis plot.new plot.window
+#' @importFrom methods new
+
 plot_splines_data = function(data, moanin_model, colors=NULL, smooth=FALSE,
 			     legend=TRUE, legendArgs=NULL, subset_conditions=NULL,
 			     subset_data=NULL,

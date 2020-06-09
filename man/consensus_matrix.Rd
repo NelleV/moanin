@@ -7,11 +7,19 @@
 consensus_matrix(labels, scale = TRUE)
 }
 \arguments{
-\item{labels}{matrix (n_genes, n_clusters)
-Matrix containing the set of labels}
+\item{labels}{a matrix with each column corresponding to a the results of a
+single clustering routine. Each column should give the cluster assignment
+FIXME: What is the required format of entries??}
 
-\item{scale}{boolean, optional, default: TRUE
-Whether to rescale the matrix}
+\item{scale}{boolean, optional, default: TRUE. Whether to rescale the resulting
+consensus matrix so that entries correspond to proportions.}
+}
+\value{
+a symmetric matrix of size NxN, where N is the number of rows of the
+ input matrix \code{labels}. Each i,j entry of the matrix corresponds the
+ number of times the two rows were in the same cluster across the clusterings
+ (\code{scale=FALSE}) or the proportion of clustering that the two rows are
+ in the same cluster (\code{scale=TRUE}).
 }
 \description{
 Compute consensus matrix from labels

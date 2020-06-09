@@ -4,18 +4,37 @@
 \alias{estimate_log_fold_change}
 \title{Estimates log fold change}
 \usage{
-estimate_log_fold_change(data, moanin_model, contrasts,
-  method = "timecourse")
+estimate_log_fold_change(
+  data,
+  moanin_model,
+  contrasts,
+  method = c("timecourse", "sum", "max", "timely", "epicon", "abs_sum",
+    "abs_squared_sum", "min")
+)
 }
 \arguments{
 \item{data}{The data in a matrix}
 
-\item{moanin_model}{}
+\item{moanin_model}{a moanin_model object, see \code{\link{create_moanin_model}}}
 
 \item{contrasts}{The contrasts to consider}
 
-\item{method}{["sum", "max", "min", "timely", "timecourse", "epicon"]}
+\item{method}{method for calculating the log-fold change. See details.}
 }
 \description{
 Estimates log fold change
+}
+\details{
+The following methods exist for calculating the log-fold change
+  between conditions over time (default is "timecourse"):
+\itemize{
+\item{\code{timecourse}}{}
+\item{\code{sum}}{}
+\item{\code{max}}{}
+\item{\code{timely}}{}
+\item{\code{epicon}}{}
+\item{\code{abs_sum}}{}
+\item{\code{abs_squared_sum}}{}
+\item{\code{min}}{}
+}
 }

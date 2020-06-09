@@ -4,7 +4,9 @@
 \name{shoemaker2015}
 \alias{shoemaker2015}
 \title{Time course transcriptomic from mouse lung tissues infected with influenza}
-\format{An object of class \code{list} of length 2.}
+\format{
+An object of class \code{list} of length 2.
+}
 \usage{
 data(shoemaker2015)
 }

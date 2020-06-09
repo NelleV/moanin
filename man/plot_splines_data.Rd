@@ -4,10 +4,21 @@
 \alias{plot_splines_data}
 \title{Plotting splines}
 \usage{
-plot_splines_data(data, moanin_model, colors = NULL, smooth = FALSE,
-  legend = TRUE, legendArgs = NULL, subset_conditions = NULL,
-  subset_data = NULL, simpleY = TRUE, mar = c(2.5, 2.5, 3, 1),
-  mfrow = NULL, addToPlot = NULL, ...)
+plot_splines_data(
+  data,
+  moanin_model,
+  colors = NULL,
+  smooth = FALSE,
+  legend = TRUE,
+  legendArgs = NULL,
+  subset_conditions = NULL,
+  subset_data = NULL,
+  simpleY = TRUE,
+  mar = c(2.5, 2.5, 3, 1),
+  mfrow = NULL,
+  addToPlot = NULL,
+  ...
+)
 }
 \arguments{
 \item{data}{matrix (k, t) containing the data (such as centroids or data)}
@@ -43,6 +54,8 @@ is always assumed to be the same across all plots and will always
 \item{mfrow}{a vector of integers of length 2 defining the grid of
 plots to be created (see \code{\link{par}}). If missing, the
 function will set a value.}
+
+\item{addToPlot}{A function that will be called after the plotting, allowing the user to add more to the plot.}
 
 \item{...}{arguments to be passed to the individual plot commands
 (Will be sent to all plot commands)}

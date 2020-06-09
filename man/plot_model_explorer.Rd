@@ -7,7 +7,11 @@
 plot_model_explorer(labels)
 }
 \arguments{
-\item{labels}{list of labels}
+\item{labels}{a list. Each element of
+the list is a matrix that gives the results of a clustering routine in each
+column (see \code{\link{consensus_matrix}}). Usually each column would be
+the result of running the clustering on a subsample or bootstrap resample
+of the data.}
 }
 \description{
 Plot model explorer

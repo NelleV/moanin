@@ -1,34 +1,35 @@
 library("limma")
 
-ALL_LFC_METHODS = c("sum", "max", "timely", "timecourse",
-		    "epicon", "abs_sum", "abs_squared_sum", "min")
-
 #' Estimates log fold change
 #'
 #' @param data The data in a matrix
-#' @param moanin_model 
+#' @param moanin_model a moanin_model object, see \code{\link{create_moanin_model}}
 #' @param contrasts The contrasts to consider
-#' @param method ["sum", "max", "min", "timely", "timecourse", "epicon"]
-#'
+#' @param method method for calculating the log-fold change. See details. 
+#' @details The following methods exist for calculating the log-fold change
+#'   between conditions over time (default is "timecourse"):
+#' \itemize{
+#' \item{\code{timecourse}}{}
+#' \item{\code{sum}}{}
+#' \item{\code{max}}{}
+#' \item{\code{timely}}{}
+#' \item{\code{epicon}}{}
+#' \item{\code{abs_sum}}{}
+#' \item{\code{abs_squared_sum}}{}
+#' \item{\code{min}}{}
+#' }
 #' @export
 estimate_log_fold_change = function(data, moanin_model, 
-				    contrasts, method="timecourse"){
+				    contrasts, method=c("timecourse", "sum", "max", "timely", 
+		    "epicon", "abs_sum", "abs_squared_sum", "min")){
     # Should check that data and meta is sorted identically
     meta = moanin_model$meta
     # Should check that the method is a known method
-
+    method<-match.arg(method)
     contrasts = is_contrasts(contrasts, meta)
 
-    if(!(method %in% ALL_LFC_METHODS)){
-	all_methods = paste(ALL_LFC_METHODS, sep=", ")
-	stop(
-	    paste("moanin::estimate_log_fold_change: '", method, "' is an unknown",
-		  " method to compute log fold change. Known methods are",
-		  all_methods, sep=""))
-    }
-
     if(method == "timely"){
-	log_fold_changes = lfc_per_time(data, meta, contrasts)
+	    log_fold_changes = lfc_per_time(data, meta, contrasts)
     }else if(method %in% c("sum", "max", "min", "abs_sum", "abs_squared_sum",
 			   "timecourse", "epicon")){
 	timely_lfc = lfc_per_time(data, meta, contrasts)

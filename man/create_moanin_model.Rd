@@ -4,8 +4,7 @@
 \alias{create_moanin_model}
 \title{Create a moanin model}
 \usage{
-create_moanin_model(meta, formula = NULL, basis = NULL,
-  degrees_of_freedom = 4)
+create_moanin_model(meta, formula = NULL, basis = NULL, degrees_of_freedom = 4)
 }
 \arguments{
 \item{meta}{data.frame containing the metadata. Metadata needs to contain
