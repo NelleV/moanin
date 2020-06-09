@@ -29,9 +29,9 @@ fit_splines = function(data, moanin_model, weights=NULL){
 #' Get fitted values for splines
 #'
 #' @inheritParams DE_timecourse
-#' @param meta_prediction optional, the results of running 
+#' @param meta_prediction optional, see \code{\link{create_meta_prediction}}.
 #'
-#' @return y_fitted the fitted y values
+#' @return a matrix of the fitted y values, with dimensions the same as \code{data}
 #'
 #' @examples
 #'  # Load data and create moanin_model
@@ -213,8 +213,12 @@ score_genes_centroid = function(data, centroid, positive_scaling=TRUE, scale=TRU
 #'
 #' Combines all p-value per rows.
 #' 
-#' @param pvalues pvalues
-#'
+#' @param pvalues a matrix of pvalues, with columns corresponding to different
+#'   tests or sources of p-values, and rows corresponding to the genes from
+#'   which the p-values come.
+#' @return a vector of p-values, one for each row of \code{pvalues}, that is the
+#'   result of Fisher's combined probability test applied to the p-values in
+#'   that row.
 #' @export
 pvalues_fisher_method = function(pvalues){
     # TODO Add a check that all pvalues are "valid"

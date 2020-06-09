@@ -15,10 +15,10 @@ all related information for time course data and the splines model that
 will be used (if applicable). See \code{\link{create_moanin_model}} for
 more details.}
 
-\item{meta_prediction}{optional, the results of running}
+\item{meta_prediction}{optional, see \code{\link{create_meta_prediction}}.}
 }
 \value{
-y_fitted the fitted y values
+a matrix of the fitted y values, with dimensions the same as \code{data}
 }
 \description{
 Get fitted values for splines

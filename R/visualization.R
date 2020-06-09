@@ -1,31 +1,30 @@
 
 #' Plotting splines
 #'
-#' @param data matrix containing the data to be plotted (such as centroids or data), where each row of the data provided will be plotted as a separate plot.
-#' @inheritParams DE_timecourse
-#' @param colors vector, optional, default NULL
-#'		vector of colors
-#' @param smooth boolean, optional, default: FALSE
-#'  Whether to smooth the centroids or not.
-#' @param mar vector of margins to set the space around each plot
-#'   (see \code{\link{par}})
-#' @param legend boolean whether to include a legend (default:TRUE)
-#' @param legendArgs list of arguments to be passed to legend command
-#'    (if \code{legend=TRUE})
-#' @param simpleY boolean, if true, will minimize the annotation of the
-#'   y axis to  only label the axis in the exterior plots (the x-axis
-#'   is always assumed to be the same across all plots and will always
-#'    be simplified)
-#' @param subset_conditions list
-#'   if provided, only plots the subset of conditions provided. Else, plots
-#'   all conditions
-#' @param subset_data list
-#'   if provided, only plots  the subset of data (ie, the rows) provided.
-#' @param mfrow a vector of integers of length 2 defining the grid of
-#'   plots to be created (see \code{\link{par}}). If missing, the
-#'   function will set a value.
-#' @param addToPlot A function that will be called after the plotting, allowing the user to add more to the plot.
-#' @param ... arguments to be passed to the individual plot commands
+#'@param data matrix containing the data to be plotted (such as centroids or
+#'  data), where each row of the data provided will be plotted as a separate
+#'  plot.
+#'@inheritParams DE_timecourse
+#'@param colors vector, optional, default NULL. Vector of colors
+#'@param smooth boolean, optional, default: FALSE. Whether to smooth the
+#'  centroids or not.
+#'@param mar vector of margins to set the space around each plot (see
+#'  \code{\link{par}})
+#'@param legend boolean whether to include a legend (default:TRUE)
+#'@param legendArgs list of arguments to be passed to legend command (if
+#'  \code{legend=TRUE})
+#'@param simpleY boolean, if true, will minimize the annotation of the y axis to
+#'  only label the axis in the exterior plots (the x-axis is always assumed to
+#'  be the same across all plots and will always be simplified)
+#'@param subset_conditions list if provided, only plots the subset of conditions
+#'  provided. Else, plots all conditions
+#'@param subset_data list if provided, only plots  the subset of data (ie, the
+#'  rows) provided.
+#'@param mfrow a vector of integers of length 2 defining the grid of plots to be
+#'  created (see \code{\link{par}}). If missing, the function will set a value.
+#'@param addToPlot A function that will be called after the plotting, allowing
+#'  the user to add more to the plot.
+#'@param ... arguments to be passed to the individual plot commands
 #'  (Will be sent to all plot commands)
 #'
 #' @examples
