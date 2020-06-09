@@ -13,9 +13,12 @@ estimate_log_fold_change(
 )
 }
 \arguments{
-\item{data}{The data in a matrix}
+\item{data}{The data matrix, where genes (features) are on the rows and
+samples on the columns.}
 
-\item{moanin_model}{a moanin_model object, see \code{\link{create_moanin_model}}}
+\item{moanin_model}{object of class \code{moanin_model}, an object containing
+all related information to the splines model used. See
+\code{\link{create_moanin_model}} for more details.}
 
 \item{contrasts}{The contrasts to consider}
 

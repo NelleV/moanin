@@ -1,9 +1,6 @@
-library("limma")
-
 #' Estimates log fold change
 #'
-#' @param data The data in a matrix
-#' @param moanin_model a moanin_model object, see \code{\link{create_moanin_model}}
+#' @inheritParams DE_timecourse
 #' @param contrasts The contrasts to consider
 #' @param method method for calculating the log-fold change. See details. 
 #' @details The following methods exist for calculating the log-fold change

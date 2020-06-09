@@ -4,8 +4,8 @@
 
 #' Plotting splines
 #'
-#' @param data matrix (k, t) containing the data (such as centroids or data) 
-#' @param moanin_model moanin_model
+#' @param data matrix containing the data to be plotted (such as centroids or data), where each row of the data provided will be plotted as a separate plot.
+#' @inheritParams DE_timecourse
 #' @param colors vector, optional, default NULL
 #'		vector of colors
 #' @param smooth boolean, optional, default: FALSE

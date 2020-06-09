@@ -7,8 +7,7 @@ library(stats)
 
 #' Fit splines
 #'
-#' @param data the data
-#' @param moanin_model moanin_model 
+#' @inheritParams DE_timecourse
 #' @param weights weigts
 #'
 #' @return beta coefficients
@@ -33,8 +32,7 @@ fit_splines = function(data, moanin_model, weights=NULL){
 
 #' Fit and predict splines
 #'
-#' @param data the data
-#' @param moanin_model moanin_model
+#' @inheritParams DE_timecourse
 #' @param weights weights
 #' @param meta_prediction optional
 #'
@@ -77,7 +75,7 @@ fit_predict_splines = function(data, moanin_model, weights=NULL, meta_prediction
 
 #' Create prediction meta data from splines model
 #'
-#' @param moanin_model a Splines model object
+#' @inheritParams DE_timecourse
 #' @param num_timepoints integer, optional, default: 100
 #'	Number of timepoints to use for the prediction metadata
 #'

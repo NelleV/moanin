@@ -5,10 +5,7 @@ library("edgeR")
 
 #' Fit weekly differential expression analysis
 #'
-#' @param data Gene expression data
-#' @param moanin_model moanin_model
-#' @param contrasts Contrast to use.
-#' @param use_voom_weights boolean: whether to use voom weights or not
+#' @inheritParams DE_timecourse
 #'
 #' @export
 DE_timepoints = function(data, moanin_model,
@@ -71,7 +68,7 @@ DE_timepoints = function(data, moanin_model,
 #'
 #' @param group1 First group to consider
 #' @param group2 Second group to consider
-#' @param moanin_model splines model object
+#' @inheritParams DE_timecourse
 #'
 #' @examples
 #' data(shoemaker2015)

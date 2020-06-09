@@ -147,16 +147,18 @@ summarise = function(basis, ng_levels) {
   return(basis_mean)
 }
 
-#' Run edge with contrasts.
+#' Run spline models with contrasts.
 #' 
-#' @param data The data matrix.
-#' @param moanin_model moanin_model
-#'	Object containing all related information to the splines model used.
+#' @param data The data matrix, where genes (features) are on the rows and
+#'   samples on the columns.
+#' @param moanin_model object of class \code{moanin_model}, an object containing
+#'  all related information to the splines model used. See
+#'  \code{\link{create_moanin_model}} for more details.
 #' @param contrasts Contrasts, either provided as a vector of strings, or a
 #'	matrix of contrasts coefficients obtained using \code{makeContrasts}
 #'	from \code{limma}.
 #' @param center boolean, whether to center the data matrix
-#' @param use_voom_weights boolean, optional, default: TRUE
+#' @param use_voom_weights boolean, optional, default: TRUE. 
 #'	Whether to use voom weights.
 #' @export
 DE_timecourse = function(data, moanin_model,

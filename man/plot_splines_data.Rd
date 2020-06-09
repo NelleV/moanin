@@ -21,9 +21,11 @@ plot_splines_data(
 )
 }
 \arguments{
-\item{data}{matrix (k, t) containing the data (such as centroids or data)}
+\item{data}{matrix containing the data to be plotted (such as centroids or data), where each row of the data provided will be plotted as a separate plot.}
 
-\item{moanin_model}{moanin_model}
+\item{moanin_model}{object of class \code{moanin_model}, an object containing
+all related information to the splines model used. See
+\code{\link{create_moanin_model}} for more details.}
 
 \item{colors}{vector, optional, default NULL
 vector of colors}

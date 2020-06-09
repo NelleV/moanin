@@ -11,7 +11,9 @@ create_timepoints_contrasts(group1, group2, moanin_model)
 
 \item{group2}{Second group to consider}
 
-\item{moanin_model}{splines model object}
+\item{moanin_model}{object of class \code{moanin_model}, an object containing
+all related information to the splines model used. See
+\code{\link{create_moanin_model}} for more details.}
 }
 \description{
 Creates pairwise contrasts for all timepoints

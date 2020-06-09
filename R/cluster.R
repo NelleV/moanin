@@ -4,8 +4,7 @@ library(splines)
 
 #' Performs splines clustering using K-means
 #'
-#' @param data matrix containg the data. Data needs to be in log scale.
-#' @param moanin_model moanin_model 
+#' @inheritParams DE_timecourse
 #' @param n_clusters int optional, default: 10
 #' @param init	["kmeans++", "random", "optimal_init"]
 #' @param n_init int, optional, default: 10
@@ -104,8 +103,7 @@ splines_kmeans_prediction = function(data, kmeans_clusters){
 
 #' Assign score and labels from raw data
 #'
-#' @param data array or dataframe.
-#'	Data to assign score and labels to
+#' @inheritParams DE_timecourse
 #' @param kmeans_clusters list of list
 #'	List returned by moanin::splines_kmeans
 #' @param percentage_genes_to_label float, optional, default: 0.5

@@ -2,7 +2,7 @@
 % Please edit documentation in R/DE_timecourse.R
 \name{DE_timecourse}
 \alias{DE_timecourse}
-\title{Run edge with contrasts.}
+\title{Run spline models with contrasts.}
 \usage{
 DE_timecourse(
   data,
@@ -13,10 +13,12 @@ DE_timecourse(
 )
 }
 \arguments{
-\item{data}{The data matrix.}
+\item{data}{The data matrix, where genes (features) are on the rows and
+samples on the columns.}
 
-\item{moanin_model}{moanin_model
-Object containing all related information to the splines model used.}
+\item{moanin_model}{object of class \code{moanin_model}, an object containing
+all related information to the splines model used. See
+\code{\link{create_moanin_model}} for more details.}
 
 \item{contrasts}{Contrasts, either provided as a vector of strings, or a
 matrix of contrasts coefficients obtained using \code{makeContrasts}
@@ -24,9 +26,9 @@ from \code{limma}.}
 
 \item{center}{boolean, whether to center the data matrix}
 
-\item{use_voom_weights}{boolean, optional, default: TRUE
+\item{use_voom_weights}{boolean, optional, default: TRUE. 
 Whether to use voom weights.}
 }
 \description{
-Run edge with contrasts.
+Run spline models with contrasts.
 }

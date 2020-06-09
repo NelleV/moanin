@@ -7,9 +7,12 @@
 fit_splines(data, moanin_model, weights = NULL)
 }
 \arguments{
-\item{data}{the data}
+\item{data}{The data matrix, where genes (features) are on the rows and
+samples on the columns.}
 
-\item{moanin_model}{moanin_model}
+\item{moanin_model}{object of class \code{moanin_model}, an object containing
+all related information to the splines model used. See
+\code{\link{create_moanin_model}} for more details.}
 
 \item{weights}{weigts}
 }
