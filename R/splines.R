@@ -1,40 +1,35 @@
-# Splines utility
 
-library(splines)
-library(MASS)
-library(stats)
-
-
-#' Fit splines
+#' Fit splines to each gene of data matrix
 #'
 #' @inheritParams DE_timecourse
-#' @param weights weigts
+#' @param weights A matrix of weights, of the same dimension as \code{data}.
 #'
-#' @return beta coefficients
+#' @return matrix of the coefficients for each basis function, each row of the
+#'   matrix containing the coefficients for the corresponding gene in
+#'   \code{data}.
 #'
 #' @export
 fit_splines = function(data, moanin_model, weights=NULL){
     basis = moanin_model$basis
     n = ncol(basis)
     nr = nrow(data)
-
+    
     if(!is.null(weights)){
-	beta = matrix(nrow=nr, ncol=n)
-	for(i in 1:nr){
-	    beta[i,] = stats::lm.wfit(basis, data[i,], weights[i,])$coefficients
+        beta = matrix(nrow=nr, ncol=n)
+        for(i in 1:nr){
+            beta[i,] = stats::lm.wfit(basis, data[i,], weights[i,])$coefficients
         }
-	row.names(beta) = row.names(data)
+        row.names(beta) = row.names(data)
     }else{
-	beta = t(stats::lm.fit(basis, t(data))$coefficients)
+        beta = t(stats::lm.fit(basis, t(data))$coefficients)
     }
     return(beta)
 }
 
-#' Fit and predict splines
+#' Get fitted values for splines
 #'
 #' @inheritParams DE_timecourse
-#' @param weights weights
-#' @param meta_prediction optional
+#' @param meta_prediction optional, the results of running 
 #'
 #' @return y_fitted the fitted y values
 #'
@@ -48,26 +43,27 @@ fit_splines = function(data, moanin_model, weights=NULL){
 #'  # Fit the splines model and returned fitted values
 #'  fitted_data = fit_predict_splines(data, moanin_model)
 #' @export
-fit_predict_splines = function(data, moanin_model, weights=NULL, meta_prediction=NULL){
+fit_predict_splines = function(data, moanin_model, 
+                             meta_prediction=NULL){
     basis = moanin_model$basis
     meta = moanin_model$meta
-    if(!is.null(weights)){
-	stop("moanin::fit_predict_splines: not implemented")
-    }
+    # if(!is.null(weights)){
+    #     stop("moanin::fit_predict_splines: not implemented")
+    # }
     if(is.null(meta_prediction)){
         y_fitted = t(stats::lm.fit(basis, t(data))$fitted.values)
     }else{
-	degrees_of_freedom = moanin_model$degrees_of_freedom
-	fitting_data = t(as.matrix(data))
-	formula_data = list(
-	    "Group"=meta$Group,
-	    "Timepoint"=meta$Timepoint,
-	    "fitting_data"=fitting_data,
-	    "degrees_of_freedom"=moanin_model$degrees_of_freedom)
-
-	updated_formula = stats::update(moanin_model$formula, fitting_data ~ .)
-	model = stats::lm(updated_formula, formula_data)	
-	y_fitted = stats::predict(model, meta_prediction)
+        degrees_of_freedom = moanin_model$degrees_of_freedom
+        fitting_data = t(as.matrix(data))
+        formula_data = list(
+            "Group"=meta$Group,
+            "Timepoint"=meta$Timepoint,
+            "fitting_data"=fitting_data,
+            "degrees_of_freedom"=moanin_model$degrees_of_freedom)
+        
+        updated_formula = stats::update(moanin_model$formula, fitting_data ~ .)
+        model = stats::lm(updated_formula, formula_data)	
+        y_fitted = stats::predict(model, meta_prediction)
     }
     return(y_fitted)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/moanin_model.R
 \name{create_splines_model}
 \alias{create_splines_model}
-\title{Create a moanin_model object}
+\title{Depricated function for creating a moanin_model object}
 \usage{
 create_splines_model(
   meta,
@@ -15,8 +15,7 @@ create_splines_model(
 \item{inheritParams}{create_moanin_model}
 }
 \description{
-This function creates a moanin_model object, used to conserve information
-relating to the model, such as the formula, the basis, the meta data.
+This function is depricated. Users should use \code{\link{create_moanin_model}}
 }
 \details{
 This function is depricated. Users should use \code{\link{create_moanin_model}}

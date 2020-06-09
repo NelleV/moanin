@@ -2,9 +2,9 @@
 % Please edit documentation in R/splines.R
 \name{fit_predict_splines}
 \alias{fit_predict_splines}
-\title{Fit and predict splines}
+\title{Get fitted values for splines}
 \usage{
-fit_predict_splines(data, moanin_model, weights = NULL, meta_prediction = NULL)
+fit_predict_splines(data, moanin_model, meta_prediction = NULL)
 }
 \arguments{
 \item{data}{The data matrix, where genes (features) are on the rows and
@@ -15,15 +15,13 @@ all related information for time course data and the splines model that
 will be used (if applicable). See \code{\link{create_moanin_model}} for
 more details.}
 
-\item{weights}{weights}
-
-\item{meta_prediction}{optional}
+\item{meta_prediction}{optional, the results of running}
 }
 \value{
 y_fitted the fitted y values
 }
 \description{
-Fit and predict splines
+Get fitted values for splines
 }
 \examples{
  # Load data and create moanin_model

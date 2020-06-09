@@ -1,6 +1,3 @@
-# library(viridis)
-# library(graphics)
-
 
 #' Plotting splines
 #'

@@ -29,7 +29,7 @@
 #'  term found in the subset is greater than expected}
 #'  }
 #' @return Returns results in the format of \code{\link[topGO]{GenTable}}.
-#' @seealso \code{\link{create_go_term_mapping}}, \code{\link{find_enriched_pathway}}, \code{\link[topGO]{GenTable}}, \code{\link[topGO]{runTest}}, \code{\link[topGO]{topGOdata-class}}, \code{\link[stats]{p.adjust}} 
+#' @seealso \code{\link{create_go_term_mapping}}, \code{\link[KEGGprofile]{find_enriched_pathway}}, \code{\link[topGO]{GenTable}}, \code{\link[topGO]{runTest}}, \code{\link[topGO]{topGOdata-class}}, \code{\link[stats]{p.adjust}} 
 #' @export
 find_enriched_go_terms = function(assignments, gene_id_to_go,
                                   ontology="BP", 

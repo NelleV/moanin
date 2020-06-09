@@ -1,9 +1,8 @@
 # Creates a "class" containing the information related to the splines used.
 
-#' Create a moanin_model object
+#' Depricated function for creating a moanin_model object
 #'
-#' This function creates a moanin_model object, used to conserve information
-#' relating to the model, such as the formula, the basis, the meta data.
+#' This function is depricated. Users should use \code{\link{create_moanin_model}}
 #'
 #'@param inheritParams create_moanin_model
 #'@details This function is depricated. Users should use \code{\link{create_moanin_model}}
