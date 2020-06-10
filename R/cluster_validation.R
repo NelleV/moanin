@@ -158,44 +158,44 @@ get_nmi_scores = function(labels){
 plot_model_explorer = function(labels){
     all_labels = labels
     n_clusters = names(all_labels)
-
+    
     nmi_scores = list()
     colors = grDevices::rainbow(length(n_clusters))
     max_trial = 0
     min_score = 1
     max_score = 0
     for(i in 1:length(n_clusters)){
-	n_cluster = n_clusters[i]
-	color = colors[i]
-
-	labels = all_labels[[n_cluster]]
-	scores = get_nmi_scores(labels)
-
-	nmi_scores[[n_cluster]] = sort(scores)
-	max_trial = max(max_trial, length(scores))
-	min_score = min(min_score, min(scores))
-	max_score = max(max_score, max(scores))
-     }
-
+        n_cluster = n_clusters[i]
+        color = colors[i]
+        
+        labels = all_labels[[n_cluster]]
+        scores = get_nmi_scores(labels)
+        
+        nmi_scores[[n_cluster]] = sort(scores)
+        max_trial = max(max_trial, length(scores))
+        min_score = min(min_score, min(scores))
+        max_score = max(max_score, max(scores))
+    }
+    
     xrange = c(min_score, max_score)
     yrange = c(1, max_trial)
-
+    
     graphics::plot(xrange, yrange, type="n", xlab="NMI", ylab="")
-
-     for(i in 1:length(n_clusters)){
-	color = colors[i]
-	scores = nmi_scores[[i]]
-	graphics::lines(sort(scores), 1:length(scores), type="b",
-			pch=16,
-			col=color,
-			lwd=1)
-
+    
+    for(i in 1:length(n_clusters)){
+        color = colors[i]
+        scores = nmi_scores[[i]]
+        graphics::lines(sort(scores), 1:length(scores), type="b",
+                        pch=16,
+                        col=color,
+                        lwd=1)
+        
     }
-
+    
     graphics::legend(min_score, length(scores)*0.9, legend=n_clusters,
-       lty=rep(1, length(scores)),
-       pch=rep(16, length(scores)),
-       col=colors, 
-       title="Clusters", text.font=4)
+                     lty=rep(1, length(scores)),
+                     pch=rep(16, length(scores)),
+                     col=colors, 
+                     title="Clusterings", text.font=4)
 }
 

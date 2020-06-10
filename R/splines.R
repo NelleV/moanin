@@ -103,21 +103,21 @@ create_meta_prediction = function(moanin_model, num_timepoints=100){
 
 rescale_values = function(y, meta=NULL, group=NULL){
     if(is.null(group)){
-	ymin = row_min(y) 
-	y = y - ymin
-	ymax = row_max(y)
-	# We may have a division by 0 here
-	y = y / ymax
+        ymin = row_min(y) 
+        y = y - ymin
+        ymax = row_max(y)
+        # We may have a division by 0 here
+        y = y / ymax
     }else{
-	factors_to_consider = levels(unlist(meta[group]))
-	for(factor in factors_to_consider){
-	    mask = meta[group] == factor
-	    ymin = row_min(y[, mask]) 
-	    y[, mask] = y[, mask] - ymin
-	    ymax = row_max(y[, mask])
-	    # We may have a division by 0 here
-	    y[, mask] = y[, mask] / ymax
-	}
+        factors_to_consider = levels(unlist(meta[group]))
+        for(factor in factors_to_consider){
+            mask = meta[group] == factor
+            ymin = row_min(y[, mask]) 
+            y[, mask] = y[, mask] - ymin
+            ymax = row_max(y[, mask])
+            # We may have a division by 0 here
+            y[, mask] = y[, mask] / ymax
+        }
     }
     return(y)
 }
