@@ -23,12 +23,14 @@ create_splines_model = function(meta, formula=NULL, basis=NULL,
 #' @param meta	\code{data.frame} containing the metadata in columns, and rows
 #'   corresponding to different samples. Metadata needs to contain the columns
 #'   "Group" and "Timepoint".
-#' @param formula formula object, optional, default: NUlL. Used to construct splines from the data in \code{meta}. See details.
+#' @param formula formula object, optional, default: NUlL. Used to construct
+#'   splines from the data in \code{meta}. See details.
 #'@param basis	matrix, optional, default: NULL. A basis matrix, where each row
 #'  corresponds to the evaluation of a sample on the basis function (thus one
 #'  column for each basis function).
-#'@param degrees_of_freedom int, optional, default: 4. Number of degrees of
-#'  freedom to use if neither the basis nor the formula is provided
+#'@param degrees_of_freedom int, optional. Number of degrees of freedom to use
+#'  if neither the basis nor the formula is provided. If not provided by the
+#'  user, internally will be set to 4
 #'@details If neither \code{formula} nor \code{basis} is given, then by default,
 #'  the function will create a basis matrix based on the formula:
 #'  \preformatted{formula = ~Group:ns(Timepoint, df=4) + Group + 0}
@@ -38,7 +40,8 @@ create_splines_model = function(meta, formula=NULL, basis=NULL,
 #'  corresponds to the evaluation of a sample on the basis function (thus one
 #'  column for each basis function). }
 #'\item{\code{meta}}{The data frame provided by user to \code{meta}}
-#'\item{\code{degrees_of_freedom}}{The degrees of freedom provided by the user}
+#'\item{\code{degrees_of_freedom}}{The degrees of freedom provided by the user 
+#' (or set by the function internally)}
 #'\item{\code{formula}}{The formula used to construct the basis matrix 
 #'(unless basis matrix is provided by the user).}
 #'} 
@@ -56,7 +59,7 @@ create_splines_model = function(meta, formula=NULL, basis=NULL,
 #' print(dim(moanin$basis))
 #' @export
 create_moanin_model = function(meta, formula=NULL, basis=NULL,
-                               degrees_of_freedom=4){
+                               degrees_of_freedom=NULL){
     meta = check_meta(meta)
     if(!is.null(basis) & !is.null(formula)){
         msg = paste("moanin::create_splines_model: both basis and formula ",
@@ -67,6 +70,7 @@ create_moanin_model = function(meta, formula=NULL, basis=NULL,
     
     if(is.null(basis)){
         if(is.null(formula)){
+            if(is.null(degrees_of_freedom)) degrees_of_freedom=4
             formula = (
                 ~Group + Group:splines::ns(Timepoint, df=degrees_of_freedom) + 0)
         }
@@ -83,4 +87,28 @@ create_moanin_model = function(meta, formula=NULL, basis=NULL,
     class(splines_model) = "moanin_model"
     
     return(splines_model)
+}
+
+#' @keywords internal
+#' @export
+print.moanin_model<-function(object){
+    N<-nrow(object$meta)
+    cat("moanin_object on",N,"samples containing the following information:\n")
+    cat("1) Meta data with",ncol(object$meta),"variables:\n")
+    print(colnames(object$meta))
+    cat("2) Basis matrix with",ncol(object$basis),"basis functions\n")
+    if(!is.null(object$formula)){
+        cat("Basis matrix was constructed with the following formula\n")
+        form<-gsub("\\s{2,}","",deparse(object$formula)) #get rid of extra spaces
+        cat(paste(form,collapse="",sep=""),"\n")
+        cat(paste("Where degrees_of_freedom=",object$degrees_of_freedom,sep=""),"\n")
+    }
+    else{
+        if(is.null(object$degrees_of_freedom))
+            cat("Basis matrix was provided by user, formula and degrees_of_freedom=NULL\n")
+        else
+            cat("Basis matrix and degrees of freedom provided by user, equal to",object$degrees_of_freedom,"\n")
+    }
+    cat("To access these objects use:\n")
+    cat(paste("\t<object_name>$",names(object),collapse="\n",sep=""))
 }
