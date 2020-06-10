@@ -136,9 +136,17 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>pvalues</th>
-      <td><p>pvalues</p></td>
+      <td><p>a matrix of pvalues, with columns corresponding to different
+tests or sources of p-values, and rows corresponding to the genes from
+which the p-values come.</p></td>
     </tr>
     </table>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>a vector of p-values, one for each row of <code>pvalues</code>, that is the
+  result of Fisher's combined probability test applied to the p-values in
+  that row.</p>
     
 
   </div>

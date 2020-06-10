@@ -136,21 +136,39 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>data</th>
-      <td><p>Gene expression data</p></td>
+      <td><p>The data matrix, where genes (features) are on the rows and
+samples on the columns.</p></td>
     </tr>
     <tr>
       <th>moanin_model</th>
-      <td><p>moanin_model</p></td>
+      <td><p>object of class <code>moanin_model</code>, an object containing
+all related information for time course data and the splines model that
+will be used (if applicable). See <code><a href='create_moanin_model.html'>create_moanin_model</a></code> for
+more details.</p></td>
     </tr>
     <tr>
       <th>contrasts</th>
-      <td><p>Contrast to use.</p></td>
+      <td><p>Contrasts, either provided as a vector of strings, or a
+matrix of contrasts coefficients obtained using
+<code><a href='https://rdrr.io/pkg/limma/man/makeContrasts.html'>makeContrasts</a></code> from the package <code>limma</code>. If given
+as a character string, will be passed to <code><a href='https://rdrr.io/pkg/limma/man/makeContrasts.html'>makeContrasts</a></code>
+to be converted into such a matrix.</p></td>
     </tr>
     <tr>
       <th>use_voom_weights</th>
-      <td><p>boolean: whether to use voom weights or not</p></td>
+      <td><p>boolean, optional, default: TRUE. 
+Whether to use voom weights.</p></td>
     </tr>
     </table>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>A <code>data.frame</code> with two columns for each of the contrasts given
+  in <code>contrasts</code>, corresponding to the raw p-value of the contrast for
+  that gene (<code>_pval</code>) and the adjusted p-value (<code>_qval</code>). The
+  adjusted p-values are FDR-adjusted based on the Benjamini-Hochberg method,
+  as implemented in <code><a href='https://rdrr.io/r/stats/p.adjust.html'>p.adjust</a></code>. The adjustment is done
+  across all p-values for all contrasts calculated.</p>
     
 
   </div>

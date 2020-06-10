@@ -137,28 +137,58 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>assignments</th>
-      <td><p>boolean named vector</p></td>
+      <td><p>boolean named vector determining the gene subset to be
+tested for enrichment of GO terms. The names of the vector should be the
+gene names. Elements with TRUE will consist of the gene cluster.</p></td>
     </tr>
     <tr>
       <th>gene_id_to_go</th>
-      <td><p>Gene ID to GO object from topGO</p></td>
+      <td><p>List giving the Gene ID to GO object required for topGO
+(see <code><a href='https://rdrr.io/pkg/topGO/man/topGOdata-class.html'>topGOdata-class</a></code>). See also
+<code><a href='create_go_term_mapping.html'>create_go_term_mapping</a></code> for constructing such a list from a
+data-frame.</p></td>
     </tr>
     <tr>
       <th>ontology</th>
-      <td><p>string, optional, default: BP
-specficies which ontology to use. Can be 'BP', 'CC', or 'NF'</p></td>
+      <td><p>string, optional, default: BP. specficies which ontology to
+use (passed to <code>ontology</code> argument in creating a new <code>topGOdata</code>
+object). Can be 'BP', 'CC', or 'NF'. See <code><a href='https://rdrr.io/pkg/topGO/man/topGOdata-class.html'>topGOdata-class</a></code>.</p></td>
     </tr>
     <tr>
       <th>weighted, </th>
-      <td><p>boolean, optional, default: FALSE
-Whether to use the weighted algorithm or not.</p></td>
+      <td><p>boolean, optional, default: FALSE. 
+Whether to use the weighted algorithm or not in <code><a href='https://rdrr.io/pkg/topGO/man/getSigGroups.html'>runTest</a></code>.</p></td>
     </tr>
     <tr>
       <th>node_size</th>
-      <td><p>integer, optional, default: 10
-Consider only GO terms with node_size number of genes.</p></td>
+      <td><p>integer, optional, default: 10. Consider only GO terms with
+node_size number of genes, passed to <code>nodeSize</code> argument of
+<code><a href='https://rdrr.io/pkg/topGO/man/topGOdata-class.html'>topGOdata-class</a></code></p></td>
     </tr>
     </table>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>Returns results in the format of <code><a href='https://rdrr.io/pkg/topGO/man/diagnosticMethods.html'>GenTable</a></code>.</p>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>This function is a wrapper for running a GO enrichment analysis via
+  the package <code>topGO</code>. This function creates a
+  <code><a href='https://rdrr.io/pkg/topGO/man/topGOdata-class.html'>topGOdata-class</a></code> object, runs the function
+  <code><a href='https://rdrr.io/pkg/topGO/man/getSigGroups.html'>runTest</a></code> to test for enrichment using the
+  <code>statistic="fisher"</code> option, and then runs
+  <code><a href='https://rdrr.io/pkg/topGO/man/diagnosticMethods.html'>GenTable</a></code>. This function then does some post-processing
+  of the results, returning only GO terms that satisfy:</p><ol>
+<li><p>BH adjusted p-values less than 0.05 using <code><a href='https://rdrr.io/r/stats/p.adjust.html'>p.adjust</a></code></p></li>
+<li><p>GO terms are <em>enriched</em>, i.e. the number of genes from the GO 
+ term found in the subset is greater than expected</p></li>
+</ol>
+
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='create_go_term_mapping.html'>create_go_term_mapping</a></code>, <code><a href='https://rdrr.io/pkg/KEGGprofile/man/find_enriched_pathway.html'>find_enriched_pathway</a></code>, <code><a href='https://rdrr.io/pkg/topGO/man/diagnosticMethods.html'>GenTable</a></code>, <code><a href='https://rdrr.io/pkg/topGO/man/getSigGroups.html'>runTest</a></code>, <code><a href='https://rdrr.io/pkg/topGO/man/topGOdata-class.html'>topGOdata-class</a></code>, <code><a href='https://rdrr.io/r/stats/p.adjust.html'>p.adjust</a></code></p></div>
     
 
   </div>

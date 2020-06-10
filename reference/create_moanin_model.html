@@ -139,35 +139,45 @@ the formula, the basis, the meta data.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>meta</th>
-      <td><p>data.frame containing the metadata. Metadata needs to contain
-column "Group" and "Timepoint"</p></td>
+      <td><p><code>data.frame</code> containing the metadata in columns, and rows
+corresponding to different samples. Metadata needs to contain the columns
+"Group" and "Timepoint".</p></td>
     </tr>
     <tr>
       <th>formula</th>
-      <td><p>formula object, optional, default: NUlL
-Formula of the splines, e.g:
-    formula = ~Group:splines::ns(Timepoint, df=4) + Group + 0</p></td>
+      <td><p>formula object, optional, default: NUlL. Used to construct splines from the data in <code>meta</code>. See details.</p></td>
     </tr>
     <tr>
       <th>basis</th>
-      <td><p>matrix, optional, default: NULL
-A basis object.</p></td>
+      <td><p>matrix, optional, default: NULL. A basis matrix, where each row
+corresponds to the evaluation of a sample on the basis function (thus one
+column for each basis function).</p></td>
     </tr>
     <tr>
       <th>degrees_of_freedom</th>
-      <td><p>int, optional, default: 4
-Number of degrees of freedom to use if neither the basis nor the
-formula is provided</p></td>
+      <td><p>int, optional, default: 4. Number of degrees of
+freedom to use if neither the basis nor the formula is provided</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>An object containing the following information:</p>
-<p>- The basis: a matrix of shape (degrees_of_freedom, n_samples)
-- The metadata: a data.frame of shape (n_samples, n_metadat)
-- The formula used, when provided.
-- The number of degrees of freedom.</p>
+    <p>An object of class <code>moanin_model</code>; a list with the following elements:</p><ul>
+<li><p><code>basis</code>A basis matrix, where each row
+ corresponds to the evaluation of a sample on the basis function (thus one
+ column for each basis function).</p></li>
+<li><p><code>meta</code>The data frame provided by user to <code>meta</code></p></li>
+<li><p><code>degrees_of_freedom</code>The degrees of freedom provided by the user</p></li>
+<li><p><code>formula</code>The formula used to construct the basis matrix 
+(unless basis matrix is provided by the user).</p></li>
+</ul>
+
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>If neither <code>formula</code> nor <code>basis</code> is given, then by default,
+ the function will create a basis matrix based on the formula:</p><pre><span class='no'>formula</span> <span class='kw'>=</span> ~<span class='no'>Group</span>:<span class='fu'>ns</span>(<span class='no'>Timepoint</span>, <span class='kw'>df</span><span class='kw'>=</span><span class='fl'>4</span>) + <span class='no'>Group</span> + <span class='fl'>0</span></pre>
+
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>

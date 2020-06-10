@@ -139,21 +139,25 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>data</th>
-      <td><p>matrix (k, t) containing the data (such as centroids or data)</p></td>
+      <td><p>matrix containing the data to be plotted (such as centroids or
+data), where each row of the data provided will be plotted as a separate
+plot.</p></td>
     </tr>
     <tr>
       <th>moanin_model</th>
-      <td><p>moanin_model</p></td>
+      <td><p>object of class <code>moanin_model</code>, an object containing
+all related information for time course data and the splines model that
+will be used (if applicable). See <code><a href='create_moanin_model.html'>create_moanin_model</a></code> for
+more details.</p></td>
     </tr>
     <tr>
       <th>colors</th>
-      <td><p>vector, optional, default NULL
-vector of colors</p></td>
+      <td><p>vector, optional, default NULL. Vector of colors</p></td>
     </tr>
     <tr>
       <th>smooth</th>
-      <td><p>boolean, optional, default: FALSE
-Whether to smooth the centroids or not.</p></td>
+      <td><p>boolean, optional, default: FALSE. Whether to smooth the
+centroids or not.</p></td>
     </tr>
     <tr>
       <th>legend</th>
@@ -161,41 +165,39 @@ Whether to smooth the centroids or not.</p></td>
     </tr>
     <tr>
       <th>legendArgs</th>
-      <td><p>list of arguments to be passed to legend command
-(if <code>legend=TRUE</code>)</p></td>
+      <td><p>list of arguments to be passed to legend command (if
+<code>legend=TRUE</code>)</p></td>
     </tr>
     <tr>
       <th>subset_conditions</th>
-      <td><p>list
-if provided, only plots the subset of conditions provided. Else, plots
-all conditions</p></td>
+      <td><p>list if provided, only plots the subset of conditions
+provided. Else, plots all conditions</p></td>
     </tr>
     <tr>
       <th>subset_data</th>
-      <td><p>list
-if provided, only plots  the subset of data (ie, the rows) provided.</p></td>
+      <td><p>list if provided, only plots  the subset of data (ie, the
+rows) provided.</p></td>
     </tr>
     <tr>
       <th>simpleY</th>
-      <td><p>boolean, if true, will minimize the annotation of the
-y axis to  only label the axis in the exterior plots (the x-axis
-is always assumed to be the same across all plots and will always
- be simplified)</p></td>
+      <td><p>boolean, if true, will minimize the annotation of the y axis to
+only label the axis in the exterior plots (the x-axis is always assumed to
+be the same across all plots and will always be simplified)</p></td>
     </tr>
     <tr>
       <th>mar</th>
-      <td><p>vector of margins to set the space around each plot
-(see <code><a href='https://rdrr.io/r/graphics/par.html'>par</a></code>)</p></td>
+      <td><p>vector of margins to set the space around each plot (see
+<code><a href='https://rdrr.io/r/graphics/par.html'>par</a></code>)</p></td>
     </tr>
     <tr>
       <th>mfrow</th>
-      <td><p>a vector of integers of length 2 defining the grid of
-plots to be created (see <code><a href='https://rdrr.io/r/graphics/par.html'>par</a></code>). If missing, the
-function will set a value.</p></td>
+      <td><p>a vector of integers of length 2 defining the grid of plots to be
+created (see <code><a href='https://rdrr.io/r/graphics/par.html'>par</a></code>). If missing, the function will set a value.</p></td>
     </tr>
     <tr>
       <th>addToPlot</th>
-      <td><p>A function that will be called after the plotting, allowing the user to add more to the plot.</p></td>
+      <td><p>A function that will be called after the plotting, allowing
+the user to add more to the plot.</p></td>
     </tr>
     <tr>
       <th>...</th>

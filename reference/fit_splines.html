@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Fit splines — fit_splines • moanin</title>
+<title>Fit splines to each gene of data matrix — fit_splines • moanin</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -36,9 +36,9 @@
 
 
 
-<meta property="og:title" content="Fit splines — fit_splines" />
+<meta property="og:title" content="Fit splines to each gene of data matrix — fit_splines" />
 
-<meta property="og:description" content="Fit splines" />
+<meta property="og:description" content="Fit splines to each gene of data matrix" />
 
 
 
@@ -118,14 +118,14 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Fit splines</h1>
+    <h1>Fit splines to each gene of data matrix</h1>
     
     <div class="hidden name"><code>fit_splines.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Fit splines</p>
+    <p>Fit splines to each gene of data matrix</p>
     
     </div>
 
@@ -136,21 +136,27 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>data</th>
-      <td><p>the data</p></td>
+      <td><p>The data matrix, where genes (features) are on the rows and
+samples on the columns.</p></td>
     </tr>
     <tr>
       <th>moanin_model</th>
-      <td><p>moanin_model</p></td>
+      <td><p>object of class <code>moanin_model</code>, an object containing
+all related information for time course data and the splines model that
+will be used (if applicable). See <code><a href='create_moanin_model.html'>create_moanin_model</a></code> for
+more details.</p></td>
     </tr>
     <tr>
       <th>weights</th>
-      <td><p>weigts</p></td>
+      <td><p>A matrix of weights, of the same dimension as <code>data</code>.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>beta coefficients</p>
+    <p>matrix of the coefficients for each basis function, each row of the
+  matrix containing the coefficients for the corresponding gene in
+  <code>data</code>.</p>
     
 
   </div>

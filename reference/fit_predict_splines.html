@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Fit and predict splines — fit_predict_splines • moanin</title>
+<title>Get fitted values for splines — fit_predict_splines • moanin</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -36,9 +36,9 @@
 
 
 
-<meta property="og:title" content="Fit and predict splines — fit_predict_splines" />
+<meta property="og:title" content="Get fitted values for splines — fit_predict_splines" />
 
-<meta property="og:description" content="Fit and predict splines" />
+<meta property="og:description" content="Get fitted values for splines" />
 
 
 
@@ -118,44 +118,43 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Fit and predict splines</h1>
+    <h1>Get fitted values for splines</h1>
     
     <div class="hidden name"><code>fit_predict_splines.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Fit and predict splines</p>
+    <p>Get fitted values for splines</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>fit_predict_splines</span>(<span class='no'>data</span>, <span class='no'>moanin_model</span>, <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>meta_prediction</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>fit_predict_splines</span>(<span class='no'>data</span>, <span class='no'>moanin_model</span>, <span class='kw'>meta_prediction</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>data</th>
-      <td><p>the data</p></td>
+      <td><p>The data matrix, where genes (features) are on the rows and
+samples on the columns.</p></td>
     </tr>
     <tr>
       <th>moanin_model</th>
-      <td><p>moanin_model</p></td>
-    </tr>
-    <tr>
-      <th>weights</th>
-      <td><p>weights</p></td>
+      <td><p>object of class <code>moanin_model</code>, an object containing
+all related information for time course data and the splines model that
+will be used (if applicable). See <code><a href='create_moanin_model.html'>create_moanin_model</a></code> for
+more details.</p></td>
     </tr>
     <tr>
       <th>meta_prediction</th>
-      <td><p>optional</p></td>
+      <td><p>optional, see <code><a href='create_meta_prediction.html'>create_meta_prediction</a></code>.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>y_fitted the fitted y values</p>
+    <p>a matrix of the fitted y values, with dimensions the same as <code>data</code></p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>

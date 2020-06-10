@@ -136,17 +136,39 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>group1</th>
-      <td><p>First group to consider</p></td>
+      <td><p>First group to consider, character value that must match a
+value contained in <code>moanin_model$meta</code>.</p></td>
     </tr>
     <tr>
       <th>group2</th>
-      <td><p>Second group to consider</p></td>
+      <td><p>Second group to consider, character value that must match a
+value contained in <code>moanin_model$meta</code>.</p></td>
     </tr>
     <tr>
       <th>moanin_model</th>
-      <td><p>splines model object</p></td>
+      <td><p>object of class <code>moanin_model</code>, an object containing
+all related information for time course data and the splines model that
+will be used (if applicable). See <code><a href='create_moanin_model.html'>create_moanin_model</a></code> for
+more details.</p></td>
     </tr>
     </table>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>a character vector with each element of the vector corresponding to a
+  contrast to be compared.</p>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>This function creates contrasts comparing two groups for every
+  timepoint in the format needed for <code><a href='DE_timepoints.html'>DE_timepoints</a></code> (i.e.
+  <code><a href='https://rdrr.io/pkg/limma/man/makeContrasts.html'>makeContrasts</a></code>, to which the contrasts are ultimately
+  passed). The time points are determined by the meta data in the
+  <code>moanin_object</code> provided by the user.</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='DE_timepoints.html'>DE_timepoints</a></code>,  <code><a href='https://rdrr.io/pkg/limma/man/makeContrasts.html'>makeContrasts</a></code></p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>

@@ -136,15 +136,24 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>genes</th>
-      <td><p>dataframe, with `gene_col` and a column corresponding to the
-`go_id`</p></td>
+      <td><p>dataframe, with two required columns. The first gives the RefSeq
+gene names, with column name by the argument <code>gene_col</code>. The other
+column must be named <code>go_id</code> and give the genes GO id.</p></td>
     </tr>
     <tr>
       <th>gene_col</th>
-      <td><p>the column of the genes data frame that contains the
-correct gene reference. By default, is refseq_mrna</p></td>
+      <td><p>the name of the column of the <code>genes</code> data frame that contains the
+correct gene reference. By default, is "refseq_mrna".</p></td>
     </tr>
     </table>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>a list giving the gene to GO id in the format required by <code><a href='https://rdrr.io/pkg/topGO/man/topGOdata-class.html'>topGOdata-class</a></code>.</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='find_enriched_go_terms.html'>find_enriched_go_terms</a></code>, <code><a href='https://rdrr.io/pkg/topGO/man/topGOdata-class.html'>topGOdata-class</a></code></p></div>
     
 
   </div>

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Run edge with contrasts. — DE_timecourse • moanin</title>
+<title>Run spline models with contrasts. — DE_timecourse • moanin</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -36,9 +36,9 @@
 
 
 
-<meta property="og:title" content="Run edge with contrasts. — DE_timecourse" />
+<meta property="og:title" content="Run spline models with contrasts. — DE_timecourse" />
 
-<meta property="og:description" content="Run edge with contrasts." />
+<meta property="og:description" content="Run spline models with contrasts." />
 
 
 
@@ -118,14 +118,14 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Run edge with contrasts.</h1>
+    <h1>Run spline models with contrasts.</h1>
     
     <div class="hidden name"><code>DE_timecourse.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Run edge with contrasts.</p>
+    <p>Run spline models with contrasts.</p>
     
     </div>
 
@@ -137,18 +137,23 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>data</th>
-      <td><p>The data matrix.</p></td>
+      <td><p>The data matrix, where genes (features) are on the rows and
+samples on the columns.</p></td>
     </tr>
     <tr>
       <th>moanin_model</th>
-      <td><p>moanin_model
-Object containing all related information to the splines model used.</p></td>
+      <td><p>object of class <code>moanin_model</code>, an object containing
+all related information for time course data and the splines model that
+will be used (if applicable). See <code><a href='create_moanin_model.html'>create_moanin_model</a></code> for
+more details.</p></td>
     </tr>
     <tr>
       <th>contrasts</th>
       <td><p>Contrasts, either provided as a vector of strings, or a
-matrix of contrasts coefficients obtained using <code>makeContrasts</code>
-from <code>limma</code>.</p></td>
+matrix of contrasts coefficients obtained using
+<code><a href='https://rdrr.io/pkg/limma/man/makeContrasts.html'>makeContrasts</a></code> from the package <code>limma</code>. If given
+as a character string, will be passed to <code><a href='https://rdrr.io/pkg/limma/man/makeContrasts.html'>makeContrasts</a></code>
+to be converted into such a matrix.</p></td>
     </tr>
     <tr>
       <th>center</th>
@@ -156,10 +161,29 @@ from <code>limma</code>.</p></td>
     </tr>
     <tr>
       <th>use_voom_weights</th>
-      <td><p>boolean, optional, default: TRUE
+      <td><p>boolean, optional, default: TRUE. 
 Whether to use voom weights.</p></td>
     </tr>
     </table>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>A <code>data.frame</code> with two columns for each of the contrasts given
+  in <code>contrasts</code>, corresponding to the raw p-value of the contrast for
+  that gene (<code>_pval</code>) and the adjusted p-value (<code>_qval</code>). The
+  adjusted p-values are FDR-adjusted based on the Benjamini-Hochberg method,
+  as implemented in <code><a href='https://rdrr.io/r/stats/p.adjust.html'>p.adjust</a></code>. The adjustment is done
+  across all p-values for all contrasts calculated.</p>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The implementation of the spline fit and the calculation of p-values
+  was based on code from <code><a href='https://rdrr.io/pkg/edge/man/edge.html'>edge</a></code>, and expanded to
+  enable handling of comparisons of groups via contrasts.</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/limma/man/makeContrasts.html'>makeContrasts</a></code>, <code><a href='create_moanin_model.html'>create_moanin_model</a></code>, <code><a href='DE_timepoints.html'>DE_timepoints</a></code>, <code><a href='https://rdrr.io/pkg/edge/man/edge.html'>edge</a></code></p></div>
     
 
   </div>

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Create a splines model — create_splines_model • moanin</title>
+<title>Depricated function for creating a moanin_model object — create_splines_model • moanin</title>
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -36,10 +36,9 @@
 
 
 
-<meta property="og:title" content="Create a splines model — create_splines_model" />
+<meta property="og:title" content="Depricated function for creating a moanin_model object — create_splines_model" />
 
-<meta property="og:description" content="This model is used to conserve information relating to the model, such as
-the formula, the basis, the meta data." />
+<meta property="og:description" content="This function is depricated. Users should use create_moanin_model" />
 
 
 
@@ -119,15 +118,14 @@ the formula, the basis, the meta data." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Create a splines model</h1>
+    <h1>Depricated function for creating a moanin_model object</h1>
     
     <div class="hidden name"><code>create_splines_model.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>This model is used to conserve information relating to the model, such as
-the formula, the basis, the meta data.</p>
+    <p>This function is depricated. Users should use <code><a href='create_moanin_model.html'>create_moanin_model</a></code></p>
     
     </div>
 
@@ -138,28 +136,14 @@ the formula, the basis, the meta data.</p>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>meta</th>
-      <td><p>data.frame containing the metadata. Metadata needs to contain
-column "Group" and "Timepoint"</p></td>
-    </tr>
-    <tr>
-      <th>formula</th>
-      <td><p>formula object, optional, default: NUlL
-Formula of the splines, e.g:
-    formula = ~Group:splines::ns(Timepoint, df=4) + Group + 0</p></td>
-    </tr>
-    <tr>
-      <th>basis</th>
-      <td><p>matrix, optional, default: NULL
-A basis object.</p></td>
-    </tr>
-    <tr>
-      <th>degrees_of_freedom</th>
-      <td><p>int, optional, default: 4
-Number of degrees of freedom to use if neither the basis nor the
-formula is provided</p></td>
+      <th>inheritParams</th>
+      <td><p>create_moanin_model</p></td>
     </tr>
     </table>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>This function is depricated. Users should use <code><a href='create_moanin_model.html'>create_moanin_model</a></code></p>
     
 
   </div>
