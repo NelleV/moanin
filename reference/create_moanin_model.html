@@ -132,7 +132,7 @@ the formula, the basis, the meta data.</p>
     </div>
 
     <pre class="usage"><span class='fu'>create_moanin_model</span>(<span class='no'>meta</span>, <span class='kw'>formula</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>basis</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>degrees_of_freedom</span> <span class='kw'>=</span> <span class='fl'>4</span>)</pre>
+  <span class='kw'>degrees_of_freedom</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -145,7 +145,8 @@ corresponding to different samples. Metadata needs to contain the columns
     </tr>
     <tr>
       <th>formula</th>
-      <td><p>formula object, optional, default: NUlL. Used to construct splines from the data in <code>meta</code>. See details.</p></td>
+      <td><p>formula object, optional, default: NUlL. Used to construct
+splines from the data in <code>meta</code>. See details.</p></td>
     </tr>
     <tr>
       <th>basis</th>
@@ -155,8 +156,9 @@ column for each basis function).</p></td>
     </tr>
     <tr>
       <th>degrees_of_freedom</th>
-      <td><p>int, optional, default: 4. Number of degrees of
-freedom to use if neither the basis nor the formula is provided</p></td>
+      <td><p>int, optional. Number of degrees of freedom to use
+if neither the basis nor the formula is provided. If not provided by the
+user, internally will be set to 4</p></td>
     </tr>
     </table>
     
@@ -167,7 +169,8 @@ freedom to use if neither the basis nor the formula is provided</p></td>
  corresponds to the evaluation of a sample on the basis function (thus one
  column for each basis function).</p></li>
 <li><p><code>meta</code>The data frame provided by user to <code>meta</code></p></li>
-<li><p><code>degrees_of_freedom</code>The degrees of freedom provided by the user</p></li>
+<li><p><code>degrees_of_freedom</code>The degrees of freedom provided by the user 
+(or set by the function internally)</p></li>
 <li><p><code>formula</code>The formula used to construct the basis matrix 
 (unless basis matrix is provided by the user).</p></li>
 </ul>
