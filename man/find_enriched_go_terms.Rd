@@ -13,19 +13,46 @@ find_enriched_go_terms(
 )
 }
 \arguments{
-\item{assignments}{boolean named vector}
+\item{assignments}{boolean named vector determining the gene subset to be
+tested for enrichment of GO terms. The names of the vector should be the
+gene names. Elements with TRUE will consist of the gene cluster.}
 
-\item{gene_id_to_go}{Gene ID to GO object from topGO}
+\item{gene_id_to_go}{List giving the Gene ID to GO object required for topGO
+(see \code{\link[topGO]{topGOdata-class}}). See also
+\code{\link{create_go_term_mapping}} for constructing such a list from a
+data-frame.}
 
-\item{ontology}{string, optional, default: BP
-specficies which ontology to use. Can be 'BP', 'CC', or 'NF'}
+\item{ontology}{string, optional, default: BP. specficies which ontology to
+use (passed to \code{ontology} argument in creating a new \code{topGOdata}
+object). Can be 'BP', 'CC', or 'NF'. See \code{\link[topGO]{topGOdata-class}}.}
 
-\item{weighted, }{boolean, optional, default: FALSE
-Whether to use the weighted algorithm or not.}
+\item{weighted, }{boolean, optional, default: FALSE. 
+Whether to use the weighted algorithm or not in \code{\link[topGO]{runTest}}.}
 
-\item{node_size}{integer, optional, default: 10
-Consider only GO terms with node_size number of genes.}
+\item{node_size}{integer, optional, default: 10. Consider only GO terms with
+node_size number of genes, passed to \code{nodeSize} argument of
+\code{\link[topGO]{topGOdata-class}}}
+}
+\value{
+Returns results in the format of \code{\link[topGO]{GenTable}}.
 }
 \description{
 Find enriched GO terms
+}
+\details{
+This function is a wrapper for running a GO enrichment analysis via
+  the package \code{topGO}. This function creates a
+  \code{\link[topGO]{topGOdata-class}} object, runs the function
+  \code{\link[topGO]{runTest}} to test for enrichment using the
+  \code{statistic="fisher"} option, and then runs
+  \code{\link[topGO]{GenTable}}. This function then does some post-processing
+  of the results, returning only GO terms that satisfy: 
+ \enumerate{
+ \item{BH adjusted p-values less than 0.05 using \code{\link[stats]{p.adjust}}}
+ \item{GO terms are \emph{enriched}, i.e. the number of genes from the GO 
+ term found in the subset is greater than expected}
+ }
+}
+\seealso{
+\code{\link{create_go_term_mapping}}, \code{\link[KEGGprofile]{find_enriched_pathway}}, \code{\link[topGO]{GenTable}}, \code{\link[topGO]{runTest}}, \code{\link[topGO]{topGOdata-class}}, \code{\link[stats]{p.adjust}}
 }

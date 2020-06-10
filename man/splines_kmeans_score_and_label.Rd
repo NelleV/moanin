@@ -13,8 +13,8 @@ splines_kmeans_score_and_label(
 )
 }
 \arguments{
-\item{data}{array or dataframe.
-Data to assign score and labels to}
+\item{data}{The data matrix, where genes (features) are on the rows and
+samples on the columns.}
 
 \item{kmeans_clusters}{list of list
 List returned by moanin::splines_kmeans}

@@ -7,14 +7,30 @@
 create_timepoints_contrasts(group1, group2, moanin_model)
 }
 \arguments{
-\item{group1}{First group to consider}
+\item{group1}{First group to consider, character value that must match a
+value contained in \code{moanin_model$meta}.}
 
-\item{group2}{Second group to consider}
+\item{group2}{Second group to consider, character value that must match a
+value contained in \code{moanin_model$meta}.}
 
-\item{moanin_model}{splines model object}
+\item{moanin_model}{object of class \code{moanin_model}, an object containing
+all related information for time course data and the splines model that
+will be used (if applicable). See \code{\link{create_moanin_model}} for
+more details.}
+}
+\value{
+a character vector with each element of the vector corresponding to a
+  contrast to be compared.
 }
 \description{
 Creates pairwise contrasts for all timepoints
+}
+\details{
+This function creates contrasts comparing two groups for every
+  timepoint in the format needed for \code{\link{DE_timepoints}} (i.e.
+  \code{\link[limma]{makeContrasts}}, to which the contrasts are ultimately
+  passed). The time points are determined by the meta data in the
+  \code{moanin_object} provided by the user.
 }
 \examples{
 data(shoemaker2015)
@@ -22,4 +38,7 @@ meta = shoemaker2015$meta
 moanin_model = moanin::create_moanin_model(meta)
 contrasts = create_timepoints_contrasts("C", "M", moanin_model)
 
+}
+\seealso{
+\code{\link{DE_timepoints}},  \code{\link[limma]{makeContrasts}}
 }

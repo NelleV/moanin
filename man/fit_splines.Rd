@@ -2,20 +2,26 @@
 % Please edit documentation in R/splines.R
 \name{fit_splines}
 \alias{fit_splines}
-\title{Fit splines}
+\title{Fit splines to each gene of data matrix}
 \usage{
 fit_splines(data, moanin_model, weights = NULL)
 }
 \arguments{
-\item{data}{the data}
+\item{data}{The data matrix, where genes (features) are on the rows and
+samples on the columns.}
 
-\item{moanin_model}{moanin_model}
+\item{moanin_model}{object of class \code{moanin_model}, an object containing
+all related information for time course data and the splines model that
+will be used (if applicable). See \code{\link{create_moanin_model}} for
+more details.}
 
-\item{weights}{weigts}
+\item{weights}{A matrix of weights, of the same dimension as \code{data}.}
 }
 \value{
-beta coefficients
+matrix of the coefficients for each basis function, each row of the
+  matrix containing the coefficients for the corresponding gene in
+  \code{data}.
 }
 \description{
-Fit splines
+Fit splines to each gene of data matrix
 }

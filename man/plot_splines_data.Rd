@@ -21,41 +21,43 @@ plot_splines_data(
 )
 }
 \arguments{
-\item{data}{matrix (k, t) containing the data (such as centroids or data)}
+\item{data}{matrix containing the data to be plotted (such as centroids or
+data), where each row of the data provided will be plotted as a separate
+plot.}
 
-\item{moanin_model}{moanin_model}
+\item{moanin_model}{object of class \code{moanin_model}, an object containing
+all related information for time course data and the splines model that
+will be used (if applicable). See \code{\link{create_moanin_model}} for
+more details.}
 
-\item{colors}{vector, optional, default NULL
-vector of colors}
+\item{colors}{vector, optional, default NULL. Vector of colors}
 
-\item{smooth}{boolean, optional, default: FALSE
-Whether to smooth the centroids or not.}
+\item{smooth}{boolean, optional, default: FALSE. Whether to smooth the
+centroids or not.}
 
 \item{legend}{boolean whether to include a legend (default:TRUE)}
 
-\item{legendArgs}{list of arguments to be passed to legend command
-(if \code{legend=TRUE})}
+\item{legendArgs}{list of arguments to be passed to legend command (if
+\code{legend=TRUE})}
 
-\item{subset_conditions}{list
-if provided, only plots the subset of conditions provided. Else, plots
-all conditions}
+\item{subset_conditions}{list if provided, only plots the subset of conditions
+provided. Else, plots all conditions}
 
-\item{subset_data}{list
-if provided, only plots  the subset of data (ie, the rows) provided.}
+\item{subset_data}{list if provided, only plots  the subset of data (ie, the
+rows) provided.}
 
-\item{simpleY}{boolean, if true, will minimize the annotation of the
-y axis to  only label the axis in the exterior plots (the x-axis
-is always assumed to be the same across all plots and will always
- be simplified)}
+\item{simpleY}{boolean, if true, will minimize the annotation of the y axis to
+only label the axis in the exterior plots (the x-axis is always assumed to
+be the same across all plots and will always be simplified)}
 
-\item{mar}{vector of margins to set the space around each plot
-(see \code{\link{par}})}
+\item{mar}{vector of margins to set the space around each plot (see
+\code{\link{par}})}
 
-\item{mfrow}{a vector of integers of length 2 defining the grid of
-plots to be created (see \code{\link{par}}). If missing, the
-function will set a value.}
+\item{mfrow}{a vector of integers of length 2 defining the grid of plots to be
+created (see \code{\link{par}}). If missing, the function will set a value.}
 
-\item{addToPlot}{A function that will be called after the plotting, allowing the user to add more to the plot.}
+\item{addToPlot}{A function that will be called after the plotting, allowing
+the user to add more to the plot.}
 
 \item{...}{arguments to be passed to the individual plot commands
 (Will be sent to all plot commands)}

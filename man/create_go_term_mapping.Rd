@@ -7,12 +7,19 @@
 create_go_term_mapping(genes, gene_col = "refseq_mrna")
 }
 \arguments{
-\item{genes}{dataframe, with `gene_col` and a column corresponding to the
-`go_id`}
+\item{genes}{dataframe, with two required columns. The first gives the RefSeq
+gene names, with column name by the argument \code{gene_col}. The other
+column must be named \code{go_id} and give the genes GO id.}
 
-\item{gene_col}{the column of the genes data frame that contains the
-correct gene reference. By default, is refseq_mrna}
+\item{gene_col}{the name of the column of the \code{genes} data frame that contains the
+correct gene reference. By default, is "refseq_mrna".}
+}
+\value{
+a list giving the gene to GO id in the format required by \code{\link[topGO]{topGOdata-class}}.
 }
 \description{
 Create the Gene to GO Term mapping
+}
+\seealso{
+\code{\link{find_enriched_go_terms}}, \code{\link[topGO]{topGOdata-class}}
 }
