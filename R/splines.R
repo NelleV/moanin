@@ -44,7 +44,7 @@ fit_splines = function(data, moanin_model, weights=NULL){
 #'  fitted_data = fit_predict_splines(data, moanin_model)
 #' @export
 fit_predict_splines = function(data, moanin_model, 
-                             meta_prediction=NULL){
+                               meta_prediction=NULL){
     basis = moanin_model$basis
     meta = moanin_model$meta
     # if(!is.null(weights)){
@@ -83,41 +83,53 @@ create_meta_prediction = function(moanin_model, num_timepoints=100){
     groups_pred = NULL
     meta = droplevels(moanin_model$meta)
     groups = levels(meta$Group) 
-    for(group in groups){
-	mask = meta$Group == group
-	time = meta$Timepoint[mask]
 
-	timepoints_pred = c(
-	    timepoints_pred,
-	    seq(min(time), max(time), length=100))
-	groups_pred = c(
-	    groups_pred,
-	    rep(group, 100))
+    # Check that the moanin model has the appropriate information to create a
+    # smooth prediction model.
+    if(is.null(moanin_model$formula) | is.null(moanin_model$degrees_of_freedom)){
+        msg = paste(
+            "Smooth prediction is not possible without the formula.",
+            "Will only predict on initial points")
+        warning(msg)
+        return(moanin_model$meta)
+    }
+
+
+    for(group in groups){
+    	mask = meta$Group == group
+	    time = meta$Timepoint[mask]
+
+    	timepoints_pred = c(
+	        timepoints_pred,
+	        seq(min(time), max(time), length=100))
+	    groups_pred = c(
+	        groups_pred,
+	        rep(group, 100))
     }
     meta_prediction = data.frame(
-	"Timepoint"=timepoints_pred,
-	"Replicates"=rep(1, length(timepoints_pred)),
-	"Group"=groups_pred)
+	    "Timepoint"=timepoints_pred,
+	    "Replicates"=rep(1, length(timepoints_pred)),
+	    "Group"=groups_pred)
     return(meta_prediction)
 }
 
 rescale_values = function(y, meta=NULL, group=NULL){
     if(is.null(group)){
-	ymin = row_min(y) 
-	y = y - ymin
-	ymax = row_max(y)
-	# We may have a division by 0 here
-	y = y / ymax
-    }else{
-	factors_to_consider = levels(unlist(meta[group]))
-	for(factor in factors_to_consider){
-	    mask = meta[group] == factor
-	    ymin = row_min(y[, mask]) 
-	    y[, mask] = y[, mask] - ymin
-	    ymax = row_max(y[, mask])
+	    ymin = row_min(y) 
+	    y = y - ymin
+	    ymax = row_max(y)
 	    # We may have a division by 0 here
-	    y[, mask] = y[, mask] / ymax
-	}
+	    y = y / ymax
+    }else{
+    	factors_to_consider = levels(unlist(meta[group]))
+	    for(factor in factors_to_consider){
+	        mask = meta[group] == factor
+            ymin = row_min(y[, mask]) 
+            y[, mask] = y[, mask] - ymin
+            ymax = row_max(y[, mask])
+            # We may have a division by 0 here
+            y[, mask] = y[, mask] / ymax
+        }
     }
     return(y)
 }
