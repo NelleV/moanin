@@ -114,16 +114,16 @@ splines_kmeans_prediction = function(data, kmeans_clusters){
 #'  When provided, will only label genes below that score. If NULL, ignore
 #'  this option.
 #' @param rescale_separately_on, string, optional, default: NULL
-#'  When provided, will rescale separately different groups of data.
-#'  @return A list consisting of
-#'  \itemize{
-#'  \item{\code{labels}}{the label or cluster assigned to each gene based on the
-#'  cluster with the best (i.e. lowest) score, with no label given to genes that
-#'  do not have a score lower than a specified quantity}
-#'  \item{\code{scores}}{the matrix of size n_cluster x n_genes, containing for 
-#'  each gene and each cluster, the goodness of fit score}
-#'  \item{\code{max_score}}{The required cutoff for a gene receiving an
-#'  assignment}
+#'	When provided, will rescale separately different groups of data.
+#'	@return A list consisting of
+#'	\itemize{
+#'	\item{\code{labels}}{the label or cluster assigned to each gene based on the
+#'	cluster with the best (i.e. lowest) score, with no label given to genes that
+#'	do not have a score lower than a specified quantity}
+#'	\item{\code{scores}}{the matrix of size n_cluster x n_genes, containing for 
+#'	each gene and each cluster, the goodness of fit score}
+#'	\item{\code{score_cutoff}}{The required cutoff for a gene receiving an
+#'	assignment}
 #'  }
 #' @export
 splines_kmeans_score_and_label = function(data, kmeans_clusters, percentage_genes_to_label=0.5,
@@ -174,9 +174,9 @@ splines_kmeans_score_and_label = function(data, kmeans_clusters, percentage_gene
     # Only assign labels to X% of the genes
     max_score_data = stats::quantile(scores, c(percentage_genes_to_label))
     if(!is.null(max_score)){
-        max_score = min(max_score_data, max_score)
+    	max_score = min(max_score_data, max_score)
     }else{
-        max_score = max_score_data
+	    max_score = max_score_data
     }
     genes_to_not_consider = scores >= max_score
     labels = apply(all_scores, 1, which.min)
@@ -192,5 +192,7 @@ splines_kmeans_score_and_label = function(data, kmeans_clusters, percentage_gene
         warning(msg)
     }
 
-    return(list("labels"=labels, "scores"=all_scores, "max_score"=max_score))
+    return(list("labels"=labels,
+                "scores"=all_scores,
+                "score_cutoff"=max_score))
 }
