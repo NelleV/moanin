@@ -157,15 +157,6 @@ more details.</p></td>
     <p>a matrix of the fitted y values, with dimensions the same as <code>data</code></p>
     
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'> <span class='co'># Load data and create moanin_model</span>
- <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>shoemaker2015</span>)
- <span class='no'>data</span> <span class='kw'>=</span> <span class='no'>shoemaker2015</span>$<span class='no'>data</span>
- <span class='no'>meta</span> <span class='kw'>=</span> <span class='no'>shoemaker2015</span>$<span class='no'>meta</span>
- <span class='no'>moanin_model</span> <span class='kw'>=</span> <span class='fu'><a href='create_moanin_model.html'>create_moanin_model</a></span>(<span class='no'>meta</span>, <span class='kw'>degrees_of_freedom</span><span class='kw'>=</span><span class='fl'>6</span>)
-
- <span class='co'># Fit the splines model and returned fitted values</span>
- <span class='no'>fitted_data</span> <span class='kw'>=</span> <span class='fu'>fit_predict_splines</span>(<span class='no'>data</span>, <span class='no'>moanin_model</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
