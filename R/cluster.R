@@ -26,12 +26,12 @@ library(splines)
 #'} 
 #' @export
 splines_kmeans = function(data, moanin_model, n_clusters=10,
-              init="kmeans++",
-              n_init=10,
-              max_iter=300,
-              random_seed=NULL,
-              fit_splines=TRUE,
-              rescale=TRUE){
+                          init="kmeans++",
+                          n_init=10, 
+                          max_iter=300, 
+                          random_seed=NULL,
+                          fit_splines=TRUE,
+                          rescale=TRUE){
     meta = moanin_model$meta
     basis = moanin_model$basis
     check_data_meta(data, meta)
@@ -39,7 +39,7 @@ splines_kmeans = function(data, moanin_model, n_clusters=10,
     if(fit_splines){
         fitted_data = fit_predict_splines(data, moanin_model)
     }else{
-    fitted_data = data
+        fitted_data = data
     }
 
     if(rescale){
@@ -48,14 +48,14 @@ splines_kmeans = function(data, moanin_model, n_clusters=10,
 
     # Set the random seed if it is null.
     if(is.null(random_seed)){
-    set.seed(NULL)
-    random_seed = .Random.seed[1]
+        set.seed(NULL)
+        random_seed = .Random.seed[1]
     }
     kmeans_clusters = ClusterR::KMeans_rcpp(
-    fitted_data, n_clusters, num_init=n_init, max_iters=max_iter,
-    seed=random_seed, initializer=init)
+        fitted_data, n_clusters, num_init=n_init, max_iters=max_iter,
+        seed=random_seed, initializer=init)
     kmeans_clusters$centroids = rescale_values(
-    kmeans_clusters$centroids, moanin_model)
+        kmeans_clusters$centroids, moanin_model)
     names(kmeans_clusters$clusters) = row.names(data)
 
     # Give names to clusters
@@ -82,7 +82,7 @@ splines_kmeans_prediction = function(data, kmeans_clusters){
     if(fit_splines){
         fitted_data = fit_predict_splines(data, moanin_model)
     }else{
-    fitted_data = data
+        fitted_data = data
     }
 
     if(rescale){
@@ -90,9 +90,9 @@ splines_kmeans_prediction = function(data, kmeans_clusters){
     }
 
     closest_cluster <- function(x) {
-    cluster_dist <- apply(
-        kmeans_clusters$centroids, 1, function(y){sqrt(sum((x-y)^2))})
-    return(which.min(cluster_dist)[1])
+        cluster_dist <- apply(
+            kmeans_clusters$centroids, 1, function(y){sqrt(sum((x-y)^2))})
+        return(which.min(cluster_dist)[1])
     }
 
     all_labels <- apply(fitted_data, 1, closest_cluster) 
@@ -127,10 +127,10 @@ splines_kmeans_prediction = function(data, kmeans_clusters){
 #'  }
 #' @export
 splines_kmeans_score_and_label = function(data, kmeans_clusters, percentage_genes_to_label=0.5,
-                      max_score=NULL,
-                      rescale_separately_on=NULL){
+                                          max_score=NULL, rescale_separately_on=NULL){
 
     meta = kmeans_clusters$moanin_model$meta
+
     n_clusters = dim(kmeans_clusters$centroids)[1]
     all_scores = matrix(NA, nrow=dim(data)[1], ncol=n_clusters)
 
