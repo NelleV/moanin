@@ -52,6 +52,7 @@ create_splines_model = function(meta, formula=NULL, basis=NULL,
 #'
 #' # Use the default options
 #' moanin = create_moanin_model(meta)
+#' print(moanin)
 #' print(dim(moanin$basis))
 #'
 #' # Change the number of degrees of freedom

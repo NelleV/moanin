@@ -56,6 +56,7 @@ meta = shoemaker2015$meta
 
 # Use the default options
 moanin = create_moanin_model(meta)
+print(moanin)
 print(dim(moanin$basis))
 
 # Change the number of degrees of freedom
