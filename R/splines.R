@@ -33,16 +33,7 @@ fit_splines = function(data, moanin_model, weights=NULL){
 #'
 #' @return a matrix of the fitted y values, with dimensions the same as \code{data}
 #'
-#' @examples
-#'  # Load data and create moanin_model
-#'  data(shoemaker2015)
-#'  data = shoemaker2015$data
-#'  meta = shoemaker2015$meta
-#'  moanin_model = create_moanin_model(meta, degrees_of_freedom=6)
-#'  
-#'  # Fit the splines model and returned fitted values
-#'  fitted_data = fit_predict_splines(data, moanin_model)
-#' @export
+#' @keywords internal
 fit_predict_splines = function(data, moanin_model, 
                              meta_prediction=NULL){
     basis = moanin_model$basis

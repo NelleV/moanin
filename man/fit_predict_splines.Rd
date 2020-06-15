@@ -23,13 +23,4 @@ a matrix of the fitted y values, with dimensions the same as \code{data}
 \description{
 Get fitted values for splines
 }
-\examples{
- # Load data and create moanin_model
- data(shoemaker2015)
- data = shoemaker2015$data
- meta = shoemaker2015$meta
- moanin_model = create_moanin_model(meta, degrees_of_freedom=6)
- 
- # Fit the splines model and returned fitted values
- fitted_data = fit_predict_splines(data, moanin_model)
-}
+\keyword{internal}
