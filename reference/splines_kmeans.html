@@ -178,20 +178,16 @@ Whether to fit splines or not.</p></td>
     <tr>
       <th>rescale</th>
       <td><p>boolean, optional, default: TRUE
-Whether to rescale the data or not.</p></td>
-    </tr>
-    </table>
-    
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>A list in the format returned by <code><a href='https://rdrr.io/pkg/ClusterR/man/KMeans_rcpp.html'>KMeans_rcpp</a></code>,
-  with the following elements added or changed:</p><ul>
+ Whether to rescale the data or not.
+ @return A list in the format returned by <code><a href='https://rdrr.io/pkg/ClusterR/man/KMeans_rcpp.html'>KMeans_rcpp</a></code>,
+   with the following elements added or changed:</p><ul>
 <li><p><code>centroids</code>The centroids are rescaled so that they range from 0-1</p></li>
 <li><p><code>moanin_model</code>The given moanin_model</p></li>
 <li><p><code>fit_splines</code>The value of <code>fit_splines</code> given to the function</p></li>
 <li><p><code>rescale</code>The value of <code>rescale</code> given to the function</p></li>
-</ul>
-
+</ul></td>
+    </tr>
+    </table>
     
 
   </div>

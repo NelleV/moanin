@@ -162,13 +162,8 @@ this option.</p></td>
     <tr>
       <th>rescale_separately_on, </th>
       <td><p>string, optional, default: NULL
-When provided, will rescale separately different groups of data.</p></td>
-    </tr>
-    </table>
-    
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>A list consisting of</p><ul>
+When provided, will rescale separately different groups of data.
+@return A list consisting of</p><ul>
 <li><p><code>labels</code>the label or cluster assigned to each gene based on the
 cluster with the best (i.e. lowest) score, with no label given to genes that
 do not have a score lower than a specified quantity</p></li>
@@ -176,8 +171,9 @@ do not have a score lower than a specified quantity</p></li>
 each gene and each cluster, the goodness of fit score</p></li>
 <li><p><code>max_score</code>The required cutoff for a gene receiving an
 assignment</p></li>
-</ul>
-
+</ul></td>
+    </tr>
+    </table>
     
 
   </div>
