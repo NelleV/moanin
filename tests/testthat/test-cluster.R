@@ -26,8 +26,8 @@ test_that("cluster::splines_kmeans_score_and_label", {
     data = data[1:500, ]
     moanin_model = create_moanin_model(meta)
     clustering_results = moanin::splines_kmeans(
-	data, moanin_model, n_init=1,
-	random_seed=random_seed)
+	    data, moanin_model, n_init=1,
+	    random_seed=random_seed)
 
     expect_silent(splines_kmeans_score_and_label(data, clustering_results))
     scores_and_labels = splines_kmeans_score_and_label(data, clustering_results)
@@ -40,5 +40,13 @@ test_that("cluster::splines_kmeans_score_and_label", {
     labels = scores_and_labels$labels
     scores = rowMin(scores_and_labels$scores[!is.na(labels), ])
     expect_true(max(scores) <= max_score)
+
+    # Now, just do a ghost test with the rescale_separately_on
+
+    expect_silent(
+        splines_kmeans_score_and_label(
+            data,
+            clustering_results, rescale_separately_on="Group"))
+
 })
 
