@@ -104,6 +104,26 @@ create_meta_prediction = function(moanin_model, num_timepoints=100){
     return(meta_prediction)
 }
 
+
+#' Rescales centroids and gene expresion values
+#'
+#' @param y 
+#'      The matrix to rescale. Each row should correspond to a gene or a
+#'      centroid and columns to samples.
+#' @param meta, optional
+#'      Metadata data.frame.
+#' @param group, optional, default: NULL
+#'      A column name of the metadata data.frame. The corresponding column
+#'      should be factors. If provided, the values of y will be rescaled such
+#'      that, for each row, all values associated to group A, … of column
+#'      "group" of the metadata is between 0 and 1. For example, if column
+#'      "group" corresponds to a genotype, all the values of a gene for a
+#'      specific genotype will be rescaled between 0 and 1.
+#' @return rescaled y, such that for each row, the values are comprised
+#'      between 0 and 1. Note that if "group" is provided, the values
+#'      associated to the columns of unique values of "group" will be rescaled
+#'      separately.
+#' @export
 rescale_values = function(y, meta=NULL, group=NULL){
     if(is.null(group)){
 	    ymin = row_min(y) 
@@ -112,6 +132,12 @@ rescale_values = function(y, meta=NULL, group=NULL){
 	    # We may have a division by 0 here
 	    y = y / ymax
     }else{
+        if(is.null(meta)){
+            msg = paste(
+                "moanin::rescale_values if group is provided, then a metadata",
+                "data.frame should be provided as well.")
+            stop(msg)
+        }
     	factors_to_consider = levels(unlist(meta[group]))
 	    for(factor in factors_to_consider){
 	        mask = meta[group] == factor
