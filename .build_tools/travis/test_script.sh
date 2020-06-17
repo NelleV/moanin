@@ -10,7 +10,8 @@ set -e
 
 
 run_tests() {
-    # first run the actual tests
+    # This runs simple "normal" + bioconductor checks on the package
+    make check
     make test
     make doc
 }
