@@ -54,6 +54,9 @@ The package comes with a couple of datasets:
 ## Time-course data of mice lung samples exposed to different influenza strains
 
 ```{r}
+library(dplyr)
+library(knitr)
+library(kableExtra)
 library(moanin)
 data(shoemaker2015)
 
