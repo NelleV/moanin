@@ -94,10 +94,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/0_installation.html">Installation</a>
-    </li>
-    <li>
-      <a href="../articles/1_datasets.html">Datasets</a>
+      <a href="../articles/documentation.html">Installation</a>
     </li>
   </ul>
 </li>
@@ -162,18 +159,22 @@ this option.</p></td>
     <tr>
       <th>rescale_separately_on, </th>
       <td><p>string, optional, default: NULL
-When provided, will rescale separately different groups of data.
-@return A list consisting of</p><ul>
+When provided, will rescale separately different groups of data.</p></td>
+    </tr>
+    </table>
+    
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>A list consisting of</p><ul>
 <li><p><code>labels</code>the label or cluster assigned to each gene based on the
 cluster with the best (i.e. lowest) score, with no label given to genes that
 do not have a score lower than a specified quantity</p></li>
 <li><p><code>scores</code>the matrix of size n_cluster x n_genes, containing for 
 each gene and each cluster, the goodness of fit score</p></li>
-<li><p><code>max_score</code>The required cutoff for a gene receiving an
+<li><p><code>score_cutoff</code>The required cutoff for a gene receiving an
 assignment</p></li>
-</ul></td>
-    </tr>
-    </table>
+</ul>
+
     
 
   </div>
