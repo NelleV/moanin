@@ -1,4 +1,5 @@
 library("moanin")
+library(timecoursedata)
 
 context("moanin::moanin_model.R")
 
