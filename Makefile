@@ -14,7 +14,6 @@ install-extra:
 
 check:
 	$(RSCRIPT) .scripts/check_package.R
-	R CMD BiocCheck
 
 doc-doxygen:
 	$(RSCRIPT) .scripts/build_documentation.R
