@@ -58,6 +58,7 @@ library(dplyr)
 library(knitr)
 library(kableExtra)
 library(moanin)
+library(timecoursedata)
 data(shoemaker2015)
 
 data = shoemaker2015$data

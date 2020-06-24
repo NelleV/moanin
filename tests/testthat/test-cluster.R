@@ -1,4 +1,5 @@
 library(moanin)
+library(timecoursedata)
 library(testthat)
 
 

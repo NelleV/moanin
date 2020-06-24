@@ -1,5 +1,6 @@
 library(moanin)
 library(limma)
+library(timecoursedata)
 
 context("moanin::de_analysis.R")
 
