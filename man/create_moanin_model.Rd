@@ -51,6 +51,7 @@ If neither \code{formula} nor \code{basis} is given, then by default,
 }
 \examples{
 # Load some data
+library(timecoursedata)
 data(shoemaker2015)
 meta = shoemaker2015$meta
 

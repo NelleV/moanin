@@ -47,6 +47,7 @@ create_splines_model = function(meta, formula=NULL, basis=NULL,
 #'} 
 #' @examples
 #' # Load some data
+#' library(timecoursedata)
 #' data(shoemaker2015)
 #' meta = shoemaker2015$meta
 #'
