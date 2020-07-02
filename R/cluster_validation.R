@@ -1,8 +1,3 @@
-library(reshape2)
-library(zoo)
-library(NMI)
-
-
 #'Compute consensus matrix from labels
 #'
 #'@param labels a matrix with each column corresponding to a the results of a

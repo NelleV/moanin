@@ -19,7 +19,8 @@ Imports: MASS (>= 1.0.0),
 	 zoo,
 	 topGO,
 	 timecoursedata,
-	 ClusterR
+	 ClusterR,
+     splines
 Suggests: testthat (>= 1.0.0),
 	  knitr,
 	  rmarkdown,

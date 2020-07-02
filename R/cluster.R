@@ -1,6 +1,3 @@
-library(ClusterR)
-library(stats)
-library(splines)
 
 #' Performs splines clustering using K-means
 #'
