@@ -82,6 +82,7 @@ DE_timepoints = function(data, moanin_model,
 #'   contrast to be compared.
 #' @seealso \code{\link{DE_timepoints}},  \code{\link[limma]{makeContrasts}}
 #' @examples
+#' library(timecoursedata)
 #' data(shoemaker2015)
 #' meta = shoemaker2015$meta
 #' moanin_model = moanin::create_moanin_model(meta)

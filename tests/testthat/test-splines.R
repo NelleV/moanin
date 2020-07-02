@@ -1,4 +1,5 @@
 library("moanin")
+library("timecoursedata")
 
 context("moanin::splines.R")
 
@@ -68,4 +69,19 @@ test_that("splines:rescale_values", {
     rescaled_data = rescale_values(data, meta)
     expect_equal(rep(0, n_genes), as.vector(row_min(rescaled_data)))
     expect_equal(rep(1, n_genes), as.vector(row_max(rescaled_data)))
+})
+
+
+test_that("splines::create_meta_prediction", {
+    data(shoemaker2015) 
+    meta = shoemaker2015$meta
+    data = shoemaker2015$data[1:5, ]
+
+    moanin_model = create_moanin_model(meta)
+    expect_silent(create_meta_prediction(moanin_model))
+
+    basis = moanin_model$basis
+    # Recreate moanin model without providing the formula
+    moanin_model = create_moanin_model(meta, basis=basis)
+    expect_warning(create_meta_prediction(moanin_model))
 })

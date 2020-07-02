@@ -1,0 +1,82 @@
+---
+title: "Installation"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::knitr}
+    %\VignetteIndexEntry{Installation}
+      %\usepackage[UTF-8]{inputenc}
+---
+
+The package moanin was developped to provide a simple and efficient workflow
+for time-course gene expression data. It depends on packages from [bioconductor](https://www.bioconductor.org/)
+and [CRAN](https://cran.r-project.org/).
+
+- CRAN packages:
+
+    - MASS (>= 1.0.0)
+    - viridis
+    - ClusterR
+    - zoo
+
+- Bioconductor packages:
+
+    - edge (>= 2.4.0)
+    - limma
+    - edgeR
+    - reshape2
+    - NMI
+    - topGO
+
+To use this package, install it with
+
+```{r eval=FALSE}
+# install devtools
+install.packages("devtools")
+# use devtools to install moanin
+devtools::install_github("NelleV/moanin")
+```
+
+Next, load the package into your namespace:
+
+```{r}
+library(moanin)
+```
+
+And you are ready to go!
+
+
+# Datasets
+
+The package comes with a couple of datasets:
+
+    - shoemaker2015
+
+## Time-course data of mice lung samples exposed to different influenza strains
+
+```{r}
+library(dplyr)
+library(knitr)
+library(kableExtra)
+library(moanin)
+library(timecoursedata)
+data(shoemaker2015)
+
+data = shoemaker2015$data
+meta = shoemaker2015$meta
+```
+
+Here's the firt 10 lines of the data named `matrix`:
+
+```{r echo=FALSE}
+data = data[1:10, ]
+meta = meta[1:10, ]
+kable(data) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+```
+
+and the first 10 lines of the metadata `data.frame`.
+```{r echo=FALSE}
+kable(meta) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+```
+

@@ -18,6 +18,7 @@ Imports: MASS (>= 1.0.0),
 	 NMI,
 	 zoo,
 	 topGO,
+	 timecoursedata,
 	 ClusterR
 Suggests: testthat (>= 1.0.0),
 	  knitr,

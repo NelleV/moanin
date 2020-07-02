@@ -4,21 +4,28 @@
 \alias{create_moanin_model}
 \title{Create a moanin model}
 \usage{
-create_moanin_model(meta, formula = NULL, basis = NULL, degrees_of_freedom = 4)
+create_moanin_model(
+  meta,
+  formula = NULL,
+  basis = NULL,
+  degrees_of_freedom = NULL
+)
 }
 \arguments{
 \item{meta}{\code{data.frame} containing the metadata in columns, and rows
 corresponding to different samples. Metadata needs to contain the columns
 "Group" and "Timepoint".}
 
-\item{formula}{formula object, optional, default: NUlL. Used to construct splines from the data in \code{meta}. See details.}
+\item{formula}{formula object, optional, default: NUlL. Used to construct
+splines from the data in \code{meta}. See details.}
 
 \item{basis}{matrix, optional, default: NULL. A basis matrix, where each row
 corresponds to the evaluation of a sample on the basis function (thus one
 column for each basis function).}
 
-\item{degrees_of_freedom}{int, optional, default: 4. Number of degrees of
-freedom to use if neither the basis nor the formula is provided}
+\item{degrees_of_freedom}{int, optional. Number of degrees of freedom to use
+if neither the basis nor the formula is provided. If not provided by the
+user, internally will be set to 4}
 }
 \value{
 An object of class \code{moanin_model}; a list with the following elements:
@@ -27,7 +34,8 @@ An object of class \code{moanin_model}; a list with the following elements:
  corresponds to the evaluation of a sample on the basis function (thus one
  column for each basis function). }
 \item{\code{meta}}{The data frame provided by user to \code{meta}}
-\item{\code{degrees_of_freedom}}{The degrees of freedom provided by the user}
+\item{\code{degrees_of_freedom}}{The degrees of freedom provided by the user 
+(or set by the function internally)}
 \item{\code{formula}}{The formula used to construct the basis matrix 
 (unless basis matrix is provided by the user).}
 }
@@ -43,6 +51,7 @@ If neither \code{formula} nor \code{basis} is given, then by default,
 }
 \examples{
 # Load some data
+library(timecoursedata)
 data(shoemaker2015)
 meta = shoemaker2015$meta
 

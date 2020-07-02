@@ -33,18 +33,9 @@ fit_splines = function(data, moanin_model, weights=NULL){
 #'
 #' @return a matrix of the fitted y values, with dimensions the same as \code{data}
 #'
-#' @examples
-#'  # Load data and create moanin_model
-#'  data(shoemaker2015)
-#'  data = shoemaker2015$data
-#'  meta = shoemaker2015$meta
-#'  moanin_model = create_moanin_model(meta, degrees_of_freedom=6)
-#'  
-#'  # Fit the splines model and returned fitted values
-#'  fitted_data = fit_predict_splines(data, moanin_model)
-#' @export
+#' @keywords internal
 fit_predict_splines = function(data, moanin_model, 
-                             meta_prediction=NULL){
+                               meta_prediction=NULL){
     basis = moanin_model$basis
     meta = moanin_model$meta
     # if(!is.null(weights)){
@@ -83,35 +74,73 @@ create_meta_prediction = function(moanin_model, num_timepoints=100){
     groups_pred = NULL
     meta = droplevels(moanin_model$meta)
     groups = levels(meta$Group) 
-    for(group in groups){
-	mask = meta$Group == group
-	time = meta$Timepoint[mask]
 
-	timepoints_pred = c(
-	    timepoints_pred,
-	    seq(min(time), max(time), length=100))
-	groups_pred = c(
-	    groups_pred,
-	    rep(group, 100))
+    # Check that the moanin model has the appropriate information to create a
+    # smooth prediction model.
+    if(is.null(moanin_model$formula) | is.null(moanin_model$degrees_of_freedom)){
+        msg = paste(
+            "Smooth prediction is not possible without the formula.",
+            "Will only predict on initial points")
+        warning(msg)
+        return(moanin_model$meta)
+    }
+
+
+    for(group in groups){
+    	mask = meta$Group == group
+	    time = meta$Timepoint[mask]
+
+    	timepoints_pred = c(
+	        timepoints_pred,
+	        seq(min(time), max(time), length=100))
+	    groups_pred = c(
+	        groups_pred,
+	        rep(group, 100))
     }
     meta_prediction = data.frame(
-	"Timepoint"=timepoints_pred,
-	"Replicates"=rep(1, length(timepoints_pred)),
-	"Group"=groups_pred)
+	    "Timepoint"=timepoints_pred,
+	    "Replicates"=rep(1, length(timepoints_pred)),
+	    "Group"=groups_pred)
     return(meta_prediction)
 }
 
+
+#' Rescales centroids and gene expresion values
+#'
+#' @param y 
+#'      The matrix to rescale. Each row should correspond to a gene or a
+#'      centroid and columns to samples.
+#' @param meta, optional
+#'      Metadata data.frame.
+#' @param group, optional, default: NULL
+#'      A column name of the metadata data.frame. The corresponding column
+#'      should be factors. If provided, the values of y will be rescaled such
+#'      that, for each row, all values associated to group A, … of column
+#'      "group" of the metadata is between 0 and 1. For example, if column
+#'      "group" corresponds to a genotype, all the values of a gene for a
+#'      specific genotype will be rescaled between 0 and 1.
+#' @return rescaled y, such that for each row, the values are comprised
+#'      between 0 and 1. Note that if "group" is provided, the values
+#'      associated to the columns of unique values of "group" will be rescaled
+#'      separately.
+#' @export
 rescale_values = function(y, meta=NULL, group=NULL){
     if(is.null(group)){
-        ymin = row_min(y) 
-        y = y - ymin
-        ymax = row_max(y)
-        # We may have a division by 0 here
-        y = y / ymax
+	    ymin = row_min(y) 
+	    y = y - ymin
+	    ymax = row_max(y)
+	    # We may have a division by 0 here
+	    y = y / ymax
     }else{
-        factors_to_consider = levels(unlist(meta[group]))
-        for(factor in factors_to_consider){
-            mask = meta[group] == factor
+        if(is.null(meta)){
+            msg = paste(
+                "moanin::rescale_values if group is provided, then a metadata",
+                "data.frame should be provided as well.")
+            stop(msg)
+        }
+    	factors_to_consider = levels(unlist(meta[group]))
+	    for(factor in factors_to_consider){
+	        mask = meta[group] == factor
             ymin = row_min(y[, mask]) 
             y[, mask] = y[, mask] - ymin
             ymax = row_max(y[, mask])

@@ -33,6 +33,7 @@ This function creates contrasts comparing two groups for every
   \code{moanin_object} provided by the user.
 }
 \examples{
+library(timecoursedata)
 data(shoemaker2015)
 meta = shoemaker2015$meta
 moanin_model = moanin::create_moanin_model(meta)
