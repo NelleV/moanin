@@ -10,14 +10,15 @@ set -e
 
 
 run_tests() {
-    # first run the actual tests
+    # This runs simple "normal" + bioconductor checks on the package
+    # make check
     make test
     make doc
 }
 
 # Start by installing
-make install
 make install-extra
+make install
 
 # Now get data and run the tests and build the manuscript
 run_tests

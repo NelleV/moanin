@@ -8,7 +8,7 @@ library(NMI)
 #'@param labels a matrix with each column corresponding to a the results of a
 #'  single clustering routine. Each column should give the cluster assignment
 #'  FIXME: What is the required format of entries??
-#'@param scale	boolean, optional, default: TRUE. Whether to rescale the resulting
+#'@param scale  boolean, optional, default: TRUE. Whether to rescale the resulting
 #'  consensus matrix so that entries correspond to proportions.
 #'@return a symmetric matrix of size NxN, where N is the number of rows of the
 #'  input matrix \code{labels}. Each i,j entry of the matrix corresponds the
@@ -64,23 +64,23 @@ plot_cdf_consensus = function(labels){
 
     cdfList<-list()
     for(i in 1:length(n_clusters)){
-    	cluster = n_clusters[i]
-    	color = colors[i]
+        cluster = n_clusters[i]
+        color = colors[i]
 
-    	labels = all_labels[[cluster]]
-    	consensus = consensus_matrix(labels, scale=FALSE)
-    	consensus = consensus / max(consensus)
-    	consensus = sort(consensus[upper.tri(consensus)])
-    	x_axis = 1:length(consensus) / length(consensus)
+        labels = all_labels[[cluster]]
+        consensus = consensus_matrix(labels, scale=FALSE)
+        consensus = consensus / max(consensus)
+        consensus = sort(consensus[upper.tri(consensus)])
+        x_axis = 1:length(consensus) / length(consensus)
         cdfList<-c(cdfList,list(consensus))
-    	graphics::lines(consensus, x_axis, type="b",
-    			pch=16,
-    			col=color,
-    			lwd=1)
+        graphics::lines(consensus, x_axis, type="b",
+                pch=16,
+                col=color,
+                lwd=1)
     }
 
     graphics::legend("bottomright", legend=n_clusters,
-	    lty=rep(1, length(n_clusters)),
+        lty=rep(1, length(n_clusters)),
         pch=rep(16, length(n_clusters)),
         col=colors,
         title="Clusters", text.font=4)
@@ -100,20 +100,20 @@ get_auc_similarity_scores = function(labels, method=c("consensus", "nmi")){
 
     auc_scores = rep(0, length(n_clusters))
     for(i in 1:length(n_clusters)){
-	cluster = n_clusters[i]
-	labels = all_labels[[cluster]]
-	if(method == "consensus"){
-	    consensus = consensus_matrix(labels, scale=FALSE)
-	    consensus = consensus / max(consensus)
-	    scores = consensus[upper.tri(consensus)]
-	}else if(method == "nmi"){
-	    scores = get_nmi_scores(labels) 
-	}
-	scores = sort(scores)
-	y_axis = 1:length(scores) / length(scores)
-	auc_score = sum(diff(scores) * zoo::rollmean(y_axis, 2))
-	
-	auc_scores[i] = auc_score
+    cluster = n_clusters[i]
+    labels = all_labels[[cluster]]
+    if(method == "consensus"){
+        consensus = consensus_matrix(labels, scale=FALSE)
+        consensus = consensus / max(consensus)
+        scores = consensus[upper.tri(consensus)]
+    }else if(method == "nmi"){
+        scores = get_nmi_scores(labels) 
+    }
+    scores = sort(scores)
+    y_axis = 1:length(scores) / length(scores)
+    auc_score = sum(diff(scores) * zoo::rollmean(y_axis, 2))
+    
+    auc_scores[i] = auc_score
     }
     return(auc_scores)
 }
@@ -122,30 +122,30 @@ get_auc_similarity_scores = function(labels, method=c("consensus", "nmi")){
 get_nmi_scores = function(labels){
 
     nmi = function(x, y){
-    	x_dataframe = as.data.frame(x)
-    	colnames(x_dataframe) = c("Label")
-    	x_dataframe$Gene = row.names(x_dataframe)
-    	x_dataframe = x_dataframe[c("Gene", "Label")]
+        x_dataframe = as.data.frame(x)
+        colnames(x_dataframe) = c("Label")
+        x_dataframe$Gene = row.names(x_dataframe)
+        x_dataframe = x_dataframe[c("Gene", "Label")]
 
-    	y_dataframe = as.data.frame(y)
-    	colnames(y_dataframe) = c("Label")
-    	y_dataframe$Gene = row.names(y_dataframe)
-    	y_dataframe = y_dataframe[c("Gene", "Label")]
+        y_dataframe = as.data.frame(y)
+        colnames(y_dataframe) = c("Label")
+        y_dataframe$Gene = row.names(y_dataframe)
+        y_dataframe = y_dataframe[c("Gene", "Label")]
 
-    	return(NMI::NMI(x_dataframe, y_dataframe))
+        return(NMI::NMI(x_dataframe, y_dataframe))
     }
 
     n_trials = dim(labels)[2]
     scores = NULL
     for(trial in 1:n_trials){
-	if(trial == n_trials){
-	    break
-	}
-	column = colnames(labels)[trial]
-	columns_to_consider = colnames(labels)[(trial+1):n_trials]
-	label = labels[column]
-	scores = c(scores, as.vector(
-	    unlist(apply(labels[columns_to_consider], 2, function(x){nmi(x, label)}))))
+    if(trial == n_trials){
+        break
+    }
+    column = colnames(labels)[trial]
+    columns_to_consider = colnames(labels)[(trial+1):n_trials]
+    label = labels[column]
+    scores = c(scores, as.vector(
+        unlist(apply(labels[columns_to_consider], 2, function(x){nmi(x, label)}))))
     }
     return(scores)
 }
@@ -165,16 +165,16 @@ plot_model_explorer = function(labels){
     min_score = 1
     max_score = 0
     for(i in 1:length(n_clusters)){
-	n_cluster = n_clusters[i]
-	color = colors[i]
+        n_cluster = n_clusters[i]
+        color = colors[i]
 
-	labels = all_labels[[n_cluster]]
-	scores = get_nmi_scores(labels)
+        labels = all_labels[[n_cluster]]
+        scores = get_nmi_scores(labels)
 
-	nmi_scores[[n_cluster]] = sort(scores)
-	max_trial = max(max_trial, length(scores))
-	min_score = min(min_score, min(scores))
-	max_score = max(max_score, max(scores))
+        nmi_scores[[n_cluster]] = sort(scores)
+        max_trial = max(max_trial, length(scores))
+        min_score = min(min_score, min(scores))
+        max_score = max(max_score, max(scores))
      }
 
     xrange = c(min_score, max_score)
@@ -182,13 +182,13 @@ plot_model_explorer = function(labels){
 
     graphics::plot(xrange, yrange, type="n", xlab="NMI", ylab="")
 
-     for(i in 1:length(n_clusters)){
-	color = colors[i]
-	scores = nmi_scores[[i]]
-	graphics::lines(sort(scores), 1:length(scores), type="b",
-			pch=16,
-			col=color,
-			lwd=1)
+    for(i in 1:length(n_clusters)){
+        color = colors[i]
+        scores = nmi_scores[[i]]
+        graphics::lines(sort(scores), 1:length(scores), type="b",
+            pch=16,
+            col=color,
+            lwd=1)
 
     }
 

@@ -47,6 +47,7 @@ create_splines_model = function(meta, formula=NULL, basis=NULL,
 #'} 
 #' @examples
 #' # Load some data
+#' library(timecoursedata)
 #' data(shoemaker2015)
 #' meta = shoemaker2015$meta
 #'
@@ -71,7 +72,9 @@ create_moanin_model = function(meta, formula=NULL, basis=NULL,
     
     if(is.null(basis)){
         if(is.null(formula)){
-            if(is.null(degrees_of_freedom)) degrees_of_freedom=4
+            if(is.null(degrees_of_freedom)){
+                degrees_of_freedom = 4
+            }
             formula = (
                 ~Group + Group:splines::ns(Timepoint, df=degrees_of_freedom) + 0)
         }

@@ -39,7 +39,7 @@ cluster with the best (i.e. lowest) score, with no label given to genes that
 do not have a score lower than a specified quantity}
 \item{\code{scores}}{the matrix of size n_cluster x n_genes, containing for 
 each gene and each cluster, the goodness of fit score}
-\item{\code{max_score}}{The required cutoff for a gene receiving an
+\item{\code{score_cutoff}}{The required cutoff for a gene receiving an
 assignment}
  }
 }
