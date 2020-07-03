@@ -1,6 +1,3 @@
-library(ClusterR)
-library(stats)
-library(splines)
 
 #' Performs splines clustering using K-means
 #'
@@ -24,6 +21,11 @@ library(splines)
 #'\item{\code{fit_splines}}{The value of \code{fit_splines} given to the function }
 #'\item{\code{rescale}}{The value of \code{rescale} given to the function }
 #'} 
+#' @examples 
+#' data(exampleData)
+#' # Use the default options
+#' moanin = create_moanin_model(testMeta)
+#' splines_kmeans(testData, moanin)
 #' @export
 splines_kmeans = function(data, moanin_model, n_clusters=10,
                           init="kmeans++",
