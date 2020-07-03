@@ -2,12 +2,13 @@
 #' Fit weekly differential expression analysis
 #'
 #' @inheritParams DE_timecourse
-#' @return A \code{data.frame} with two columns for each of the contrasts given
-#'   in \code{contrasts}, corresponding to the raw p-value of the contrast for
-#'   that gene (\code{_pval}) and the adjusted p-value (\code{_qval}). The
-#'   adjusted p-values are FDR-adjusted based on the Benjamini-Hochberg method,
-#'   as implemented in \code{\link[stats]{p.adjust}}. The adjustment is done
-#'   across all p-values for all contrasts calculated.
+#' @return A \code{data.frame} with three columns for each of the contrasts
+#'   given in \code{contrasts}, corresponding to the raw p-value of the contrast
+#'   for that gene (\code{_pval}), the adjusted p-value (\code{_qval}), and the
+#'   estimate of log-fold-change (\code{_lfc}). The adjusted p-values are
+#'   FDR-adjusted based on the Benjamini-Hochberg method, as implemented in
+#'   \code{\link[stats]{p.adjust}}. The adjustment is done across all p-values
+#'   for all contrasts calculated.
 #' @export
 DE_timepoints = function(data, moanin_model,
 			 contrasts,

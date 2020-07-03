@@ -1,8 +1,3 @@
-library(reshape2)
-library(zoo)
-library(NMI)
-
-
 #'Compute consensus matrix from labels
 #'
 #'@param labels a matrix with each column corresponding to a the results of a
@@ -158,7 +153,7 @@ get_nmi_scores = function(labels){
 plot_model_explorer = function(labels){
     all_labels = labels
     n_clusters = names(all_labels)
-
+    
     nmi_scores = list()
     colors = grDevices::rainbow(length(n_clusters))
     max_trial = 0
@@ -176,10 +171,9 @@ plot_model_explorer = function(labels){
         min_score = min(min_score, min(scores))
         max_score = max(max_score, max(scores))
      }
-
     xrange = c(min_score, max_score)
     yrange = c(1, max_trial)
-
+    
     graphics::plot(xrange, yrange, type="n", xlab="NMI", ylab="")
 
     for(i in 1:length(n_clusters)){
@@ -189,13 +183,12 @@ plot_model_explorer = function(labels){
             pch=16,
             col=color,
             lwd=1)
-
     }
-
+    
     graphics::legend(min_score, length(scores)*0.9, legend=n_clusters,
-       lty=rep(1, length(scores)),
-       pch=rep(16, length(scores)),
-       col=colors, 
-       title="Clusters", text.font=4)
+                     lty=rep(1, length(scores)),
+                     pch=rep(16, length(scores)),
+                     col=colors, 
+                     title="Clusterings", text.font=4)
 }
 

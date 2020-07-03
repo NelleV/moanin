@@ -3,7 +3,7 @@ Title: An awesome R package for time course RNASeq data analysis
 Version: 0.0.0
 Author: Nelle Varoquaux <nelle.varoquaux@gmail.com>
 Maintainer: Nelle Varoquaux <nelle.varoquaux@gmail.com>
-Description: Simple and efficient workflow for time-course gene expression data
+Description: Simple and efficient workflow for time-course gene expression data.
 Depends: R (>= 3.5)
 Imports: MASS (>= 1.0.0),
 	 edge (>= 2.4.0),
@@ -19,7 +19,8 @@ Imports: MASS (>= 1.0.0),
 	 zoo,
 	 topGO,
 	 timecoursedata,
-	 ClusterR
+	 ClusterR,
+     splines
 Suggests: testthat (>= 1.0.0),
 	  knitr,
 	  rmarkdown,
@@ -33,3 +34,4 @@ License: BSD 3-clause License + file LICENSE
 Encoding: UTF-8
 LazyData: false
 RoxygenNote: 7.1.0
+biocViews: TimeCourse, GeneExpression
