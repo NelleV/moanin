@@ -59,6 +59,7 @@ create_splines_model = function(meta, formula=NULL, basis=NULL,
 #' moanin = create_moanin_model(meta, degrees_of_freedom=6)
 #' print(dim(moanin$basis))
 #' @export
+#' @importFrom splines ns
 create_moanin_model = function(meta, formula=NULL, basis=NULL,
                                degrees_of_freedom=NULL){
     meta = check_meta(meta)
@@ -94,7 +95,7 @@ create_moanin_model = function(meta, formula=NULL, basis=NULL,
 
 #' @keywords internal
 #' @export
-print.moanin_model<-function(object){
+print.moanin_model<-function(object,...){
     N<-nrow(object$meta)
     cat("moanin_object on",N,"samples containing the following information:\n")
     cat("1) Meta data with",ncol(object$meta),"variables:\n")
