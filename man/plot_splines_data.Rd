@@ -67,6 +67,7 @@ Plotting splines
 }
 \examples{
 # First, load some data and create a moanin model
+library(timecoursedata)
 data(shoemaker2015)
 data = shoemaker2015$data
 meta = shoemaker2015$meta

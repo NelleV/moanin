@@ -95,24 +95,24 @@ create_moanin_model = function(meta, formula=NULL, basis=NULL,
 
 #' @keywords internal
 #' @export
-print.moanin_model<-function(object,...){
-    N<-nrow(object$meta)
-    cat("moanin_object on",N,"samples containing the following information:\n")
-    cat("1) Meta data with",ncol(object$meta),"variables:\n")
-    print(colnames(object$meta))
-    cat("2) Basis matrix with",ncol(object$basis),"basis functions\n")
-    if(!is.null(object$formula)){
+print.moanin_model<-function(x,...){
+    N<-nrow(x$meta)
+    cat("moanin_model object on",N,"samples containing the following information:\n")
+    cat("1) Meta data with",ncol(x$meta),"variables:\n")
+    print(colnames(x$meta))
+    cat("2) Basis matrix with",ncol(x$basis),"basis functions\n")
+    if(!is.null(x$formula)){
         cat("Basis matrix was constructed with the following formula\n")
-        form<-gsub("\\s{2,}","",deparse(object$formula)) #get rid of extra spaces
+        form<-gsub("\\s{2,}","",deparse(x$formula)) #get rid of extra spaces
         cat(paste(form,collapse="",sep=""),"\n")
-        cat(paste("Where degrees_of_freedom=",object$degrees_of_freedom,sep=""),"\n")
+        cat(paste("Where degrees_of_freedom=",x$degrees_of_freedom,sep=""),"\n")
     }
     else{
-        if(is.null(object$degrees_of_freedom))
+        if(is.null(x$degrees_of_freedom))
             cat("Basis matrix was provided by user, formula and degrees_of_freedom=NULL\n")
         else
-            cat("Basis matrix and degrees of freedom provided by user, equal to",object$degrees_of_freedom,"\n")
+            cat("Basis matrix and degrees of freedom provided by user, equal to",x$degrees_of_freedom,"\n")
     }
     cat("To access these objects use:\n")
-    cat(paste("\t<object_name>$",names(object),collapse="\n",sep=""))
+    cat(paste("\t<x_name>$",names(x),collapse="\n",sep=""))
 }
