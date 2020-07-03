@@ -188,10 +188,32 @@ user, internally will be set to 4</p></td>
 
 <span class='co'># Use the default options</span>
 <span class='no'>moanin</span> <span class='kw'>=</span> <span class='fu'>create_moanin_model</span>(<span class='no'>meta</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/dim.html'>dim</a></span>(<span class='no'>moanin</span>$<span class='no'>basis</span>))</div><div class='output co'>#&gt; [1] 209  25</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>moanin</span>)</div><div class='output co'>#&gt; moanin_model object on 209 samples containing the following information:
+#&gt; 1) Meta data with 5 variables:
+#&gt; [1] ""            "Group"       "Replicate"   "Timepoint"   "WeeklyGroup"
+#&gt; 2) Basis matrix with 25 basis functions
+#&gt; Basis matrix was constructed with the following formula
+#&gt; ~Group + Group:splines::ns(Timepoint, df = degrees_of_freedom) + 0 
+#&gt; Where degrees_of_freedom=4 
+#&gt; To access these objects use:
+#&gt; 	&lt;x_name&gt;$degrees_of_freedom
+#&gt; 	&lt;x_name&gt;$basis
+#&gt; 	&lt;x_name&gt;$meta
+#&gt; 	&lt;x_name&gt;$formula</div><div class='input'>
 <span class='co'># Change the number of degrees of freedom</span>
 <span class='no'>moanin</span> <span class='kw'>=</span> <span class='fu'>create_moanin_model</span>(<span class='no'>meta</span>, <span class='kw'>degrees_of_freedom</span><span class='kw'>=</span><span class='fl'>6</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/dim.html'>dim</a></span>(<span class='no'>moanin</span>$<span class='no'>basis</span>))</div><div class='output co'>#&gt; [1] 209  35</div></pre>
+<span class='fu'><a href='https://rdrr.io/r/base/print.html'>print</a></span>(<span class='no'>moanin</span>)</div><div class='output co'>#&gt; moanin_model object on 209 samples containing the following information:
+#&gt; 1) Meta data with 5 variables:
+#&gt; [1] ""            "Group"       "Replicate"   "Timepoint"   "WeeklyGroup"
+#&gt; 2) Basis matrix with 35 basis functions
+#&gt; Basis matrix was constructed with the following formula
+#&gt; ~Group + Group:splines::ns(Timepoint, df = degrees_of_freedom) + 0 
+#&gt; Where degrees_of_freedom=6 
+#&gt; To access these objects use:
+#&gt; 	&lt;x_name&gt;$degrees_of_freedom
+#&gt; 	&lt;x_name&gt;$basis
+#&gt; 	&lt;x_name&gt;$meta
+#&gt; 	&lt;x_name&gt;$formula</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

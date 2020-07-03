@@ -160,12 +160,13 @@ Whether to use voom weights.</p></td>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A <code>data.frame</code> with two columns for each of the contrasts given
-  in <code>contrasts</code>, corresponding to the raw p-value of the contrast for
-  that gene (<code>_pval</code>) and the adjusted p-value (<code>_qval</code>). The
-  adjusted p-values are FDR-adjusted based on the Benjamini-Hochberg method,
-  as implemented in <code><a href='https://rdrr.io/r/stats/p.adjust.html'>p.adjust</a></code>. The adjustment is done
-  across all p-values for all contrasts calculated.</p>
+    <p>A <code>data.frame</code> with three columns for each of the contrasts
+  given in <code>contrasts</code>, corresponding to the raw p-value of the contrast
+  for that gene (<code>_pval</code>), the adjusted p-value (<code>_qval</code>), and the
+  estimate of log-fold-change (<code>_lfc</code>). The adjusted p-values are
+  FDR-adjusted based on the Benjamini-Hochberg method, as implemented in
+  <code><a href='https://rdrr.io/r/stats/p.adjust.html'>p.adjust</a></code>. The adjustment is done across all p-values
+  for all contrasts calculated.</p>
     
 
   </div>
