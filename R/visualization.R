@@ -108,8 +108,8 @@ plot_splines_data = function(data, moanin_model, colors=NULL, smooth=FALSE,
    
     ## For legend:
     if(is.null(colors)){
-	meta = moanin_model$meta
-        groups = levels(meta$Group)
+	    meta = moanin_model$meta
+        groups = levels(meta[,moanin_model$group_variable])
         colors = viridis::viridis(length(groups))
         names(colors) = groups
     }
@@ -169,7 +169,9 @@ plot_splines_data = function(data, moanin_model, colors=NULL, smooth=FALSE,
 plot_centroid_individual = function(centroid, moanin_model,
 			    colors, smooth=FALSE, subset_conditions=NULL, ...){
     meta = moanin_model$meta
-    groups = levels(meta$Group)
+    gpVar = moanin_model$group_variable
+    tpVar = moanin_model$time_variable
+    groups = levels(meta[,gpVar])
 
     if(!is.null(subset_conditions)){
         if(!all(subset_conditions %in% groups)){
@@ -182,11 +184,11 @@ plot_centroid_individual = function(centroid, moanin_model,
 	}
     }
 
-    xrange = range(meta$Timepoint)
+    xrange = range(meta[,tpVar])
     if(is.null(dim(centroid))){
         centroid = t(as.matrix(centroid))
     }
-    yrange = range(centroid[, meta$Group %in% groups])
+    yrange = range(centroid[, meta[,gpVar] %in% groups])
 
     graphics::plot(xrange, yrange, type="n", ...)
     if(smooth){
@@ -208,15 +210,15 @@ plot_centroid_individual = function(centroid, moanin_model,
         color = colors[group]
         
 	# Start by individual points
-        mask = meta$Group == group
-        time = meta$Timepoint[mask]
+        mask = meta[,gpVar] == group
+        time = meta[,tpVar][mask]
         indx = order(time)
         graphics::lines(time[indx], centroid[mask][indx], type="p",
 			col=color, pch=16,
 			lwd=0)
 	if(smooth){
-	    mask = meta_prediction$Group == group
-	    time = meta_prediction$Timepoint[mask]
+	    mask = meta_prediction[,gpVar] == group
+	    time = meta_prediction[,tpVar][mask]
 	    indx = order(time)
 	}
 	graphics::lines(time[indx], centroid_fitted[mask][indx], type="l",

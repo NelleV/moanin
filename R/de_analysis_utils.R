@@ -21,19 +21,21 @@ estimate_log_fold_change = function(data, moanin_model,
 		    "epicon", "abs_sum", "abs_squared_sum", "min")){
     # Should check that data and meta is sorted identically
     meta = moanin_model$meta
+    gpVar = moanin_model$group_variable
+    
     # Should check that the method is a known method
     method<-match.arg(method)
-    contrasts = is_contrasts(contrasts, meta)
+    contrasts = is_contrasts(contrasts, moanin_model)
 
     if(method == "timely"){
-	    log_fold_changes = lfc_per_time(data, meta, contrasts)
+	    log_fold_changes = lfc_per_time(data, moanin_model, contrasts)
     }else if(method %in% c("sum", "max", "min", "abs_sum", "abs_squared_sum",
 			   "timecourse", "epicon")){
-	timely_lfc = lfc_per_time(data, meta, contrasts)
-	timely_lfc_meta = reconstruct_meta_from_lfc(timely_lfc, split_char=":")
+	timely_lfc = lfc_per_time(data, moanin_model, contrasts)
+	timely_lfc_meta = reconstruct_meta_from_lfc(timely_lfc, split_char=":",group_variable=gpVar,time_variable=tpVar)
     	log_fold_changes = data.frame(row.names=row.names(data))
 	for(contrast in colnames(contrasts)){
-	    mask = (timely_lfc_meta$Group == contrast) & !is.na(colSums(timely_lfc))
+	    mask = (timely_lfc_meta[,gpVar] == contrast) & !is.na(colSums(timely_lfc))
 	    if(method == "max"){
 		log_fold_changes[, contrast] = rowMax(abs(timely_lfc[, mask]))
 	    } else if(method == "min") {
@@ -57,8 +59,10 @@ estimate_log_fold_change = function(data, moanin_model,
 }
 
 
-estimate_log_fold_change_sum = function(data, meta, contrasts){
-    sample_coefficients = lapply(meta$Group, function(x) return(contrasts[x, ]))
+estimate_log_fold_change_sum = function(data, moanin_model, contrasts){
+    meta=moanin_model$meta
+    gpVar=moanin_model$group_variable
+    sample_coefficients = lapply(meta[,gpVar], function(x) return(contrasts[x, ]))
     sample_coefficients = as.matrix(sample_coefficients)
 
     # First, do weekly contrasts
@@ -71,7 +75,6 @@ estimate_log_fold_change_sum = function(data, meta, contrasts){
     }
 
 }
-
 
 data_summarize_per_time = function(data, meta){
     all_group_times = levels(meta$WeeklyGroup)
@@ -86,25 +89,28 @@ data_summarize_per_time = function(data, meta){
 
 
 # XXX helper function to reconstruct metadat from adat
-reconstruct_meta_from_lfc = function(data_per_time, split_char="."){
+reconstruct_meta_from_lfc = function(data_per_time, group_variable, time_variable,split_char="."){
     meta_per_time = t(
 	as.data.frame(strsplit(colnames(data_per_time), split_char, fixed=TRUE)))
     row.names(meta_per_time) = colnames(data_per_time)
-    colnames(meta_per_time) = c("Group", "Timepoint")
+    colnames(meta_per_time) = c(group_variable, time_variable)
     meta_per_time = as.data.frame(meta_per_time)
-    meta_per_time[, "Timepoint"] = as.numeric(meta_per_time[, "Timepoint"])
+    meta_per_time[, time_variable] = as.numeric(meta_per_time[, time_variable])
     return(meta_per_time) 
 }
 
 
-lfc_per_time = function(data, meta, contrasts){
-    meta$Timepoint = as.factor(meta$Timepoint)
+lfc_per_time = function(data, moanin_model, contrasts){
+    meta = moanin_model$meta
+    tpVar = moanin_model$time_variable
+    gpVar = moanin_model$group_variable
+    meta[,tpVar] = as.factor(meta[,tpVar])
 
-    averaged_data = average_replicates(data, meta)
-    averaged_meta = reconstruct_meta_from_lfc(averaged_data, split_char=":")
+    averaged_data = average_replicates(data, moanin_model)
+    averaged_meta = reconstruct_meta_from_lfc(averaged_data, split_char=":",group_variable=gpVar,time_variable=tpVar)
 
-    averaged_meta$Timepoint = as.factor(averaged_meta$Timepoint)
-    sample_coefficients = sapply(averaged_meta$Group, function(x) return(contrasts[x, ]))
+    averaged_meta[,tpVar] = as.factor(averaged_meta[,tpVar])
+    sample_coefficients = sapply(averaged_meta[,gpVar], function(x) return(contrasts[x, ]))
     if(is.null(dim(sample_coefficients))){
 	sample_coefficients = as.matrix(sample_coefficients)
     }else{
@@ -113,18 +119,18 @@ lfc_per_time = function(data, meta, contrasts){
     colnames(sample_coefficients) = colnames(contrasts)
 
     log_fold_changes = matrix(NA, dim(data)[1],
-			      dim(contrasts)[2]*length(unique(meta$Timepoint)))
+			      dim(contrasts)[2]*length(unique(meta[,tpVar])))
     row.names(log_fold_changes) = row.names(data)
     colnames(log_fold_changes) = sapply(
 	colnames(sample_coefficients),
-	function(x){sapply(unique(averaged_meta$Timepoint), function(t){paste0(x, ":", t)})})
+	function(x){sapply(unique(averaged_meta[,tpVar]), function(t){paste0(x, ":", t)})})
 
     for(column in colnames(sample_coefficients)){
 	
 	sample_coefficient = as.vector(unlist(sample_coefficients[, column]))
 	coef_data = t(t(averaged_data) * sample_coefficient)
-	for(timepoint in unique(averaged_meta$Timepoint)){
-	    mask = averaged_meta$Timepoint == timepoint
+	for(timepoint in unique(averaged_meta[,tpVar])){
+	    mask = averaged_meta[,tpVar] == timepoint
 	    if(sum(mask) != dim(contrasts)[1]){
 		next
 	    }
@@ -136,8 +142,11 @@ lfc_per_time = function(data, meta, contrasts){
 }
 
 
-average_replicates = function(data, meta){
-    timepoint_group = droplevels(meta$Group:meta$Timepoint)
+average_replicates = function(data, moanin_model){
+    meta = moanin_model$meta
+    gpVar = moanin_model$group_variable
+    tpVar = moanin_model$time_variable
+    timepoint_group = droplevels(meta[,gpVar]:meta[,tpVar])
     all_levels = levels(timepoint_group)
 
     # selecting certain columns sometimes returns vectors and sometimes 

@@ -189,7 +189,7 @@ DE_timecourse = function(data, moanin_model,
     check_data_meta(data, meta)
     data = as.matrix(data)
 
-    contrasts = is_contrasts(contrasts, meta)
+    contrasts = is_contrasts(contrasts, moanin_model)
 
     if(use_voom_weights){
         y = edgeR::DGEList(counts=data)
