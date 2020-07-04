@@ -224,7 +224,7 @@ DE_timecourse = function(data, moanin_model,
         
         # Get the number of samples used for this particular contrast:
         groups_of_interest = names(contrast)[contrast != 0]
-        n_samples_fit = sum(meta[,gpVar] %in% groups_of_interest))
+        n_samples_fit = sum(meta[,gpVar] %in% groups_of_interest)
         n_groups = length(groups_of_interest)
         degrees_of_freedom = dim(basis)[2] / ng
         

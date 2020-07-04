@@ -55,7 +55,7 @@ fit_predict_splines = function(data, moanin_model,
             "degrees_of_freedom"=moanin_model$degrees_of_freedom)
         
         updated_formula = stats::update(moanin_model$formula, fitting_data ~ .)
-        model = stats::lm(updated_formula, formula_data)	
+        model = stats::lm(updated_formula, formula_data)
         y_fitted = stats::predict(model, meta_prediction)
     }
     return(y_fitted)
@@ -105,7 +105,7 @@ create_meta_prediction = function(moanin_model, num_timepoints=100){
 	    "Timepoint"=timepoints_pred,
 	    "Replicates"=rep(1, length(timepoints_pred)),
 	    "Group"=groups_pred)
-    names(meta_prediction)[c(1,3)]<-c(gpVar,tpVar)
+    names(meta_prediction)[c(1,3)]<-c(tpVar,gpVar)
     return(meta_prediction)
 }
 

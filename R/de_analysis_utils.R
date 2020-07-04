@@ -22,6 +22,7 @@ estimate_log_fold_change = function(data, moanin_model,
     # Should check that data and meta is sorted identically
     meta = moanin_model$meta
     gpVar = moanin_model$group_variable
+    tpVar = moanin_model$time_variable
     
     # Should check that the method is a known method
     method<-match.arg(method)
@@ -146,7 +147,7 @@ average_replicates = function(data, moanin_model){
     meta = moanin_model$meta
     gpVar = moanin_model$group_variable
     tpVar = moanin_model$time_variable
-    timepoint_group = droplevels(meta[,gpVar]:meta[,tpVar])
+    timepoint_group = droplevels(meta[,gpVar]:as.factor(meta[,tpVar]))
     all_levels = levels(timepoint_group)
 
     # selecting certain columns sometimes returns vectors and sometimes 
