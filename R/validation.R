@@ -10,7 +10,7 @@
 #' @return meta returns the metadata with additional columns if necessary.
 #'
 #' @keywords internal
-check_meta = function(meta, check_replicates=FALSE){
+check_meta = function(meta, check_replicates=FALSE, groupVariable="Group",timeVariable="Timepoint"){
     metadata_column_names = colnames(meta)
     if(!("Group" %in% metadata_column_names)){
 	stop(

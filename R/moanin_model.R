@@ -61,8 +61,11 @@ create_splines_model = function(meta, formula=NULL, basis=NULL,
 #' @export
 #' @importFrom splines ns
 create_moanin_model = function(meta, formula=NULL, basis=NULL,
+    groupVariable="Group",timeVariable="Timepoint",
                                degrees_of_freedom=NULL){
-    meta = check_meta(meta)
+    meta = check_meta(meta,
+        groupVariable=groupVariable,
+        timeVariable=timeVariable)
     if(!is.null(basis) & !is.null(formula)){
         msg = paste("moanin::create_splines_model: both basis and formula ",
                     "are provided by the user. Please provide one or ",
@@ -75,8 +78,9 @@ create_moanin_model = function(meta, formula=NULL, basis=NULL,
             if(is.null(degrees_of_freedom)){
                 degrees_of_freedom = 4
             }
-            formula = (
-                ~Group + Group:splines::ns(Timepoint, df=degrees_of_freedom) + 0)
+            formulaText<-paste0("~",groupVariable," + ",groupVariable,":splines::ns(",timeVariable,",df=",degrees_of_freedom,") + 0")
+            formula = as.formula(formulaText)# (
+#                 ~Group + Group:splines::ns(Timepoint, df=degrees_of_freedom) + 0)
         }
         basis = stats::model.matrix(formula, data=meta)
     }else{
