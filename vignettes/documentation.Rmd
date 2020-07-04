@@ -1,5 +1,5 @@
 ---
-title: "Installation"
+title: "moanin package"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteEngine{knitr::knitr}
@@ -8,75 +8,33 @@ vignette: >
 ---
 
 The package moanin was developped to provide a simple and efficient workflow
-for time-course gene expression data. It depends on packages from [bioconductor](https://www.bioconductor.org/)
-and [CRAN](https://cran.r-project.org/).
+for long time-course gene expression data. It makes simple to do differential expression between conditions based on either individual condition comparisons per time point, or by fitting spline functions per gene. There are also functions to help with clustering and visualization.
 
-- CRAN packages:
+# Setup
 
-    - MASS (>= 1.0.0)
-    - viridis
-    - ClusterR
-    - zoo
+We will work with time course data available in the accompanying `timecoursedata` package. This is mRNA-Seq timecourse data on a plant, sorghum. The plants were sampled every week for 17 weeks. The plants were of two different varieties (i.e. different genotypes), and under three different watering conditions:
 
-- Bioconductor packages:
+* Control: regular weekly watering
+* Preflowering drought: plants under drought under pre-flowering (weeks before week 9), and watered like control for week 9 and afterward.
+* Postflowering drought: plants were regularly watered pre-flowering (weeks through week 9), and then watering withheld weeks 10 onward.
 
-    - edge (>= 2.4.0)
-    - limma
-    - edgeR
-    - reshape2
-    - NMI
-    - topGO
-
-To use this package, install it with
-
-```{r eval=FALSE}
-# install devtools
-install.packages("devtools")
-# use devtools to install moanin
-devtools::install_github("NelleV/moanin")
-```
-
-Next, load the package into your namespace:
+This data is available on both the leaf and the root sampled from the same plant. We will concentrate on the leaf samples, available as a dataset `varoquaux2019leaf`.  
 
 ```{r}
-library(moanin)
-```
-
-And you are ready to go!
-
-
-# Datasets
-
-The package comes with a couple of datasets:
-
-    - shoemaker2015
-
-## Time-course data of mice lung samples exposed to different influenza strains
-
-```{r}
-library(dplyr)
-library(knitr)
-library(kableExtra)
 library(moanin)
 library(timecoursedata)
-data(shoemaker2015)
-
-data = shoemaker2015$data
-meta = shoemaker2015$meta
+data("varoquaux2019leaf")
+names(varoquaux2019leaf)
 ```
 
-Here's the firt 10 lines of the data named `matrix`:
+The `data` element contains the gene expression data, while the `meta` data consists of information regarding the samples.
 
-```{r echo=FALSE}
-data = data[1:10, ]
-meta = meta[1:10, ]
-kable(data) %>%
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
-```
 
-and the first 10 lines of the metadata `data.frame`.
-```{r echo=FALSE}
-kable(meta) %>%
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
-```
+# Set up `moanin` class
+
+The first step is to create a moanin class, which uses our meta data to create the needed information for future analysis. 
+
+```{r}
+moaninObject<-create_moanin_model(meta, formula=NULL, basis=NULL,
+                               degrees_of_freedom=NULL))
 
