@@ -1,12 +1,12 @@
 library("moanin")
 library(timecoursedata)
+data(shoemaker2015)
 
 context("moanin::de_analysis_utils.R")
 
 
 test_that("Estimating log fold change smoke tests", {
     # This is just a smoke test.
-    data(shoemaker2015)
     data = shoemaker2015$data
     meta = shoemaker2015$meta
 
@@ -41,7 +41,6 @@ test_that("Estimating log fold change smoke tests", {
 })
 
 test_that("Estimating log fold change with unknown error", {
-    data(shoemaker2015)
     data = shoemaker2015$data
     meta = shoemaker2015$meta
 
@@ -56,7 +55,6 @@ test_that("Estimating log fold change with unknown error", {
 
 
 test_that("Estimating log fold change", {
-    data(shoemaker2015)
     data = shoemaker2015$data
     meta = shoemaker2015$meta
 
