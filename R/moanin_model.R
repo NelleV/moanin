@@ -60,7 +60,7 @@ create_splines_model = function(meta, formula=NULL, basis=NULL,
 #' print(moanin)
 #' @export
 #' @importFrom splines ns
-create_moanin_model = function(meta, formula=NULL, basis=NULL,
+create_moanin_model = function(meta, formula=NULL, basis=NULL, groupVariable="Group", timepointVariable="Timepoint",
                                degrees_of_freedom=NULL){
     meta = check_meta(meta)
     if(!is.null(basis) & !is.null(formula)){
