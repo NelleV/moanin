@@ -117,6 +117,7 @@ splines_kmeans_prediction = function(data, kmeans_clusters){
 #'  this option.
 #' @param rescale_separately_on, string, optional, default: NULL
 #'	When provided, will rescale separately different groups of data.
+#' @param previous_scores an option to give the scores results from a previous run of \code{splines_kmeans_score_and_label}, and only redo the filtering (i.e. if want to change \code{percentage_genes_to_label} without rerunning the calculation of scores)
 #'	@return A list consisting of
 #'	\itemize{
 #'	\item{\code{labels}}{the label or cluster assigned to each gene based on the
@@ -127,72 +128,82 @@ splines_kmeans_prediction = function(data, kmeans_clusters){
 #'	\item{\code{score_cutoff}}{The required cutoff for a gene receiving an
 #'	assignment}
 #'  }
+#' @examples 
+#' data(exampleData)
+#' moanin = create_moanin_model(testMeta)
+#' kmClusters=splines_kmeans(testData, moanin)
+#' scores_and_labels = splines_kmeans_score_and_label(testData, kmClusters)
 #' @export
 splines_kmeans_score_and_label = function(data, kmeans_clusters, percentage_genes_to_label=0.5,
-                                          max_score=NULL, rescale_separately_on=NULL){
+                                          max_score=NULL, rescale_separately_on=NULL, previous_scores=NULL){
 
-    meta = kmeans_clusters$moanin_model$meta
+    if(is.null(previous_scores)){
+        meta = kmeans_clusters$moanin_model$meta
 
-    n_clusters = dim(kmeans_clusters$centroids)[1]
-    all_scores = matrix(NA, nrow=dim(data)[1], ncol=n_clusters)
+        n_clusters = dim(kmeans_clusters$centroids)[1]
+        all_scores = matrix(NA, nrow=dim(data)[1], ncol=n_clusters)
 
 
-    if(!is.null(rescale_separately_on)){
-        groups = levels(meta[, rescale_separately_on])
-    }
-
-    for(k in 1:n_clusters){
-        # By default, should not rescale separately on any columns.
-        if(is.null(rescale_separately_on)){ 
-            scores = score_genes_centroid(
-                data,
-                kmeans_clusters$centroids[k,],
-                scale=FALSE)
-
-            all_scores[, k] = scores /  max(scores)
-        }else{
-            scores = NULL
-            for(group in groups){
-                mask = meta[, rescale_separately_on] == group
-                partial_scores = score_genes_centroid(
-                    data[, mask],
-                    kmeans_clusters$centroids[k, mask],
-                    scale=FALSE)
-                if(is.null(scores)){
-                    scores = partial_scores
-                }else{
-                    scores = scores + partial_scores
-                }
-            }   
-            all_scores[, k] = scores / max(scores)
+        if(!is.null(rescale_separately_on)){
+            groups = levels(meta[, rescale_separately_on])
         }
-    }
 
-    # Give names to rows
-    all_scores = as.matrix(all_scores)
-    row.names(all_scores) = row.names(data) 
-    scores = apply(all_scores, 1, min)
+        for(k in 1:n_clusters){
+            # By default, should not rescale separately on any columns.
+            if(is.null(rescale_separately_on)){ 
+                scores = score_genes_centroid(
+                    data,
+                    kmeans_clusters$centroids[k,],
+                    scale=FALSE)
 
-    # Only assign labels to X% of the genes
-    max_score_data = stats::quantile(scores, c(percentage_genes_to_label))
-    if(!is.null(max_score)){
-    	max_score = min(max_score_data, max_score)
-    }else{
-	    max_score = max_score_data
+                all_scores[, k] = scores /  max(scores)
+            }else{
+                scores = NULL
+                for(group in groups){
+                    mask = meta[, rescale_separately_on] == group
+                    partial_scores = score_genes_centroid(
+                        data[, mask],
+                        kmeans_clusters$centroids[k, mask],
+                        scale=FALSE)
+                    if(is.null(scores)){
+                        scores = partial_scores
+                    }else{
+                        scores = scores + partial_scores
+                    }
+                }   
+                all_scores[, k] = scores / max(scores)
+            }
+        }
+
+        # Give names to rows
+        all_scores = as.matrix(all_scores)
+        row.names(all_scores) = row.names(data) 
+        scores = apply(all_scores, 1, min)
     }
-    genes_to_not_consider = scores >= max_score
+    else all_scores=previous_scores
     labels = apply(all_scores, 1, which.min)
-    labels[genes_to_not_consider] = NA
     names(labels) = row.names(data)
 
-    if(max_score == 1){
-        msg = paste(
-            "moanin::splines_kmeans_score_and_label is labeling genes",
-            " with a score of 1. This implies that no good fit for ",
-            "those genes are found and the assignement is random.",
-            sep="")
-        warning(msg)
-    }
+    if(percentage_genes_to_label<1 & is.null(max_score)){
+        max_score_data = stats::quantile(scores, c(percentage_genes_to_label))
+        if(!is.null(max_score)){
+        	max_score = min(max_score_data, max_score)
+        }else{
+    	    max_score = max_score_data
+        }
+        genes_to_not_consider = scores >= max_score
+        labels[genes_to_not_consider] = NA
+    
+        if(max_score == 1){
+            msg = paste(
+                "moanin::splines_kmeans_score_and_label is labeling genes",
+                " with a score of 1. This implies that no good fit for ",
+                "those genes are found and the assignment is random.",
+                sep="")
+            warning(msg)
+        } 
+    }# Only assign labels to X% of the genes
+
 
     return(list("labels"=labels,
                 "scores"=all_scores,

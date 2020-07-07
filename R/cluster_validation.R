@@ -10,11 +10,24 @@
 #'  number of times the two rows were in the same cluster across the clusterings
 #'  (\code{scale=FALSE}) or the proportion of clustering that the two rows are
 #'  in the same cluster (\code{scale=TRUE}).
-#'@export
+#' @examples 
+#' data(exampleData)
+#' moanin = create_moanin_model(testMeta)
+#' #small function to run splines_kmeans on subsample of 50 genes
+#' subsampleCluster<-function(){
+#'    ind<-sample(1:nrow(testData),size=50)
+#'    km<-splines_kmeans(testData[ind,],moanin,n_clusters=3)
+#'    assign<-splines_kmeans_score_and_label(testData, km, percentage_genes_to_label=1.0)$label
+#'   }
+#' kmClusters=replicate(10,subsampleCluster())
+#' cm<-consensus_matrix(kmClusters)
+#' heatmap(cm)
+
+#' @export
 consensus_matrix = function(labels, scale=TRUE){
     melted_labels = reshape2::melt(as.matrix(labels))
     colnames(melted_labels) = c("Gene", "Clustering", "Label")
-    melted_labels$Clustering_lab = melted_labels$Clustering:as.factor(melted_labels$Label)
+    melted_labels$Clustering_lab = as.factor(melted_labels$Clustering):as.factor(melted_labels$Label)
     w = reshape2::dcast(melted_labels, Gene~Clustering_lab, value.var="Clustering_lab", fun.aggregate=length)
     x = as.matrix(w[,-1])
     x[is.na(x)] = 0
