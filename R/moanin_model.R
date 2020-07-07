@@ -105,8 +105,8 @@ create_moanin_model = function(meta, formula=NULL, basis=NULL,
 print.moanin_model<-function(x,...){
     N<-nrow(x$meta)
     cat("moanin_model object on",N,"samples containing the following information:\n")
-    cat("1) Meta data with",ncol(x$meta),"variables:\n")
-    print(colnames(x$meta))
+    cat("1) Meta data with",ncol(x$meta),"variables\n")
+    if(ncol(x$meta)<=10) print(colnames(x$meta))
     cat(paste0("2) Group variable given by '",x$group_variable,"'\n"))
     cat(paste0("3) Time variable given by '",x$time_variable,"'\n"))
     cat("4) Basis matrix with",ncol(x$basis),"basis functions\n")

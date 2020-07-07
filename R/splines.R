@@ -53,7 +53,7 @@ fit_predict_splines = function(data, moanin_model,
             "Timepoint"=meta[,tpVar],
             "fitting_data"=fitting_data,
             "degrees_of_freedom"=moanin_model$degrees_of_freedom)
-        
+        names(formula_data)[c(1:2)]<-c(gpVar,tpVar)
         updated_formula = stats::update(moanin_model$formula, fitting_data ~ .)
         model = stats::lm(updated_formula, formula_data)
         y_fitted = stats::predict(model, meta_prediction)

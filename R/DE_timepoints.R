@@ -96,6 +96,8 @@ create_timepoints_contrasts = function(group1, group2, moanin_model){
     meta = meta[meta[,gpVar] %in% c(group1, group2),]
     all_timepoints = sort(unique(meta[,tpVar]))
     contrasts = rep(NA, length(all_timepoints))
+    msg<-""
+    foundMissing<-FALSE
     for(i in 1:length(all_timepoints)){
 	# First, check that the two conditions have been sampled for this
 	# timepoint
@@ -110,11 +112,11 @@ create_timepoints_contrasts = function(group1, group2, moanin_model){
 	    }else{
 		missing_condition = group1
 	    }
-	    msg = paste(
-		"moanin::create_timepoints_contrasts: timepoint",
-		timepoint, "is missing in condition", missing_condition)
-	    warning(msg)
+	    msg = paste0(msg,paste("timepoint",
+		timepoint, "is missing in condition", missing_condition,"\n"))
+	    foundMissing<-TRUE
 	}
     }
+    if(foundMissing) warning(msg)
     return(contrasts[!is.na(contrasts)])
 }

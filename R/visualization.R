@@ -108,7 +108,7 @@ plot_splines_data = function(data, moanin_model, colors=NULL, smooth=FALSE,
    
     ## For legend:
     if(is.null(colors)){
-	    meta = moanin_model$meta
+        meta = moanin_model$meta
         groups = levels(meta[,moanin_model$group_variable])
         colors = viridis::viridis(length(groups))
         names(colors) = groups
