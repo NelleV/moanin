@@ -16,13 +16,16 @@ create_splines_model = function(meta, formula=NULL, basis=NULL,
 }
 
 #' Create a moanin model
-#'
+#' 
 #' This model is used to conserve information relating to the model, such as
 #' the formula, the basis, the meta data.
 #'
 #' @param meta	\code{data.frame} containing the metadata in columns, and rows
-#'   corresponding to different samples. Metadata needs to contain the columns
-#'   "Group" and "Timepoint".
+#'   corresponding to different samples. 
+#' @param group_variable A character value giving the column that corresponds to
+#'   the grouping variable to test for DE. By default "Group"
+#' @param time_variable A character value giving the column that corresponds to
+#'   the time variable. By default "Timepoint".
 #' @param formula formula object, optional, default: NUlL. Used to construct
 #'   splines from the data in \code{meta}. See details.
 #'@param basis	matrix, optional, default: NULL. A basis matrix, where each row
@@ -61,8 +64,11 @@ create_splines_model = function(meta, formula=NULL, basis=NULL,
 #' @export
 #' @importFrom splines ns
 create_moanin_model = function(meta, formula=NULL, basis=NULL,
+    group_variable="Group",time_variable="Timepoint",
                                degrees_of_freedom=NULL){
-    meta = check_meta(meta)
+    meta = check_meta(meta,
+        group_variable=group_variable,
+        time_variable=time_variable)
     if(!is.null(basis) & !is.null(formula)){
         msg = paste("moanin::create_splines_model: both basis and formula ",
                     "are provided by the user. Please provide one or ",
@@ -75,8 +81,9 @@ create_moanin_model = function(meta, formula=NULL, basis=NULL,
             if(is.null(degrees_of_freedom)){
                 degrees_of_freedom = 4
             }
-            formula = (
-                ~Group + Group:splines::ns(Timepoint, df=degrees_of_freedom) + 0)
+            formulaText<-paste0("~",group_variable," + ",group_variable,":splines::ns(",time_variable,",df=",degrees_of_freedom,") + 0")
+            formula = as.formula(formulaText)# (
+#                 ~Group + Group:splines::ns(Timepoint, df=degrees_of_freedom) + 0)
         }
         basis = stats::model.matrix(formula, data=meta)
     }else{
@@ -88,6 +95,8 @@ create_moanin_model = function(meta, formula=NULL, basis=NULL,
     splines_model$"basis" = basis
     splines_model$"meta" = meta
     splines_model$"formula" = formula
+    splines_model$time_variable = time_variable
+    splines_model$group_variable = group_variable
     class(splines_model) = "moanin_model"
     
     return(splines_model)
@@ -98,14 +107,15 @@ create_moanin_model = function(meta, formula=NULL, basis=NULL,
 print.moanin_model<-function(x,...){
     N<-nrow(x$meta)
     cat("moanin_model object on",N,"samples containing the following information:\n")
-    cat("1) Meta data with",ncol(x$meta),"variables:\n")
-    print(colnames(x$meta))
-    cat("2) Basis matrix with",ncol(x$basis),"basis functions\n")
+    cat("1) Meta data with",ncol(x$meta),"variables\n")
+    if(ncol(x$meta)<=10) print(colnames(x$meta))
+    cat(paste0("2) Group variable given by '",x$group_variable,"'\n"))
+    cat(paste0("3) Time variable given by '",x$time_variable,"'\n"))
+    cat("4) Basis matrix with",ncol(x$basis),"basis functions\n")
     if(!is.null(x$formula)){
         cat("Basis matrix was constructed with the following formula\n")
         form<-gsub("\\s{2,}","",deparse(x$formula)) #get rid of extra spaces
         cat(paste(form,collapse="",sep=""),"\n")
-        cat(paste("Where degrees_of_freedom=",x$degrees_of_freedom,sep=""),"\n")
     }
     else{
         if(is.null(x$degrees_of_freedom))
@@ -113,6 +123,6 @@ print.moanin_model<-function(x,...){
         else
             cat("Basis matrix and degrees of freedom provided by user, equal to",x$degrees_of_freedom,"\n")
     }
-    cat("To access these objects use:\n")
-    cat(paste("\t<x_name>$",names(x),collapse="\n",sep=""))
+    cat("To access this information use:\n")
+    cat(paste("\t<object_name>$",names(x),collapse="\n",sep=""))
 }

@@ -54,3 +54,9 @@ Whether to fit splines or not.}
 \description{
 Performs splines clustering using K-means
 }
+\examples{
+data(exampleData)
+# Use the default options
+moanin = create_moanin_model(testMeta)
+splines_kmeans(testData, moanin)
+}

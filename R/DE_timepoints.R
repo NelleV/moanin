@@ -91,28 +91,32 @@ DE_timepoints = function(data, moanin_model,
 #' @export
 create_timepoints_contrasts = function(group1, group2, moanin_model){
     meta = moanin_model$meta
-    meta = meta[meta$Group %in% c(group1, group2),]
-    all_timepoints = sort(unique(meta$Timepoint))
+    gpVar = moanin_model$group_variable
+    tpVar = moanin_model$time_variable
+    meta = meta[meta[,gpVar] %in% c(group1, group2),]
+    all_timepoints = sort(unique(meta[,tpVar]))
     contrasts = rep(NA, length(all_timepoints))
+    msg<-""
+    foundMissing<-FALSE
     for(i in 1:length(all_timepoints)){
 	# First, check that the two conditions have been sampled for this
 	# timepoint
 	timepoint = all_timepoints[i]
-	submeta = meta[meta$Timepoint == timepoint, ]
+	submeta = meta[meta[,tpVar] == timepoint, ]
 	if(length(unique(submeta$WeeklyGroup)) == 2){
 	    groups = as.character(unique(submeta$WeeklyGroup))
 	    contrasts[i] = paste0(group1, ".", timepoint, "-", group2, ".", timepoint)
 	}else if(length(unique(submeta$WeeklyGroup)) == 1){
-	    if(unique(submeta$Group)[1] ==  group1){
+	    if(unique(submeta[,gpVar])[1] ==  group1){
 		missing_condition = group2
 	    }else{
 		missing_condition = group1
 	    }
-	    msg = paste(
-		"moanin::create_timepoints_contrasts: timepoint",
-		timepoint, "is missing in condition", missing_condition)
-	    warning(msg)
+	    msg = paste0(msg,paste("timepoint",
+		timepoint, "is missing in condition", missing_condition,"\n"))
+	    foundMissing<-TRUE
 	}
     }
+    if(foundMissing) warning(msg)
     return(contrasts[!is.na(contrasts)])
 }
