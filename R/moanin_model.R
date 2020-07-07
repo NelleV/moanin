@@ -16,7 +16,7 @@ create_splines_model = function(meta, formula=NULL, basis=NULL,
 }
 
 #' Create a moanin model
-#'
+#' 
 #' This model is used to conserve information relating to the model, such as
 #' the formula, the basis, the meta data.
 #'
