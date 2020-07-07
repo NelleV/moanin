@@ -4,7 +4,7 @@
 \alias{is_contrasts}
 \title{Check is contrasts}
 \usage{
-is_contrasts(contrasts, meta)
+is_contrasts(contrasts, moanin_model)
 }
 \description{
 Will check that the contrasts provided are indeed contrasts. contrasts are

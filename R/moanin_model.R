@@ -22,8 +22,10 @@ create_splines_model = function(meta, formula=NULL, basis=NULL,
 #'
 #' @param meta	\code{data.frame} containing the metadata in columns, and rows
 #'   corresponding to different samples. 
-#' @param group_variable A character value giving the column that corresponds to the grouping variable to test for DE. By default "Group"
-#' @param time_variable A character value giving the column that corresponds to the time variable. By default "Timepoint".
+#' @param group_variable A character value giving the column that corresponds to
+#'   the grouping variable to test for DE. By default "Group"
+#' @param time_variable A character value giving the column that corresponds to
+#'   the time variable. By default "Timepoint".
 #' @param formula formula object, optional, default: NUlL. Used to construct
 #'   splines from the data in \code{meta}. See details.
 #'@param basis	matrix, optional, default: NULL. A basis matrix, where each row

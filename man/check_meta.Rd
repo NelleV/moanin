@@ -4,7 +4,12 @@
 \alias{check_meta}
 \title{Check that the metadata provided is what we expect}
 \usage{
-check_meta(meta, check_replicates = FALSE)
+check_meta(
+  meta,
+  check_replicates = FALSE,
+  group_variable = "Group",
+  time_variable = "Timepoint"
+)
 }
 \arguments{
 \item{meta}{metadata}
