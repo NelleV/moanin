@@ -8,7 +8,9 @@
 #'      Number of initialization to perform.
 #' @param max_iter  int, optional, default: 300
 #'  Maximum number of iteration to perform  
-#' @param random_seed int, optional, default: NULL
+#' @param random_seed int, optional, default: NULL. 
+#' Passed to argument \code{seed} in  \code{\link[ClusterR]{KMeans_rcpp}}. 
+#' If NULL (default), set to \code{.Random.seed[1]}.
 #' @param fit_splines   boolean, optional, default: TRUE
 #'  Whether to fit splines or not.
 #' @param rescale   boolean, optional, default: TRUE
@@ -178,13 +180,13 @@ splines_kmeans_score_and_label = function(data, kmeans_clusters, percentage_gene
         # Give names to rows
         all_scores = as.matrix(all_scores)
         row.names(all_scores) = row.names(data) 
-        scores = apply(all_scores, 1, min)
     }
     else all_scores=previous_scores
+    scores = apply(all_scores, 1, min)
     labels = apply(all_scores, 1, which.min)
     names(labels) = row.names(data)
 
-    if(percentage_genes_to_label<1 & is.null(max_score)){
+    if(percentage_genes_to_label<1 | !is.null(max_score)){
         max_score_data = stats::quantile(scores, c(percentage_genes_to_label))
         if(!is.null(max_score)){
         	max_score = min(max_score_data, max_score)

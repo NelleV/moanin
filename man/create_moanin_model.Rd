@@ -58,15 +58,13 @@ If neither \code{formula} nor \code{basis} is given, then by default,
 }
 \examples{
 # Load some data
-library(timecoursedata)
-data(shoemaker2015)
-meta = shoemaker2015$meta
+data(exampleData)
 
 # Use the default options
-moanin = create_moanin_model(meta)
+moanin = create_moanin_model(testMeta)
 print(moanin)
 
 # Change the number of degrees of freedom
-moanin = create_moanin_model(meta, degrees_of_freedom=6)
+moanin = create_moanin_model(testMeta, degrees_of_freedom=6)
 print(moanin)
 }

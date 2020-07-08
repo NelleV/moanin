@@ -35,7 +35,9 @@ Number of initialization to perform.}
 \item{max_iter}{int, optional, default: 300
 Maximum number of iteration to perform}
 
-\item{random_seed}{int, optional, default: NULL}
+\item{random_seed}{int, optional, default: NULL. 
+Passed to argument \code{seed} in  \code{\link[ClusterR]{KMeans_rcpp}}. 
+If NULL (default), set to \code{.Random.seed[1]}.}
 
 \item{fit_splines}{boolean, optional, default: TRUE
 Whether to fit splines or not.}

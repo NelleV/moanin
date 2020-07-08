@@ -50,19 +50,18 @@ create_splines_model = function(meta, formula=NULL, basis=NULL,
 #'} 
 #' @examples
 #' # Load some data
-#' library(timecoursedata)
-#' data(shoemaker2015)
-#' meta = shoemaker2015$meta
+#' data(exampleData)
 #'
 #' # Use the default options
-#' moanin = create_moanin_model(meta)
+#' moanin = create_moanin_model(testMeta)
 #' print(moanin)
 #'
 #' # Change the number of degrees of freedom
-#' moanin = create_moanin_model(meta, degrees_of_freedom=6)
+#' moanin = create_moanin_model(testMeta, degrees_of_freedom=6)
 #' print(moanin)
 #' @export
 #' @importFrom splines ns
+#' @importFrom stats as.formula
 create_moanin_model = function(meta, formula=NULL, basis=NULL,
     group_variable="Group",time_variable="Timepoint",
                                degrees_of_freedom=NULL){
@@ -82,7 +81,7 @@ create_moanin_model = function(meta, formula=NULL, basis=NULL,
                 degrees_of_freedom = 4
             }
             formulaText<-paste0("~",group_variable," + ",group_variable,":splines::ns(",time_variable,",df=",degrees_of_freedom,") + 0")
-            formula = as.formula(formulaText)# (
+            formula = stats::as.formula(formulaText)# (
 #                 ~Group + Group:splines::ns(Timepoint, df=degrees_of_freedom) + 0)
         }
         basis = stats::model.matrix(formula, data=meta)

@@ -67,22 +67,19 @@ Plotting splines
 }
 \examples{
 # First, load some data and create a moanin model
-library(timecoursedata)
-data(shoemaker2015)
-data = shoemaker2015$data
-meta = shoemaker2015$meta
-moanin_model = create_moanin_model(meta, degrees_of_freedom=6)
+data(exampleData)
+moanin_model = create_moanin_model(testMeta, degrees_of_freedom=6)
 
 # The moanin model contains all the information for plotting purposes. The
 # plot_splines_function will automatically fit the splines from the
 # information contained in the moanin model
 plot_splines_data(
-data, moanin_model,
+testData, moanin_model,
 subset_data=c("AK050122", "AK043921"),
 mfrow=c(2, 2))
 
 # The splines can also be smoothed
-plot_splines_data(data, moanin_model,
+plot_splines_data(testData, moanin_model,
 	     subset_data=c("AK050122", "AK043921"),
 	     smooth=TRUE, mfrow=c(2, 2))
 }
