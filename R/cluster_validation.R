@@ -22,7 +22,6 @@
 #' kmClusters=replicate(10,subsampleCluster())
 #' cm<-consensus_matrix(kmClusters)
 #' heatmap(cm)
-
 #' @export
 consensus_matrix = function(labels, scale=TRUE){
     melted_labels = reshape2::melt(as.matrix(labels))
@@ -43,25 +42,19 @@ consensus_matrix = function(labels, scale=TRUE){
     return(consensus)
 }
 
-#' Plot CDF consensus matrix
-#'
-#' @param labels a list. Each element of
-#'   the list is a matrix that gives the results of a clustering routine in each
-#'   column (see \code{\link{consensus_matrix}}). Usually each column would be
-#'   the result of running the clustering on a subsample or bootstrap resample
-#'   of the data.
-#' @details For each element of the list \code{labels}, the function calculates
+#' @details For each element of the list \code{labels}, \code{plot_cdf_consensus} calculates
 #'   the consensus between the clusterings in the matrix, i.e. the number of
 #'   times that pairs of rows are in the same cluster for different clusterings
 #'   (columns) of the matrix using the \code{\link{consensus_matrix}} function.
 #'   Then the set of values (the N(N-1) values in the upper triangle of the
-#'   matrix), are converted into a cdf function.
-#' @return list of the cdf values calculated, of same length as that of
-#'   \code{labels}.
-#'   
+#'   matrix), are converted into a cdf function and plotted.
+#' @return invisibily returns list of the upper triangle values, with the list of same length
+#'   as that of \code{labels}.
+#' @rdname get_auc_similarity_scores
 #' @export
 plot_cdf_consensus = function(labels){
     all_labels = labels
+    if(is.null(names(all_labels))) names(all_labels)<-paste("Set",1:length(all_labels))
     n_clusters = names(all_labels)
 
     colors = grDevices::rainbow(length(n_clusters))
@@ -95,15 +88,54 @@ plot_cdf_consensus = function(labels){
     invisible(cdfList)
 }
 
-#' Plot AUC consensus matrix
+#' Evaluate the consensus between sets of clusterings
 #'
-#' @inheritParams plot_cdf_consensus
-#' @param method method for calculation of similarity, one of "consensus" or "nmi". See details. 
+#' @description Methods for evaluating the consensus between sets of
+#'   clusterings, usually in the context of subsetting of the data or different
+#'   numbers of clusters.
+#' @param labels a list. Each element of
+#'   the list is a matrix that gives the results of a clustering routine in each
+#'   column (see \code{\link{consensus_matrix}}). Usually each column would be
+#'   the result of running the clustering on a subsample or bootstrap resample
+#'   of the data.
+#' @param method method for calculation of similarity for the AUC measure, one
+#'   of "consensus" or "nmi". See details.
+#' @details For each set of clusterings given by \code{labels} (i.e. for each
+#'   matrix \code{M} which is an element of the list \code{labels})
+#'   \code{get_auc_similarity_scores} calculates a pairwise measure of
+#'   similarity between the columns of \code{M}. These pairwise scores are
+#'   plotted against their rank, and the final AUC measure is the area under
+#'   this curve.
+#' @details For method "consensus", the pairwise measure is given by calculating
+#'   the consensus matrix using \code{\link{consensus_matrix}} with
+#'   \code{scale=FALSE}. The consensus matrix is divided by the max of \code{M}.
+#' @details For method "nmi", the pairwise value is the NMI value between each
+#'   pair of columns of the matrix of clusterings using the
+#'   \code{\link[NMI]{NMI}} function.
+#' @seealso \code{\link{consensus_matrix}}, \code{\link[NMI]{NMI}},
+#'   \code{\link{plot_cdf_consensus}}
+#' @returns A vector, equal to length of the list \code{labels}, giving the AUC
+#'   value for each element of \code{labels}.
+#' @aliases plot_cdf_consensus
+#' @examples 
+#' data(exampleData)
+#' moanin = create_moanin_model(testMeta)
+#' #small function to run splines_kmeans on subsample of 50 genes
+#' subsampleCluster<-function(){
+#'    ind<-sample(1:nrow(testData),size=50)
+#'    km<-splines_kmeans(testData[ind,],moanin,n_clusters=3)
+#'    assign<-splines_kmeans_score_and_label(testData, km, percentage_genes_to_label=1.0)$label
+#'   }
+#' kmClusters1=replicate(10,subsampleCluster())
+#' kmClusters2=replicate(10,subsampleCluster())
+#' out<-plot_cdf_consensus(labels=list(kmClusters1,kmClusters2)) 
+#' get_auc_similarity_scores(list(kmClusters1,kmClusters2))
 #' @export
 get_auc_similarity_scores = function(labels, method=c("consensus", "nmi")){
     method<-match.arg(method)
 
     all_labels = labels
+    if(is.null(names(all_labels))) names(all_labels)<-paste("Set",1:length(all_labels))
     n_clusters = names(all_labels)
 
     auc_scores = rep(0, length(n_clusters))
@@ -162,6 +194,7 @@ get_nmi_scores = function(labels){
 #' Plot model explorer
 #'
 #' @inheritParams plot_cdf_consensus
+#' @return This function is a plotting function does not return anything
 #' @export
 plot_model_explorer = function(labels){
     all_labels = labels

@@ -8,8 +8,7 @@ estimate_log_fold_change(
   data,
   moanin_model,
   contrasts,
-  method = c("timecourse", "sum", "max", "timely", "epicon", "abs_sum",
-    "abs_squared_sum", "min")
+  method = c("timecourse", "sum", "max", "timely", "abs_sum", "abs_squared_sum", "min")
 )
 }
 \arguments{
@@ -25,6 +24,12 @@ more details.}
 
 \item{method}{method for calculating the log-fold change. See details.}
 }
+\value{
+A data.frame giving the estimated log-fold change for each gene
+  (row). For all methods except for "timely", the data frame will consist of
+  one column for each value of the argument \code{contrasts}. For "timely"
+  there will be one column for each timepoint and contrast combination.
+}
 \description{
 Estimates log fold change
 }
@@ -32,13 +37,12 @@ Estimates log fold change
 The following methods exist for calculating the log-fold change
   between conditions over time (default is "timecourse"):
 \itemize{
-\item{\code{timecourse}}{}
-\item{\code{sum}}{}
-\item{\code{max}}{}
-\item{\code{timely}}{}
-\item{\code{epicon}}{}
-\item{\code{abs_sum}}{}
-\item{\code{abs_squared_sum}}{}
-\item{\code{min}}{}
+\item{\code{timely}}{The log-fold change for each individual timepoint (\eqn{lfc(t)})}
+\item{\code{timecourse}}{The average absolute per-week fold-change, multiplied by the sign of the average per-week fold-change.}
+\item{\code{sum}}{Sum of per-week log fold change, over all timepoints}
+\item{\code{max}}{Max of per-week log fold change, over all timepoints}
+\item{\code{abs_sum}}{Sum of the absolute value of the per-week log fold change, over all timepoints}
+\item{\code{abs_squared_sum}}{Sum of the square value of the per-week log fold change, over all timepoint}
+\item{\code{min}}{Min of per-week log fold change, over all timepoints}
 }
 }

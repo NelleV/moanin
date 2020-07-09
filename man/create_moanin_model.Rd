@@ -2,6 +2,7 @@
 % Please edit documentation in R/moanin_model.R
 \name{create_moanin_model}
 \alias{create_moanin_model}
+\alias{print.moanin_model}
 \title{Create a moanin model}
 \usage{
 create_moanin_model(
@@ -12,6 +13,8 @@ create_moanin_model(
   time_variable = "Timepoint",
   degrees_of_freedom = NULL
 )
+
+\method{print}{moanin_model}(x, ...)
 }
 \arguments{
 \item{meta}{\code{data.frame} containing the metadata in columns, and rows

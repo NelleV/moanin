@@ -24,9 +24,9 @@
 #'  created (see \code{\link{par}}). If missing, the function will set a value.
 #'@param addToPlot A function that will be called after the plotting, allowing
 #'  the user to add more to the plot.
-#'@param ... arguments to be passed to the individual plot commands
-#'  (Will be sent to all plot commands)
-#'
+#'@param ... arguments to be passed to the individual plot commands (Will be
+#'  sent to all plot commands)
+#'@return This function creates a plot and does not return anything to the user.
 #' @examples
 #' # First, load some data and create a moanin model
 #' data(exampleData)

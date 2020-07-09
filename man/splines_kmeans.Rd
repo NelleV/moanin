@@ -43,15 +43,17 @@ If NULL (default), set to \code{.Random.seed[1]}.}
 Whether to fit splines or not.}
 
 \item{rescale}{boolean, optional, default: TRUE
- Whether to rescale the data or not.
- @return A list in the format returned by \code{\link[ClusterR]{KMeans_rcpp}},
+Whether to rescale the data or not.}
+}
+\value{
+A list in the format returned by \code{\link[ClusterR]{KMeans_rcpp}},
    with the following elements added or changed:
 \itemize{
 \item{\code{centroids}}{The centroids are rescaled so that they range from 0-1}
 \item{\code{moanin_model}}{The given moanin_model}
 \item{\code{fit_splines}}{The value of \code{fit_splines} given to the function }
 \item{\code{rescale}}{The value of \code{rescale} given to the function }
-}}
+}
 }
 \description{
 Performs splines clustering using K-means

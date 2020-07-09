@@ -1,19 +1,19 @@
-# Creates a "class" containing the information related to the splines used.
-
-#' Depricated function for creating a moanin_model object
-#'
-#' This function is depricated. Users should use \code{\link{create_moanin_model}}
-#'
-#'@param inheritParams create_moanin_model
-#'@details This function is depricated. Users should use \code{\link{create_moanin_model}}
-#' @export
-#' @keywords internal
-create_splines_model = function(meta, formula=NULL, basis=NULL,
-				degrees_of_freedom=4){
-    .Deprecated(new="create_moanin_model")
-    return(create_moanin_model(meta, formula=formula, basis=basis,
-			       degrees_of_freedom=degrees_of_freedom))
-}
+# # Creates a "class" containing the information related to the splines used.
+#
+# #' Depricated function for creating a moanin_model object
+# #'
+# #' This function is depricated. Users should use \code{\link{create_moanin_model}}
+# #'
+# #'@param inheritParams create_moanin_model
+# #'@details This function is depricated. Users should use \code{\link{create_moanin_model}}
+# #' @export
+# #' @keywords internal
+# create_splines_model = function(meta, formula=NULL, basis=NULL,
+#                 degrees_of_freedom=4){
+#     .Deprecated(new="create_moanin_model")
+#     return(create_moanin_model(meta, formula=formula, basis=basis,
+#                    degrees_of_freedom=degrees_of_freedom))
+# }
 
 #' Create a moanin model
 #' 
@@ -60,6 +60,7 @@ create_splines_model = function(meta, formula=NULL, basis=NULL,
 #' moanin = create_moanin_model(testMeta, degrees_of_freedom=6)
 #' print(moanin)
 #' @export
+#' @aliases print.moanin_model
 #' @importFrom splines ns
 #' @importFrom stats as.formula
 create_moanin_model = function(meta, formula=NULL, basis=NULL,
@@ -69,7 +70,7 @@ create_moanin_model = function(meta, formula=NULL, basis=NULL,
         group_variable=group_variable,
         time_variable=time_variable)
     if(!is.null(basis) & !is.null(formula)){
-        msg = paste("moanin::create_splines_model: both basis and formula ",
+        msg = paste("both basis and formula ",
                     "are provided by the user. Please provide one or ",
                     "the other", sep="")
         stop(msg)
@@ -101,7 +102,7 @@ create_moanin_model = function(meta, formula=NULL, basis=NULL,
     return(splines_model)
 }
 
-#' @keywords internal
+#' @rdname create_moanin_model
 #' @export
 print.moanin_model<-function(x,...){
     N<-nrow(x$meta)

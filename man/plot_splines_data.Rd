@@ -59,8 +59,11 @@ created (see \code{\link{par}}). If missing, the function will set a value.}
 \item{addToPlot}{A function that will be called after the plotting, allowing
 the user to add more to the plot.}
 
-\item{...}{arguments to be passed to the individual plot commands
-(Will be sent to all plot commands)}
+\item{...}{arguments to be passed to the individual plot commands (Will be
+sent to all plot commands)}
+}
+\value{
+This function creates a plot and does not return anything to the user.
 }
 \description{
 Plotting splines

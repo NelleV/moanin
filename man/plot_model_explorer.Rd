@@ -13,6 +13,9 @@ column (see \code{\link{consensus_matrix}}). Usually each column would be
 the result of running the clustering on a subsample or bootstrap resample
 of the data.}
 }
+\value{
+This function is a plotting function does not return anything
+}
 \description{
 Plot model explorer
 }

@@ -15,7 +15,7 @@
 #'  Whether to fit splines or not.
 #' @param rescale   boolean, optional, default: TRUE
 #'  Whether to rescale the data or not.
-#'  @return A list in the format returned by \code{\link[ClusterR]{KMeans_rcpp}},
+#' @return A list in the format returned by \code{\link[ClusterR]{KMeans_rcpp}},
 #'    with the following elements added or changed:
 #'\itemize{
 #'\item{\code{centroids}}{The centroids are rescaled so that they range from 0-1}
