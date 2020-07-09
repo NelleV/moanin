@@ -48,8 +48,8 @@ consensus_matrix = function(labels, scale=TRUE){
 #'   (columns) of the matrix using the \code{\link{consensus_matrix}} function.
 #'   Then the set of values (the N(N-1) values in the upper triangle of the
 #'   matrix), are converted into a cdf function and plotted.
-#' @return invisibily returns list of the upper triangle values, with the list of same length
-#'   as that of \code{labels}.
+#' @return \code{plot_cdf_consensus} invisibily returns list of the upper
+#'   triangle values, with the list of same length as that of \code{labels}.
 #' @rdname get_auc_similarity_scores
 #' @export
 plot_cdf_consensus = function(labels){
@@ -114,9 +114,10 @@ plot_cdf_consensus = function(labels){
 #'   \code{\link[NMI]{NMI}} function.
 #' @seealso \code{\link{consensus_matrix}}, \code{\link[NMI]{NMI}},
 #'   \code{\link{plot_cdf_consensus}}
-#' @returns A vector, equal to length of the list \code{labels}, giving the AUC
-#'   value for each element of \code{labels}.
-#' @aliases plot_cdf_consensus
+#' @returns \code{get_auc_similarity_scores} returns a vector, equal to length
+#'   of the list \code{labels}, giving the AUC value for each element of
+#'   \code{labels}.
+#' @aliases plot_cdf_consensus plot_model_explorer
 #' @examples 
 #' data(exampleData)
 #' moanin = create_moanin_model(testMeta)
@@ -128,8 +129,11 @@ plot_cdf_consensus = function(labels){
 #'   }
 #' kmClusters1=replicate(10,subsampleCluster())
 #' kmClusters2=replicate(10,subsampleCluster())
+#' # Note, because of the small number of replicates (10), 
+#' # these plots are not representative of what to expect.
 #' out<-plot_cdf_consensus(labels=list(kmClusters1,kmClusters2)) 
 #' get_auc_similarity_scores(list(kmClusters1,kmClusters2))
+#' plot_model_explorer(list(kmClusters1,kmClusters2))
 #' @export
 get_auc_similarity_scores = function(labels, method=c("consensus", "nmi")){
     method<-match.arg(method)
@@ -182,10 +186,10 @@ get_nmi_scores = function(labels){
         break
     }
     column = colnames(labels)[trial]
-    columns_to_consider = colnames(labels)[(trial+1):n_trials]
-    label = labels[column]
+    columns_to_consider = (trial+1):n_trials
+    label = labels[,trial]
     scores = c(scores, as.vector(
-        unlist(apply(labels[columns_to_consider], 2, function(x){nmi(x, label)}))))
+        unlist(apply(labels[,columns_to_consider,drop=FALSE], 2, function(x){nmi(x, label)}))))
     }
     return(scores)
 }
@@ -193,15 +197,18 @@ get_nmi_scores = function(labels){
 
 #' Plot model explorer
 #'
-#' @inheritParams plot_cdf_consensus
+#' @param colors a vector of colors, of length equal to the length of \code{labels}
 #' @return This function is a plotting function does not return anything
+#' @rdname get_auc_similarity_scores
 #' @export
-plot_model_explorer = function(labels){
+#' @importFrom grDevices rainbow
+plot_model_explorer = function(labels,colors = rainbow(length(labels))){
     all_labels = labels
+    if(is.null(names(all_labels))) names(all_labels)<-paste("Set",1:length(all_labels))
     n_clusters = names(all_labels)
-    
+    if(length(colors)!=length(labels)) stop("colors argument should be same length as labels")
     nmi_scores = list()
-    colors = grDevices::rainbow(length(n_clusters))
+    
     max_trial = 0
     min_score = 1
     max_score = 0

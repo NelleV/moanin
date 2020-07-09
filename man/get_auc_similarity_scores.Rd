@@ -3,11 +3,14 @@
 \name{plot_cdf_consensus}
 \alias{plot_cdf_consensus}
 \alias{get_auc_similarity_scores}
+\alias{plot_model_explorer}
 \title{Evaluate the consensus between sets of clusterings}
 \usage{
 plot_cdf_consensus(labels)
 
 get_auc_similarity_scores(labels, method = c("consensus", "nmi"))
+
+plot_model_explorer(labels, colors = rainbow(length(labels)))
 }
 \arguments{
 \item{labels}{a list. Each element of
@@ -18,13 +21,18 @@ of the data.}
 
 \item{method}{method for calculation of similarity for the AUC measure, one
 of "consensus" or "nmi". See details.}
+
+\item{colors}{a vector of colors, of length equal to the length of \code{labels}}
 }
 \value{
-invisibily returns list of the upper triangle values, with the list of same length
-  as that of \code{labels}.
+\code{plot_cdf_consensus} invisibily returns list of the upper
+  triangle values, with the list of same length as that of \code{labels}.
 
-A vector, equal to length of the list \code{labels}, giving the AUC
-  value for each element of \code{labels}.
+\code{get_auc_similarity_scores} returns a vector, equal to length
+  of the list \code{labels}, giving the AUC value for each element of
+  \code{labels}.
+
+This function is a plotting function does not return anything
 }
 \description{
 Methods for evaluating the consensus between sets of
@@ -65,8 +73,11 @@ subsampleCluster<-function(){
   }
 kmClusters1=replicate(10,subsampleCluster())
 kmClusters2=replicate(10,subsampleCluster())
+# Note, because of the small number of replicates (10), 
+# these plots are not representative of what to expect.
 out<-plot_cdf_consensus(labels=list(kmClusters1,kmClusters2)) 
 get_auc_similarity_scores(list(kmClusters1,kmClusters2))
+plot_model_explorer(list(kmClusters1,kmClusters2))
 }
 \seealso{
 \code{\link{consensus_matrix}}, \code{\link[NMI]{NMI}},
