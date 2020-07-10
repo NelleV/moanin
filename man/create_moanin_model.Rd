@@ -8,13 +8,14 @@ create_moanin_model(
   meta,
   formula = NULL,
   basis = NULL,
+  group_variable = "Group",
+  time_variable = "Timepoint",
   degrees_of_freedom = NULL
 )
 }
 \arguments{
 \item{meta}{\code{data.frame} containing the metadata in columns, and rows
-corresponding to different samples. Metadata needs to contain the columns
-"Group" and "Timepoint".}
+corresponding to different samples.}
 
 \item{formula}{formula object, optional, default: NUlL. Used to construct
 splines from the data in \code{meta}. See details.}
@@ -22,6 +23,12 @@ splines from the data in \code{meta}. See details.}
 \item{basis}{matrix, optional, default: NULL. A basis matrix, where each row
 corresponds to the evaluation of a sample on the basis function (thus one
 column for each basis function).}
+
+\item{group_variable}{A character value giving the column that corresponds to
+the grouping variable to test for DE. By default "Group"}
+
+\item{time_variable}{A character value giving the column that corresponds to
+the time variable. By default "Timepoint".}
 
 \item{degrees_of_freedom}{int, optional. Number of degrees of freedom to use
 if neither the basis nor the formula is provided. If not provided by the
@@ -58,9 +65,8 @@ meta = shoemaker2015$meta
 # Use the default options
 moanin = create_moanin_model(meta)
 print(moanin)
-print(dim(moanin$basis))
 
 # Change the number of degrees of freedom
 moanin = create_moanin_model(meta, degrees_of_freedom=6)
-print(dim(moanin$basis))
+print(moanin)
 }

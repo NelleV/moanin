@@ -182,13 +182,14 @@ DE_timecourse = function(data, moanin_model,
     basis = moanin_model$basis
     meta = moanin_model$meta
 
-    ng = nlevels(meta$Group)
-    ng_labels = meta$Group
+    gpVar = moanin_model$group_variable
+    ng = nlevels(meta[,gpVar])
+    ng_labels = meta[,gpVar]
 
     check_data_meta(data, meta)
     data = as.matrix(data)
 
-    contrasts = is_contrasts(contrasts, meta)
+    contrasts = is_contrasts(contrasts, moanin_model)
 
     if(use_voom_weights){
         y = edgeR::DGEList(counts=data)
@@ -223,7 +224,7 @@ DE_timecourse = function(data, moanin_model,
         
         # Get the number of samples used for this particular contrast:
         groups_of_interest = names(contrast)[contrast != 0]
-        n_samples_fit = sum(with(meta, Group %in% groups_of_interest))
+        n_samples_fit = sum(meta[,gpVar] %in% groups_of_interest)
         n_groups = length(groups_of_interest)
         degrees_of_freedom = dim(basis)[2] / ng
         

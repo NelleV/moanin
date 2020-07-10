@@ -1,11 +1,11 @@
 library(moanin)
 library(limma)
 library(timecoursedata)
+data(shoemaker2015)
 
 context("moanin::de_analysis.R")
 
 test_that("time-course DE analysis", {
-    data(shoemaker2015)
     data = shoemaker2015$data
     meta = shoemaker2015$meta
 

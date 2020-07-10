@@ -1,0 +1,9 @@
+^.*[.]Rproj$
+^\.Rproj\.user$
+^[.]Rproj[.]user$
+^[.]Rhistory
+^[.]gitignore
+^[.]travis[.]yml
+^[.]build_tools
+^[.]git
+^[.]scripts

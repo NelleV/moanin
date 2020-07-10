@@ -38,6 +38,8 @@ fit_predict_splines = function(data, moanin_model,
                                meta_prediction=NULL){
     basis = moanin_model$basis
     meta = moanin_model$meta
+    gpVar = moanin_model$group_variable
+    tpVar = moanin_model$time_variable
     # if(!is.null(weights)){
     #     stop("moanin::fit_predict_splines: not implemented")
     # }
@@ -47,13 +49,13 @@ fit_predict_splines = function(data, moanin_model,
         degrees_of_freedom = moanin_model$degrees_of_freedom
         fitting_data = t(as.matrix(data))
         formula_data = list(
-            "Group"=meta$Group,
-            "Timepoint"=meta$Timepoint,
+            "Group"=meta[,gpVar],
+            "Timepoint"=meta[,tpVar],
             "fitting_data"=fitting_data,
             "degrees_of_freedom"=moanin_model$degrees_of_freedom)
-        
+        names(formula_data)[c(1:2)]<-c(gpVar,tpVar)
         updated_formula = stats::update(moanin_model$formula, fitting_data ~ .)
-        model = stats::lm(updated_formula, formula_data)	
+        model = stats::lm(updated_formula, formula_data)
         y_fitted = stats::predict(model, meta_prediction)
     }
     return(y_fitted)
@@ -73,7 +75,9 @@ create_meta_prediction = function(moanin_model, num_timepoints=100){
     timepoints_pred = NULL
     groups_pred = NULL
     meta = droplevels(moanin_model$meta)
-    groups = levels(meta$Group) 
+    gpVar = moanin_model$group_variable
+    tpVar = moanin_model$time_variable
+    groups = levels(meta[,gpVar]) 
 
     # Check that the moanin model has the appropriate information to create a
     # smooth prediction model.
@@ -87,8 +91,8 @@ create_meta_prediction = function(moanin_model, num_timepoints=100){
 
 
     for(group in groups){
-    	mask = meta$Group == group
-	    time = meta$Timepoint[mask]
+    	mask = meta[,gpVar] == group
+	    time = meta[,tpVar][mask]
 
     	timepoints_pred = c(
 	        timepoints_pred,
@@ -101,6 +105,7 @@ create_meta_prediction = function(moanin_model, num_timepoints=100){
 	    "Timepoint"=timepoints_pred,
 	    "Replicates"=rep(1, length(timepoints_pred)),
 	    "Group"=groups_pred)
+    names(meta_prediction)[c(1,3)]<-c(tpVar,gpVar)
     return(meta_prediction)
 }
 

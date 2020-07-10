@@ -10,39 +10,39 @@
 #' @return meta returns the metadata with additional columns if necessary.
 #'
 #' @keywords internal
-check_meta = function(meta, check_replicates=FALSE){
+check_meta = function(meta, check_replicates=FALSE, group_variable="Group",time_variable="Timepoint"){
     metadata_column_names = colnames(meta)
-    if(!("Group" %in% metadata_column_names)){
+    if(!(group_variable %in% metadata_column_names)){
 	stop(
-	    "moanin::create_moanin_model: " +
-	    "Metadata doesn't contain expected information." +
+	    "moanin::create_moanin_model: ",
+	    "Metadata doesn't contain expected information.",
 	    " Group column is missing.")
     }
 
-    if(!("Timepoint" %in% metadata_column_names)){
+    if(!(time_variable %in% metadata_column_names)){
 	stop(
-	    "moanin::create_moanin_model: " +
-	    "Metadata doesn't contain expected information." +
+	    "moanin::create_moanin_model: " ,
+	    "Metadata doesn't contain expected information." ,
 	    " Timepoint column is missing.")
     }
 
     if(check_replicates & !("Replicate" %in% metadata_column_names)){
 	stop(
-	    "moanin::create_moanin_model: " +
-	    "Metadata doesn't contain expected information." +
+	    "moanin::create_moanin_model: " ,
+	    "Metadata doesn't contain expected information.",
 	    "Replicate column is missing")
     }
 
     # Check that Timepoint is numeric.
-    if(!is.numeric(meta$Timepoint)){
+    if(!is.numeric(meta[,time_variable])){
 	stop(
-	    "moanin::create_moanin_model: " +
+	    "moanin::create_moanin_model: " ,
 	    "Timepoint column is expected to be numeric")
     }
 
-    if(!is.factor(meta$Group)){
+    if(!is.factor(meta[,group_variable])){
 	stop(
-	    "moanin::create_moanin_model: " +
+	    "moanin::create_moanin_model: " ,
 	    "Group column is expected to be factors")
     }
 
@@ -50,7 +50,7 @@ check_meta = function(meta, check_replicates=FALSE){
     # Just create this one.
     if(!("WeeklyGroup" %in% metadata_column_names)){
 	meta["WeeklyGroup"] = as.factor(
-	    make.names(meta$Group:as.factor(meta$Timepoint)))
+	    make.names(meta[,group_variable]:as.factor(meta[,time_variable])))
     }
     return(meta) 
 }
@@ -64,7 +64,7 @@ check_data_meta = function(data, meta){
     data = as.matrix(data)
     if(dim_meta[1] != dim_data[2]){
 	stop(
-	    "Data and metadata are inconsistent. Data is of shape (Xx"+
+	    "Data and metadata are inconsistent. Data is of shape (Xx",
 	    "Metadata is of shape XX")
     }
 
@@ -100,13 +100,15 @@ check_is_2d = function(X){
 #' and that each contrast indeed sums to 0.
 #'
 #' @keywords internal
-is_contrasts = function(contrasts, meta){
+is_contrasts = function(contrasts, moanin_model){
+    meta = moanin_model$meta
+    gpVar = moanin_model$group_variable
     if(is.vector(contrasts)){
 	# XXX Should we add more tests here in order to provide meaningful
 	# error messages?
 	contrasts = limma::makeContrasts(
 	    contrasts=contrasts,
-	    levels=levels(meta$Group))
+	    levels=levels(meta[,gpVar]))
     }else{
 	# Basic checks to make sure we have contrasts
 	dim_contrasts = dim(contrasts)
@@ -115,7 +117,7 @@ is_contrasts = function(contrasts, meta){
 	    stop(msg)
 	}
 
-	n_groups = length(levels(meta$Group))
+	n_groups = length(levels(meta[,gpVar]))
 	if(dim(contrasts)[1] != n_groups){
 	    msg = paste(
 		"When contrasts provided is a matrix, it should contain the",
