@@ -33,8 +33,9 @@
 #' head(estsTimecourse)
 #' @export
 estimate_log_fold_change = function(data, moanin_model, 
-                                    contrasts, method=c("timecourse", "sum", "max", "timely", 
-                                                        "abs_sum", "abs_squared_sum", "min")){
+        contrasts, 
+        method=c("timecourse", "sum", "max", "timely", 
+                 "abs_sum", "abs_squared_sum", "min")){
     # Should check that data and meta is sorted identically
     meta = moanin_model$meta
     gpVar = moanin_model$group_variable
@@ -49,10 +50,12 @@ estimate_log_fold_change = function(data, moanin_model,
     }else if(method %in% c("sum", "max", "min", "abs_sum", "abs_squared_sum",
                            "timecourse", "epicon")){
         timely_lfc = lfc_per_time(data, moanin_model, contrasts)
-        timely_lfc_meta = reconstruct_meta_from_lfc(timely_lfc, split_char=":",group_variable=gpVar,time_variable=tpVar)
+        timely_lfc_meta = reconstruct_meta_from_lfc(timely_lfc, split_char=":",
+                    group_variable=gpVar,time_variable=tpVar)
         log_fold_changes = data.frame(row.names=row.names(data))
         for(contrast in colnames(contrasts)){
-            mask = (timely_lfc_meta[,gpVar] == contrast) & !is.na(colSums(timely_lfc))
+            mask = (timely_lfc_meta[,gpVar] == contrast) & 
+                !is.na(colSums(timely_lfc))
             if(method == "max"){
                 log_fold_changes[, contrast] = rowMax(abs(timely_lfc[, mask]))
             } else if(method == "min") {
@@ -106,7 +109,8 @@ data_summarize_per_time = function(data, meta){
 
 
 # XXX helper function to reconstruct metadat from adat
-reconstruct_meta_from_lfc = function(data_per_time, group_variable, time_variable,split_char="."){
+reconstruct_meta_from_lfc = function(data_per_time, group_variable, 
+                                     time_variable,split_char="."){
     meta_per_time = t(
         as.data.frame(strsplit(colnames(data_per_time), split_char, fixed=TRUE)))
     row.names(meta_per_time) = colnames(data_per_time)
@@ -124,7 +128,8 @@ lfc_per_time = function(data, moanin_model, contrasts){
     meta[,tpVar] = as.factor(meta[,tpVar])
     
     averaged_data = average_replicates(data, moanin_model)
-    averaged_meta = reconstruct_meta_from_lfc(averaged_data, split_char=":",group_variable=gpVar,time_variable=tpVar)
+    averaged_meta = reconstruct_meta_from_lfc(averaged_data, split_char=":",
+                                group_variable=gpVar,time_variable=tpVar)
     
     averaged_meta[,tpVar] = as.factor(averaged_meta[,tpVar])
     sample_coefficients = sapply(averaged_meta[,gpVar], function(x) return(contrasts[x, ]))
@@ -140,7 +145,8 @@ lfc_per_time = function(data, moanin_model, contrasts){
     row.names(log_fold_changes) = row.names(data)
     colnames(log_fold_changes) = sapply(
         colnames(sample_coefficients),FUN=
-            function(x){sapply(unique(averaged_meta[,tpVar]), FUN=function(t){paste0(x, ":", t)})})
+            function(x){sapply(unique(averaged_meta[,tpVar]), 
+                               FUN=function(t){paste0(x, ":", t)})})
     
     for(column in colnames(sample_coefficients)){
         

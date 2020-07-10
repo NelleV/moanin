@@ -4,7 +4,7 @@ Version: 0.0.0
 Author: Nelle Varoquaux <nelle.varoquaux@gmail.com>
 Maintainer: Nelle Varoquaux <nelle.varoquaux@gmail.com>
 Description: Simple and efficient workflow for time-course gene expression data.
-Depends: R (>= 3.5),
+Depends: R (>= 4.0),
 	 topGO
 Imports: MASS (>= 1.0.0),
 	 limma,

@@ -22,7 +22,8 @@ of the data.}
 \item{method}{method for calculation of similarity for the AUC measure, one
 of "consensus" or "nmi". See details.}
 
-\item{colors}{a vector of colors, of length equal to the length of \code{labels}}
+\item{colors}{a vector of colors, of length equal to the length of
+\code{labels}}
 }
 \value{
 \code{plot_cdf_consensus} invisibily returns list of the upper
@@ -40,12 +41,13 @@ Methods for evaluating the consensus between sets of
   numbers of clusters.
 }
 \details{
-For each element of the list \code{labels}, \code{plot_cdf_consensus} calculates
-  the consensus between the clusterings in the matrix, i.e. the number of
-  times that pairs of rows are in the same cluster for different clusterings
-  (columns) of the matrix using the \code{\link{consensus_matrix}} function.
-  Then the set of values (the N(N-1) values in the upper triangle of the
-  matrix), are converted into a cdf function and plotted.
+For each element of the list \code{labels},
+  \code{plot_cdf_consensus} calculates the consensus between the clusterings
+  in the matrix, i.e. the number of times that pairs of rows are in the same
+  cluster for different clusterings (columns) of the matrix using the
+  \code{\link{consensus_matrix}} function. Then the set of values (the N(N-1)
+  values in the upper triangle of the matrix), are converted into a cdf
+  function and plotted.
 
 For each set of clusterings given by \code{labels} (i.e. for each
   matrix \code{M} which is an element of the list \code{labels})
@@ -69,8 +71,9 @@ moanin = create_moanin_model(testMeta)
 subsampleCluster<-function(){
    ind<-sample(1:nrow(testData),size=50)
    km<-splines_kmeans(testData[ind,],moanin,n_clusters=3)
-   assign<-splines_kmeans_score_and_label(testData, km, percentage_genes_to_label=1.0)$label
-  }
+   assign<-splines_kmeans_score_and_label(testData, km, 
+       percentage_genes_to_label=1.0)$label
+}
 kmClusters1=replicate(10,subsampleCluster())
 kmClusters2=replicate(10,subsampleCluster())
 # Note, because of the small number of replicates (10), 

@@ -44,7 +44,7 @@ do not have a score lower than a specified quantity}
 each gene and each cluster, the goodness of fit score}
 \item{\code{score_cutoff}}{The required cutoff for a gene receiving an
 assignment}
- }
+}
 }
 \description{
 Assign score and labels from raw data

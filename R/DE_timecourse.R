@@ -162,7 +162,7 @@ summarise = function(basis, ng_levels) {
 #'  to be converted into such a matrix.
 #' @param center boolean, whether to center the data matrix
 #' @param use_voom_weights boolean, optional, default: TRUE. 
-#'	Whether to use voom weights.
+#'  Whether to use voom weights.
 #' @details The implementation of the spline fit and the calculation of p-values
 #'   was based on code from \code{\link[edge]{edge}}, and expanded to enable
 #'   handling of comparisons of groups via contrasts.#' @seealso

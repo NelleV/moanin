@@ -18,9 +18,11 @@
 #' @return A list in the format returned by \code{\link[ClusterR]{KMeans_rcpp}},
 #'    with the following elements added or changed:
 #'\itemize{
-#'\item{\code{centroids}}{The centroids are rescaled so that they range from 0-1}
+#'\item{\code{centroids}}{The centroids are rescaled so that they range from
+#'0-1}
 #'\item{\code{moanin_model}}{The given moanin_model}
-#'\item{\code{fit_splines}}{The value of \code{fit_splines} given to the function }
+#'\item{\code{fit_splines}}{The value of \code{fit_splines} given to the
+#'function }
 #'\item{\code{rescale}}{The value of \code{rescale} given to the function }
 #'} 
 #' @examples 
@@ -31,12 +33,12 @@
 #' table(out$clusters)
 #' @export
 splines_kmeans = function(data, moanin_model, n_clusters=10,
-                          init="kmeans++",
-                          n_init=10, 
-                          max_iter=300, 
-                          random_seed=.Random.seed[1],
-                          fit_splines=TRUE,
-                          rescale=TRUE){
+                        init="kmeans++",
+                        n_init=10, 
+                        max_iter=300, 
+                        random_seed=.Random.seed[1],
+                        fit_splines=TRUE,
+                        rescale=TRUE){
     meta = moanin_model$meta
     basis = moanin_model$basis
     check_data_meta(data, meta)
@@ -59,7 +61,8 @@ splines_kmeans = function(data, moanin_model, n_clusters=10,
     names(kmeans_clusters$clusters) = row.names(data)
     
     # Give names to clusters
-    cluster_names = vapply(seq_len(n_clusters), function(x){paste0("C", x)},FUN.VALUE="C")
+    cluster_names = vapply(seq_len(n_clusters), FUN=function(x){paste0("C", x)},
+                        FUN.VALUE="C")
     row.names(kmeans_clusters$centroids) = cluster_names
     colnames(kmeans_clusters$centroids) = colnames(data)
     
@@ -114,26 +117,30 @@ splines_kmeans_prediction = function(data, kmeans_clusters){
 #'  When provided, will only label genes below that score. If NULL, ignore
 #'  this option.
 #' @param rescale_separately_on, string, optional, default: NULL
-#'	When provided, will rescale separately different groups of data.
-#' @param previous_scores an option to give the scores results from a previous run of \code{splines_kmeans_score_and_label}, and only redo the filtering (i.e. if want to change \code{percentage_genes_to_label} without rerunning the calculation of scores)
-#'	@return A list consisting of
-#'	\itemize{
-#'	\item{\code{labels}}{the label or cluster assigned to each gene based on the
-#'	cluster with the best (i.e. lowest) score, with no label given to genes that
-#'	do not have a score lower than a specified quantity}
-#'	\item{\code{scores}}{the matrix of size n_cluster x n_genes, containing for 
-#'	each gene and each cluster, the goodness of fit score}
-#'	\item{\code{score_cutoff}}{The required cutoff for a gene receiving an
-#'	assignment}
-#'  }
+#'  When provided, will rescale separately different groups of data.
+#' @param previous_scores an option to give the scores results from a previous
+#'   run of \code{splines_kmeans_score_and_label}, and only redo the filtering
+#'   (i.e. if want to change \code{percentage_genes_to_label} without rerunning
+#'   the calculation of scores)
+#' @return A list consisting of
+#' \itemize{
+#' \item{\code{labels}}{the label or cluster assigned to each gene based on the
+#' cluster with the best (i.e. lowest) score, with no label given to genes that
+#' do not have a score lower than a specified quantity}
+#' \item{\code{scores}}{the matrix of size n_cluster x n_genes, containing for 
+#' each gene and each cluster, the goodness of fit score}
+#' \item{\code{score_cutoff}}{The required cutoff for a gene receiving an
+#' assignment}
+#' }
 #' @examples 
 #' data(exampleData)
 #' moanin = create_moanin_model(testMeta)
 #' kmClusters=splines_kmeans(testData, moanin)
 #' scores_and_labels = splines_kmeans_score_and_label(testData, kmClusters)
 #' @export
-splines_kmeans_score_and_label = function(data, kmeans_clusters, percentage_genes_to_label=0.5,
-                                          max_score=NULL, rescale_separately_on=NULL, previous_scores=NULL){
+splines_kmeans_score_and_label = function(data, kmeans_clusters, 
+        percentage_genes_to_label=0.5,
+        max_score=NULL, rescale_separately_on=NULL, previous_scores=NULL){
 
     if(is.null(previous_scores)){
         meta = kmeans_clusters$moanin_model$meta
@@ -185,9 +192,9 @@ splines_kmeans_score_and_label = function(data, kmeans_clusters, percentage_gene
     if(percentage_genes_to_label<1 | !is.null(max_score)){
         max_score_data = stats::quantile(scores, c(percentage_genes_to_label))
         if(!is.null(max_score)){
-        	max_score = min(max_score_data, max_score)
+            max_score = min(max_score_data, max_score)
         }else{
-    	    max_score = max_score_data
+            max_score = max_score_data
         }
         genes_to_not_consider = scores >= max_score
         labels[genes_to_not_consider] = NA
