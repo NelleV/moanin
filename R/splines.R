@@ -131,8 +131,10 @@ rescale_values = function(y, meta=NULL, group=NULL){
         ymin = row_min(y) 
         y = y - ymin
         ymax = row_max(y)
-        # We may have a division by 0 here
-        y = y / ymax
+        whNonZero<-which(ymax>0)
+        if(length(whNonZero)>0){
+            y[whNonZero,] = y[whNonZero,] / ymax[whNonZero]
+        }
     }else{
         if(is.null(meta)){
             msg = paste(
@@ -146,8 +148,8 @@ rescale_values = function(y, meta=NULL, group=NULL){
             ymin = row_min(y[, mask]) 
             y[, mask] = y[, mask] - ymin
             ymax = row_max(y[, mask])
-            # We may have a division by 0 here
-            y[, mask] = y[, mask] / ymax
+            whNonZero<-which(ymax>0)
+            y[whNonZero,mask] = y[whNonZero,mask] / ymax[whNonZero]
         }
     }
     return(y)
