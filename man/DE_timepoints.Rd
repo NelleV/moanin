@@ -60,7 +60,7 @@ Creates pairwise contrasts for all timepoints
 \examples{
 data(exampleData)
 moanin = create_moanin_model(testMeta)
-contrasts = create_timepoints_contrasts("C", "K", moanin_model)
+contrasts = create_timepoints_contrasts("C", "K", moanin)
 head(contrasts)
 deTimepoints=DE_timepoints(data=testData, moanin_model=moanin, contrasts=contrasts, use_voom_weights=FALSE)
 head(deTimecourse)
