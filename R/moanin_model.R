@@ -37,6 +37,7 @@
 #'@details If neither \code{formula} nor \code{basis} is given, then by default,
 #'  the function will create a basis matrix based on the formula:
 #'  \preformatted{formula = ~Group:ns(Timepoint, df=4) + Group + 0}
+#'@details Note that the meta data will have levels dropped (via \code{droplevels}). 
 #'@return An object of class \code{moanin_model}; a list with the following elements:
 #'\itemize{
 #'\item{\code{basis}}{A basis matrix, where each row
@@ -109,7 +110,8 @@ print.moanin_model<-function(x,...){
     cat("moanin_model object on",N,"samples containing the following information:\n")
     cat("1) Meta data with",ncol(x$meta),"variables\n")
     if(ncol(x$meta)<=10) print(colnames(x$meta))
-    cat(paste0("2) Group variable given by '",x$group_variable,"'\n"))
+    cat(paste0("2) Group variable given by '",x$group_variable,"' with the following levels:\n"))
+    print(summary(moanin$meta$Group))
     cat(paste0("3) Time variable given by '",x$time_variable,"'\n"))
     cat("4) Basis matrix with",ncol(x$basis),"basis functions\n")
     if(!is.null(x$formula)){

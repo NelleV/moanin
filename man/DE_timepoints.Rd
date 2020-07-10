@@ -2,9 +2,12 @@
 % Please edit documentation in R/DE_timepoints.R
 \name{DE_timepoints}
 \alias{DE_timepoints}
+\alias{create_timepoints_contrasts}
 \title{Fit weekly differential expression analysis}
 \usage{
 DE_timepoints(data, moanin_model, contrasts, use_voom_weights = TRUE)
+
+create_timepoints_contrasts(group1, group2, moanin_model)
 }
 \arguments{
 \item{data}{The data matrix, where genes (features) are on the rows and
@@ -23,6 +26,12 @@ to be converted into such a matrix.}
 
 \item{use_voom_weights}{boolean, optional, default: TRUE. 
 Whether to use voom weights.}
+
+\item{group1}{First group to consider in making contrasts, character value that must match a
+value contained in \code{moanin_model$meta}.}
+
+\item{group2}{Second group to consider in making contrasts, character value that must match a
+value contained in \code{moanin_model$meta}.}
 }
 \value{
 A \code{data.frame} with three columns for each of the contrasts
@@ -32,7 +41,30 @@ A \code{data.frame} with three columns for each of the contrasts
   FDR-adjusted based on the Benjamini-Hochberg method, as implemented in
   \code{\link[stats]{p.adjust}}. The adjustment is done across all p-values
   for all contrasts calculated.
+
+\code{create_timepoints_contrasts}: a character vector with each element of the vector corresponding to a
+  contrast to be compared.
 }
 \description{
 Fit weekly differential expression analysis
+
+Creates pairwise contrasts for all timepoints
+}
+\details{
+\code{create_timepoints_contrasts} creates the needed contrasts for comparing two groups for every
+  timepoint in the format needed for \code{DE_timepoints} (i.e.
+  \code{\link[limma]{makeContrasts}}, to which the contrasts are ultimately
+  passed). The time points are determined by the meta data in the
+  \code{moanin_object} provided by the user.
+}
+\examples{
+data(exampleData)
+moanin = create_moanin_model(testMeta)
+contrasts = create_timepoints_contrasts("C", "K", moanin_model)
+head(contrasts)
+deTimepoints=DE_timepoints(data=testData, moanin_model=moanin, contrasts=contrasts, use_voom_weights=FALSE)
+head(deTimecourse)
+}
+\seealso{
+\code{\link[limma]{makeContrasts}}
 }

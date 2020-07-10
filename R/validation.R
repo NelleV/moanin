@@ -46,7 +46,7 @@ check_meta = function(meta, check_replicates=FALSE, group_variable="Group",time_
 	    "Group column is expected to be factors")
     }
 
-
+    meta<-droplevels(meta)
     # Just create this one.
     if(!("WeeklyGroup" %in% metadata_column_names)){
 	meta["WeeklyGroup"] = as.factor(

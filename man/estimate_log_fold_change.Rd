@@ -46,3 +46,11 @@ The following methods exist for calculating the log-fold change
 \item{\code{min}}{Min of per-week log fold change, over all timepoints}
 }
 }
+\examples{
+data(exampleData)
+moanin = create_moanin_model(testMeta)
+estsTimely = estimate_log_fold_change(data=testData,moanin, contrasts=c("K-C"),method="timely")
+head(estsTimely)
+estsTimecourse = estimate_log_fold_change(data=testData,moanin, contrasts=c("K-C"),method="timecourse")
+head(estsTimecourse)
+}

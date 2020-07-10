@@ -46,8 +46,11 @@ Run spline models with contrasts.
 \details{
 The implementation of the spline fit and the calculation of p-values
   was based on code from \code{\link[edge]{edge}}, and expanded to
-  enable handling of comparisons of groups via contrasts.
+  enable handling of comparisons of groups via contrasts.#' @seealso \code{\link[limma]{makeContrasts}}, \code{\link{create_moanin_model}}, \code{\link{DE_timepoints}}, \code{\link[edge]{edge}}
 }
-\seealso{
-\code{\link[limma]{makeContrasts}}, \code{\link{create_moanin_model}}, \code{\link{DE_timepoints}}, \code{\link[edge]{edge}}
+\examples{
+data(exampleData)
+moanin = create_moanin_model(testMeta)
+deTimecourse=DE_timecourse(data=testData, moanin_model=moanin, contrasts="K-C", use_voom_weights=FALSE)
+head(deTimecourse)
 }

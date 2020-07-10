@@ -9,6 +9,7 @@
 #' @param min_samples integer, corresponding to the minimum of samples for a
 #'  gene to be expressed to be included in downstream analyses.
 #' @return The filtered counts matrix
+#' @keywords internal
 expression_filtering = function(counts, min_counts=20, min_samples=3){
     rows_to_keep = apply(counts, 1, function(x){
             sum(x > min_counts) > min_samples

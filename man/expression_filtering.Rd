@@ -21,3 +21,4 @@ The filtered counts matrix
 \description{
 Utility function to filter out low-expressed genes
 }
+\keyword{internal}

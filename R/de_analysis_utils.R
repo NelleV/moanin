@@ -18,6 +18,13 @@
 #'   (row). For all methods except for "timely", the data frame will consist of
 #'   one column for each value of the argument \code{contrasts}. For "timely"
 #'   there will be one column for each timepoint and contrast combination.
+#' @examples 
+#' data(exampleData)
+#' moanin = create_moanin_model(testMeta)
+#' estsTimely = estimate_log_fold_change(data=testData,moanin, contrasts=c("K-C"),method="timely")
+#' head(estsTimely)
+#' estsTimecourse = estimate_log_fold_change(data=testData,moanin, contrasts=c("K-C"),method="timecourse")
+#' head(estsTimecourse)
 #' @export
 estimate_log_fold_change = function(data, moanin_model, 
 				    contrasts, method=c("timecourse", "sum", "max", "timely", 

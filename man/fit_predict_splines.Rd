@@ -2,7 +2,7 @@
 % Please edit documentation in R/splines.R
 \name{fit_predict_splines}
 \alias{fit_predict_splines}
-\title{Get fitted values for splines}
+\title{Get fitted values for splines for each gene}
 \usage{
 fit_predict_splines(data, moanin_model, meta_prediction = NULL)
 }
@@ -21,6 +21,6 @@ more details.}
 a matrix of the fitted y values, with dimensions the same as \code{data}
 }
 \description{
-Get fitted values for splines
+Get fitted values for splines for each gene
 }
 \keyword{internal}

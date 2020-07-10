@@ -58,6 +58,8 @@ the formula, the basis, the meta data.
 If neither \code{formula} nor \code{basis} is given, then by default,
  the function will create a basis matrix based on the formula:
  \preformatted{formula = ~Group:ns(Timepoint, df=4) + Group + 0}
+
+Note that the meta data will have levels dropped (via \code{droplevels}).
 }
 \examples{
 # Load some data

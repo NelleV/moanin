@@ -26,7 +26,7 @@ fit_splines = function(data, moanin_model, weights=NULL){
     return(beta)
 }
 
-#' Get fitted values for splines
+#' Get fitted values for splines for each gene
 #'
 #' @inheritParams DE_timecourse
 #' @param meta_prediction optional, see \code{\link{create_meta_prediction}}.
@@ -245,7 +245,7 @@ score_genes_centroid = function(data, centroid, positive_scaling=TRUE, scale=TRU
 
 #' Fisher's method to combine pvalues
 #'
-#' Combines all p-value per rows.
+#' Combines all p-values per rows.
 #' 
 #' @param pvalues a matrix of pvalues, with columns corresponding to different
 #'   tests or sources of p-values, and rows corresponding to the genes from
@@ -253,6 +253,12 @@ score_genes_centroid = function(data, centroid, positive_scaling=TRUE, scale=TRU
 #' @return a vector of p-values, one for each row of \code{pvalues}, that is the
 #'   result of Fisher's combined probability test applied to the p-values in
 #'   that row.
+#' @examples 
+#' data(exampleData)
+#' moanin = create_moanin_model(testMeta)
+#' deTimepoints=DE_timepoints(data=testData, moanin_model=moanin, contrasts=contrasts, use_voom_weights=FALSE)
+#' fisherPval=pvalues_fisher_method(deTimepoints[,grep("pval",colnames(deTimepoints))])
+#' head(fisherPval)
 #' @export
 pvalues_fisher_method = function(pvalues){
     # TODO Add a check that all pvalues are "valid"

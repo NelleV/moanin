@@ -9,6 +9,14 @@
 #'   FDR-adjusted based on the Benjamini-Hochberg method, as implemented in
 #'   \code{\link[stats]{p.adjust}}. The adjustment is done across all p-values
 #'   for all contrasts calculated.
+#' @aliases create_timepoints_contrasts
+#' @examples 
+#' data(exampleData)
+#' moanin = create_moanin_model(testMeta)
+#' contrasts = create_timepoints_contrasts("C", "K", moanin_model)
+#' head(contrasts)
+#' deTimepoints=DE_timepoints(data=testData, moanin_model=moanin, contrasts=contrasts, use_voom_weights=FALSE)
+#' head(deTimecourse)
 #' @export
 DE_timepoints = function(data, moanin_model,
 			 contrasts,
@@ -68,24 +76,19 @@ DE_timepoints = function(data, moanin_model,
 
 #' Creates pairwise contrasts for all timepoints
 #'
-#' @param group1 First group to consider, character value that must match a
+#' @param group1 First group to consider in making contrasts, character value that must match a
 #'   value contained in \code{moanin_model$meta}.
-#' @param group2 Second group to consider, character value that must match a
+#' @param group2 Second group to consider in making contrasts, character value that must match a
 #'   value contained in \code{moanin_model$meta}.
-#' @inheritParams DE_timecourse
-#' @details This function creates contrasts comparing two groups for every
-#'   timepoint in the format needed for \code{\link{DE_timepoints}} (i.e.
+#' @details \code{create_timepoints_contrasts} creates the needed contrasts for comparing two groups for every
+#'   timepoint in the format needed for \code{DE_timepoints} (i.e.
 #'   \code{\link[limma]{makeContrasts}}, to which the contrasts are ultimately
 #'   passed). The time points are determined by the meta data in the
 #'   \code{moanin_object} provided by the user.
-#' @return a character vector with each element of the vector corresponding to a
+#' @return \code{create_timepoints_contrasts}: a character vector with each element of the vector corresponding to a
 #'   contrast to be compared.
-#' @seealso \code{\link{DE_timepoints}},  \code{\link[limma]{makeContrasts}}
-#' @examples
-#' data(exampleData)
-#' moanin_model = moanin::create_moanin_model(testMeta)
-#' contrasts = create_timepoints_contrasts("C", "M", moanin_model)
-#'
+#' @seealso \code{\link[limma]{makeContrasts}}
+#' @rdname DE_timepoints
 #' @export
 create_timepoints_contrasts = function(group1, group2, moanin_model){
     meta = moanin_model$meta
