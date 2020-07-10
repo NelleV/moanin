@@ -8,3 +8,6 @@
 ^[.]git
 ^[.]scripts
 ^.*\.Rproj$
+^Makefile
+^pkgdown
+^.*[.]md

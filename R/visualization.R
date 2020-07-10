@@ -35,14 +35,15 @@
 #' # The moanin model contains all the information for plotting purposes. The
 #' # plot_splines_function will automatically fit the splines from the
 #' # information contained in the moanin model
+#' genes = c("NM_001042489", "NM_008725")
 #' plot_splines_data(
 #'	testData, moanin_model,
-#'	subset_data=c("AK050122", "AK043921"),
+#'	subset_data=genes,
 #'	mfrow=c(2, 2))
 #'
 #' # The splines can also be smoothed
 #' plot_splines_data(testData, moanin_model,
-#'		     subset_data=c("AK050122", "AK043921"),
+#'		     subset_data=genes,
 #'		     smooth=TRUE, mfrow=c(2, 2))
 #' @export
 #' @importFrom graphics axis plot.new plot.window
@@ -60,7 +61,7 @@ plot_splines_data = function(data, moanin_model, colors=NULL, smooth=FALSE,
         mask = subset_data %in% row.names(data)
         if(!all(mask)){
             msg = paste0(
-                "Some elements of subset_data are not match row.names of data.")
+                "Some elements of subset_data do not match row.names of data.")
             stop(msg)
         }
         data = data[subset_data, ]

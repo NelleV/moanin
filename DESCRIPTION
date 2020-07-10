@@ -1,5 +1,5 @@
 Package: moanin
-Title: An awesome R package for time course RNASeq data analysis
+Title: An R Package for Time Course RNASeq Data Analysis
 Version: 0.0.0
 Author: Nelle Varoquaux <nelle.varoquaux@gmail.com>
 Maintainer: Nelle Varoquaux <nelle.varoquaux@gmail.com>

@@ -3,6 +3,9 @@
 \docType{data}
 \name{exampleData}
 \alias{exampleData}
+\alias{testData}
+\alias{testMeta}
+\alias{testGenesGO}
 \title{Small data set for running examples}
 \format{
 Three objects are loaded, a data frame of expression of 500 genes by 84

@@ -6,12 +6,16 @@
 #' @details The following methods exist for calculating the log-fold change
 #'   between conditions over time (default is "timecourse"):
 #' \itemize{
-#' \item{\code{timely}}{The log-fold change for each individual timepoint (\eqn{lfc(t)})}
-#' \item{\code{timecourse}}{The average absolute per-week fold-change, multiplied by the sign of the average per-week fold-change.}
+#' \item{\code{timely}}{The log-fold change for each individual timepoint
+#' (\eqn{lfc(t)})}
+#' \item{\code{timecourse}}{The average absolute per-week fold-change,
+#' multiplied by the sign of the average per-week fold-change.}
 #' \item{\code{sum}}{Sum of per-week log fold change, over all timepoints}
 #' \item{\code{max}}{Max of per-week log fold change, over all timepoints}
-#' \item{\code{abs_sum}}{Sum of the absolute value of the per-week log fold change, over all timepoints}
-#' \item{\code{abs_squared_sum}}{Sum of the square value of the per-week log fold change, over all timepoint}
+#' \item{\code{abs_sum}}{Sum of the absolute value of the per-week log fold
+#' change, over all timepoints}
+#' \item{\code{abs_squared_sum}}{Sum of the square value of the per-week log
+#' fold change, over all timepoint}
 #' \item{\code{min}}{Min of per-week log fold change, over all timepoints}
 #' }
 #' @return A data.frame giving the estimated log-fold change for each gene
@@ -21,9 +25,11 @@
 #' @examples 
 #' data(exampleData)
 #' moanin = create_moanin_model(testMeta)
-#' estsTimely = estimate_log_fold_change(data=testData,moanin, contrasts=c("K-C"),method="timely")
+#' estsTimely = estimate_log_fold_change(data=testData,moanin, 
+#'    contrasts=c("K-C"), method="timely")
 #' head(estsTimely)
-#' estsTimecourse = estimate_log_fold_change(data=testData,moanin, contrasts=c("K-C"),method="timecourse")
+#' estsTimecourse = estimate_log_fold_change(data=testData,moanin, 
+#'    contrasts=c("K-C"),method="timecourse")
 #' head(estsTimecourse)
 #' @export
 estimate_log_fold_change = function(data, moanin_model, 

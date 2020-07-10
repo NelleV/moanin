@@ -132,7 +132,7 @@ compute_pvalue = function(basis, y, beta, beta_null, ng_labels,
 }
 
 summarise = function(basis, ng_levels) {
-    basis_mean = matrix(,nrow=nrow(basis), ncol=nlevels(ng_levels))
+    basis_mean = matrix(nrow=nrow(basis), ncol=nlevels(ng_levels))
     colnames(basis_mean) = levels(ng_levels)
     rownames(basis_mean) = rownames(basis)
     
@@ -164,8 +164,10 @@ summarise = function(basis, ng_levels) {
 #' @param use_voom_weights boolean, optional, default: TRUE. 
 #'	Whether to use voom weights.
 #' @details The implementation of the spline fit and the calculation of p-values
-#'   was based on code from \code{\link[edge]{edge}}, and expanded to
-#'   enable handling of comparisons of groups via contrasts.#' @seealso \code{\link[limma]{makeContrasts}}, \code{\link{create_moanin_model}}, \code{\link{DE_timepoints}}, \code{\link[edge]{edge}}
+#'   was based on code from \code{\link[edge]{edge}}, and expanded to enable
+#'   handling of comparisons of groups via contrasts.#' @seealso
+#'   \code{\link[limma]{makeContrasts}}, \code{\link{create_moanin_model}},
+#'   \code{\link{DE_timepoints}}, \code{\link[edge]{edge}}
 #' @return A \code{data.frame} with two columns for each of the contrasts given
 #'   in \code{contrasts}, corresponding to the raw p-value of the contrast for
 #'   that gene (\code{_pval}) and the adjusted p-value (\code{_qval}). The
@@ -175,7 +177,8 @@ summarise = function(basis, ng_levels) {
 #' @examples 
 #' data(exampleData)
 #' moanin = create_moanin_model(testMeta)
-#' deTimecourse=DE_timecourse(data=testData, moanin_model=moanin, contrasts="K-C", use_voom_weights=FALSE)
+#' deTimecourse=DE_timecourse(data=testData, moanin_model=moanin, 
+#'    contrasts="K-C", use_voom_weights=FALSE)
 #' head(deTimecourse)
 #' @export
 DE_timecourse = function(data, moanin_model,

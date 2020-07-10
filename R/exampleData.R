@@ -11,6 +11,7 @@
 #'   refer to the full data set.
 #' @details The rownames of \code{testData} are RefSeq. 
 #' @keywords data
+#' @aliases testData testMeta testGenesGO
 #' @examples
 #' #code used to create data:
 #' \dontrun{

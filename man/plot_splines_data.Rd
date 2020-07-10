@@ -76,13 +76,14 @@ moanin_model = create_moanin_model(testMeta, degrees_of_freedom=6)
 # The moanin model contains all the information for plotting purposes. The
 # plot_splines_function will automatically fit the splines from the
 # information contained in the moanin model
+genes = c("NM_001042489", "NM_008725")
 plot_splines_data(
 testData, moanin_model,
-subset_data=c("AK050122", "AK043921"),
+subset_data=genes,
 mfrow=c(2, 2))
 
 # The splines can also be smoothed
 plot_splines_data(testData, moanin_model,
-	     subset_data=c("AK050122", "AK043921"),
+	     subset_data=genes,
 	     smooth=TRUE, mfrow=c(2, 2))
 }
