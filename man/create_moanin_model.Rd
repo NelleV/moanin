@@ -2,6 +2,7 @@
 % Please edit documentation in R/moanin_model.R
 \name{create_moanin_model}
 \alias{create_moanin_model}
+\alias{print.moanin_model}
 \title{Create a moanin model}
 \usage{
 create_moanin_model(
@@ -12,6 +13,8 @@ create_moanin_model(
   time_variable = "Timepoint",
   degrees_of_freedom = NULL
 )
+
+\method{print}{moanin_model}(x, ...)
 }
 \arguments{
 \item{meta}{\code{data.frame} containing the metadata in columns, and rows
@@ -33,6 +36,10 @@ the time variable. By default "Timepoint".}
 \item{degrees_of_freedom}{int, optional. Number of degrees of freedom to use
 if neither the basis nor the formula is provided. If not provided by the
 user, internally will be set to 4}
+
+\item{x}{a \code{moanin_model} object}
+
+\item{...}{arguments passed to generic \code{print}}
 }
 \value{
 An object of class \code{moanin_model}; a list with the following elements:
@@ -55,18 +62,18 @@ the formula, the basis, the meta data.
 If neither \code{formula} nor \code{basis} is given, then by default,
  the function will create a basis matrix based on the formula:
  \preformatted{formula = ~Group:ns(Timepoint, df=4) + Group + 0}
+
+Note that the meta data will have levels dropped (via \code{droplevels}).
 }
 \examples{
 # Load some data
-library(timecoursedata)
-data(shoemaker2015)
-meta = shoemaker2015$meta
+data(exampleData)
 
 # Use the default options
-moanin = create_moanin_model(meta)
+moanin = create_moanin_model(testMeta)
 print(moanin)
 
 # Change the number of degrees of freedom
-moanin = create_moanin_model(meta, degrees_of_freedom=6)
+moanin = create_moanin_model(testMeta, degrees_of_freedom=6)
 print(moanin)
 }

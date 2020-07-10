@@ -1,19 +1,19 @@
-# Creates a "class" containing the information related to the splines used.
-
-#' Depricated function for creating a moanin_model object
-#'
-#' This function is depricated. Users should use \code{\link{create_moanin_model}}
-#'
-#'@param inheritParams create_moanin_model
-#'@details This function is depricated. Users should use \code{\link{create_moanin_model}}
-#' @export
-#' @keywords internal
-create_splines_model = function(meta, formula=NULL, basis=NULL,
-				degrees_of_freedom=4){
-    .Deprecated(new="create_moanin_model")
-    return(create_moanin_model(meta, formula=formula, basis=basis,
-			       degrees_of_freedom=degrees_of_freedom))
-}
+# # Creates a "class" containing the information related to the splines used.
+#
+# #' Depricated function for creating a moanin_model object
+# #'
+# #' This function is depricated. Users should use \code{\link{create_moanin_model}}
+# #'
+# #'@param inheritParams create_moanin_model
+# #'@details This function is depricated. Users should use \code{\link{create_moanin_model}}
+# #' @export
+# #' @keywords internal
+# create_splines_model = function(meta, formula=NULL, basis=NULL,
+#                 degrees_of_freedom=4){
+#     .Deprecated(new="create_moanin_model")
+#     return(create_moanin_model(meta, formula=formula, basis=basis,
+#                    degrees_of_freedom=degrees_of_freedom))
+# }
 
 #' Create a moanin model
 #' 
@@ -37,6 +37,7 @@ create_splines_model = function(meta, formula=NULL, basis=NULL,
 #'@details If neither \code{formula} nor \code{basis} is given, then by default,
 #'  the function will create a basis matrix based on the formula:
 #'  \preformatted{formula = ~Group:ns(Timepoint, df=4) + Group + 0}
+#'@details Note that the meta data will have levels dropped (via \code{droplevels}). 
 #'@return An object of class \code{moanin_model}; a list with the following elements:
 #'\itemize{
 #'\item{\code{basis}}{A basis matrix, where each row
@@ -50,27 +51,27 @@ create_splines_model = function(meta, formula=NULL, basis=NULL,
 #'} 
 #' @examples
 #' # Load some data
-#' library(timecoursedata)
-#' data(shoemaker2015)
-#' meta = shoemaker2015$meta
+#' data(exampleData)
 #'
 #' # Use the default options
-#' moanin = create_moanin_model(meta)
+#' moanin = create_moanin_model(testMeta)
 #' print(moanin)
 #'
 #' # Change the number of degrees of freedom
-#' moanin = create_moanin_model(meta, degrees_of_freedom=6)
+#' moanin = create_moanin_model(testMeta, degrees_of_freedom=6)
 #' print(moanin)
 #' @export
+#' @aliases print.moanin_model
 #' @importFrom splines ns
+#' @importFrom stats as.formula
 create_moanin_model = function(meta, formula=NULL, basis=NULL,
-    group_variable="Group",time_variable="Timepoint",
+                               group_variable="Group",time_variable="Timepoint",
                                degrees_of_freedom=NULL){
     meta = check_meta(meta,
-        group_variable=group_variable,
-        time_variable=time_variable)
+                      group_variable=group_variable,
+                      time_variable=time_variable)
     if(!is.null(basis) & !is.null(formula)){
-        msg = paste("moanin::create_splines_model: both basis and formula ",
+        msg = paste("both basis and formula ",
                     "are provided by the user. Please provide one or ",
                     "the other", sep="")
         stop(msg)
@@ -82,8 +83,8 @@ create_moanin_model = function(meta, formula=NULL, basis=NULL,
                 degrees_of_freedom = 4
             }
             formulaText<-paste0("~",group_variable," + ",group_variable,":splines::ns(",time_variable,",df=",degrees_of_freedom,") + 0")
-            formula = as.formula(formulaText)# (
-#                 ~Group + Group:splines::ns(Timepoint, df=degrees_of_freedom) + 0)
+            formula = stats::as.formula(formulaText)# (
+            #                 ~Group + Group:splines::ns(Timepoint, df=degrees_of_freedom) + 0)
         }
         basis = stats::model.matrix(formula, data=meta)
     }else{
@@ -102,14 +103,17 @@ create_moanin_model = function(meta, formula=NULL, basis=NULL,
     return(splines_model)
 }
 
-#' @keywords internal
+#' @rdname create_moanin_model
+#' @param x a \code{moanin_model} object
+#' @param ... arguments passed to generic \code{print}
 #' @export
 print.moanin_model<-function(x,...){
     N<-nrow(x$meta)
     cat("moanin_model object on",N,"samples containing the following information:\n")
     cat("1) Meta data with",ncol(x$meta),"variables\n")
     if(ncol(x$meta)<=10) print(colnames(x$meta))
-    cat(paste0("2) Group variable given by '",x$group_variable,"'\n"))
+    cat(paste0("2) Group variable given by '",x$group_variable,"' with the following levels:\n"))
+    print(summary(x$meta$Group))
     cat(paste0("3) Time variable given by '",x$time_variable,"'\n"))
     cat("4) Basis matrix with",ncol(x$basis),"basis functions\n")
     if(!is.null(x$formula)){

@@ -59,30 +59,31 @@ created (see \code{\link{par}}). If missing, the function will set a value.}
 \item{addToPlot}{A function that will be called after the plotting, allowing
 the user to add more to the plot.}
 
-\item{...}{arguments to be passed to the individual plot commands
-(Will be sent to all plot commands)}
+\item{...}{arguments to be passed to the individual plot commands (Will be
+sent to all plot commands)}
+}
+\value{
+This function creates a plot and does not return anything to the user.
 }
 \description{
 Plotting splines
 }
 \examples{
 # First, load some data and create a moanin model
-library(timecoursedata)
-data(shoemaker2015)
-data = shoemaker2015$data
-meta = shoemaker2015$meta
-moanin_model = create_moanin_model(meta, degrees_of_freedom=6)
+data(exampleData)
+moanin_model = create_moanin_model(testMeta, degrees_of_freedom=6)
 
 # The moanin model contains all the information for plotting purposes. The
 # plot_splines_function will automatically fit the splines from the
 # information contained in the moanin model
+genes = c("NM_001042489", "NM_008725")
 plot_splines_data(
-data, moanin_model,
-subset_data=c("AK050122", "AK043921"),
+testData, moanin_model,
+subset_data=genes,
 mfrow=c(2, 2))
 
 # The splines can also be smoothed
-plot_splines_data(data, moanin_model,
-	     subset_data=c("AK050122", "AK043921"),
+plot_splines_data(testData, moanin_model,
+	     subset_data=genes,
 	     smooth=TRUE, mfrow=c(2, 2))
 }
