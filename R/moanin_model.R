@@ -104,6 +104,8 @@ create_moanin_model = function(meta, formula=NULL, basis=NULL,
 }
 
 #' @rdname create_moanin_model
+#' @param x a \code{moanin_model} object
+#' @param ... arguments passed to generic \code{print}
 #' @export
 print.moanin_model<-function(x,...){
     N<-nrow(x$meta)

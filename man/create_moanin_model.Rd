@@ -36,6 +36,10 @@ the time variable. By default "Timepoint".}
 \item{degrees_of_freedom}{int, optional. Number of degrees of freedom to use
 if neither the basis nor the formula is provided. If not provided by the
 user, internally will be set to 4}
+
+\item{x}{a \code{moanin_model} object}
+
+\item{...}{arguments passed to generic \code{print}}
 }
 \value{
 An object of class \code{moanin_model}; a list with the following elements:

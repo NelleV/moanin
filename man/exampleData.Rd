@@ -5,9 +5,9 @@
 \alias{exampleData}
 \title{Small data set for running examples}
 \format{
-Two objects are loaded, a data frame of expression of 500 genes by 84
-  samples (\code{testData}), and a data frame with meta information on those
-  84 samples (\code{testMeta}).
+Three objects are loaded, a data frame of expression of 500 genes by 84
+  samples (\code{testData}), a data frame with meta information on those
+  84 samples (\code{testMeta}), and a data frame giving the GOID of the genes in \code{testData}.
 }
 \description{
 Small data set for running examples
@@ -17,6 +17,8 @@ This data is a subset of the full time course data available as
   \code{\link[timecoursedata]{shoemaker2015}} and is only provided for the
   purpose of running examples, and not for biological meaning. Users should
   refer to the full data set.
+
+The rownames of \code{testData} are RefSeq.
 }
 \examples{
 #code used to create data:
@@ -27,7 +29,15 @@ testData<-shoemaker2015$data[1:500,]
 whSamples<-which(shoemaker2015$meta$Group \%in\% c("C","K"))
 testData<-testData[,whSamples]
 testMeta<-shoemaker2015$meta[whSamples,]
-save(list=c("testData","testMeta"),file="data/exampleData.rda")
+library(biomaRt)
+ensembl = useMart("ensembl")
+ensembl = useMart("ensembl")
+ensembl = useDataset("mmusculus_gene_ensembl", mart=ensembl)
+testGenesGO = getBM(attributes=c("go_id", "refseq_mrna"),
+              values=rownames(testData),
+              filters="refseq_mrna",
+              mart=ensembl)
+save(list=c("testData","testMeta","testGenesGO"),file="data/exampleData.rda")
 }
 }
 \keyword{data}

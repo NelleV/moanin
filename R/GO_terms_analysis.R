@@ -41,6 +41,7 @@
 #' find_enriched_go_terms(inGroup,geneId2Go)
 #' @seealso \code{\link{create_go_term_mapping}}, \code{\link[KEGGprofile]{find_enriched_pathway}}, \code{\link[topGO]{GenTable}}, \code{\link[topGO]{runTest}}, \code{\link[topGO]{topGOdata-class}}, \code{\link[stats]{p.adjust}} 
 #' @export
+#' @importFrom topGO annFUN.gene2GO runTest GenTable
 find_enriched_go_terms = function(assignments, gene_id_to_go,
                                   ontology="BP", 
                                   weighted=FALSE,
