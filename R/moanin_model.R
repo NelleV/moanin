@@ -65,11 +65,11 @@
 #' @importFrom splines ns
 #' @importFrom stats as.formula
 create_moanin_model = function(meta, formula=NULL, basis=NULL,
-    group_variable="Group",time_variable="Timepoint",
+                               group_variable="Group",time_variable="Timepoint",
                                degrees_of_freedom=NULL){
     meta = check_meta(meta,
-        group_variable=group_variable,
-        time_variable=time_variable)
+                      group_variable=group_variable,
+                      time_variable=time_variable)
     if(!is.null(basis) & !is.null(formula)){
         msg = paste("both basis and formula ",
                     "are provided by the user. Please provide one or ",
@@ -84,7 +84,7 @@ create_moanin_model = function(meta, formula=NULL, basis=NULL,
             }
             formulaText<-paste0("~",group_variable," + ",group_variable,":splines::ns(",time_variable,",df=",degrees_of_freedom,") + 0")
             formula = stats::as.formula(formulaText)# (
-#                 ~Group + Group:splines::ns(Timepoint, df=degrees_of_freedom) + 0)
+            #                 ~Group + Group:splines::ns(Timepoint, df=degrees_of_freedom) + 0)
         }
         basis = stats::model.matrix(formula, data=meta)
     }else{
@@ -111,7 +111,7 @@ print.moanin_model<-function(x,...){
     cat("1) Meta data with",ncol(x$meta),"variables\n")
     if(ncol(x$meta)<=10) print(colnames(x$meta))
     cat(paste0("2) Group variable given by '",x$group_variable,"' with the following levels:\n"))
-    print(summary(moanin$meta$Group))
+    print(summary(x$meta$Group))
     cat(paste0("3) Time variable given by '",x$time_variable,"'\n"))
     cat("4) Basis matrix with",ncol(x$basis),"basis functions\n")
     if(!is.null(x$formula)){

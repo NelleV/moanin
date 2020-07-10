@@ -4,9 +4,9 @@ Version: 0.0.0
 Author: Nelle Varoquaux <nelle.varoquaux@gmail.com>
 Maintainer: Nelle Varoquaux <nelle.varoquaux@gmail.com>
 Description: Simple and efficient workflow for time-course gene expression data.
-Depends: R (>= 3.5)
+Depends: R (>= 4.0),
+	 topGO
 Imports: MASS (>= 1.0.0),
-	 edge (>= 2.4.0),
 	 limma,
 	 viridis,
 	 edgeR,
@@ -17,7 +17,6 @@ Imports: MASS (>= 1.0.0),
 	 reshape2,
 	 NMI,
 	 zoo,
-	 topGO,
 	 ClusterR,
      splines
 Suggests: testthat (>= 1.0.0),

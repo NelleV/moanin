@@ -11,7 +11,7 @@ splines_kmeans(
   init = "kmeans++",
   n_init = 10,
   max_iter = 300,
-  random_seed = NULL,
+  random_seed = .Random.seed[1],
   fit_splines = TRUE,
   rescale = TRUE
 )
@@ -62,5 +62,6 @@ Performs splines clustering using K-means
 data(exampleData)
 # Use the default options
 moanin = create_moanin_model(testMeta)
-splines_kmeans(testData, moanin)
+out<-splines_kmeans(testData, moanin,n_clusters=5)
+table(out$clusters)
 }

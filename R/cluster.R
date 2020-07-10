@@ -27,46 +27,42 @@
 #' data(exampleData)
 #' # Use the default options
 #' moanin = create_moanin_model(testMeta)
-#' splines_kmeans(testData, moanin)
+#' out<-splines_kmeans(testData, moanin,n_clusters=5)
+#' table(out$clusters)
 #' @export
 splines_kmeans = function(data, moanin_model, n_clusters=10,
                           init="kmeans++",
                           n_init=10, 
                           max_iter=300, 
-                          random_seed=NULL,
+                          random_seed=.Random.seed[1],
                           fit_splines=TRUE,
                           rescale=TRUE){
     meta = moanin_model$meta
     basis = moanin_model$basis
     check_data_meta(data, meta)
-
+    
     if(fit_splines){
         fitted_data = fit_predict_splines(data, moanin_model)
     }else{
         fitted_data = data
     }
-
+    
     if(rescale){
         fitted_data = rescale_values(fitted_data, meta)
     }
-
-    # Set the random seed if it is null.
-    if(is.null(random_seed)){
-        set.seed(NULL)
-        random_seed = .Random.seed[1]
-    }
+    
     kmeans_clusters = ClusterR::KMeans_rcpp(
         fitted_data, n_clusters, num_init=n_init, max_iters=max_iter,
         seed=random_seed, initializer=init)
     kmeans_clusters$centroids = rescale_values(
         kmeans_clusters$centroids, moanin_model)
     names(kmeans_clusters$clusters) = row.names(data)
-
+    
     # Give names to clusters
-    cluster_names = sapply(1:n_clusters, function(x){paste0("C", x)})
+    cluster_names = vapply(seq_len(n_clusters), function(x){paste0("C", x)},FUN.VALUE="C")
     row.names(kmeans_clusters$centroids) = cluster_names
     colnames(kmeans_clusters$centroids) = colnames(data)
-
+    
     kmeans_clusters$moanin_model = moanin_model
     kmeans_clusters$fit_splines = fit_splines
     kmeans_clusters$rescale = rescale
@@ -78,27 +74,27 @@ splines_kmeans_prediction = function(data, kmeans_clusters){
     moanin_model = kmeans_clusters$moanin_model
     fit_splines = kmeans_clusters$fit_splines
     rescale = kmeans_clusters$rescale
-
+    
     meta = moanin_model$meta
     basis = moanin_model$basis
     check_data_meta(data, meta)
-
+    
     if(fit_splines){
         fitted_data = fit_predict_splines(data, moanin_model)
     }else{
         fitted_data = data
     }
-
+    
     if(rescale){
         fitted_data = rescale_values(fitted_data, meta)
     }
-
+    
     closest_cluster <- function(x) {
         cluster_dist <- apply(
             kmeans_clusters$centroids, 1, function(y){sqrt(sum((x-y)^2))})
         return(which.min(cluster_dist)[1])
     }
-
+    
     all_labels <- apply(fitted_data, 1, closest_cluster) 
     kmeans_clusters$clusters = all_labels
     names(kmeans_clusters$clusters) = row.names(data)
@@ -150,7 +146,7 @@ splines_kmeans_score_and_label = function(data, kmeans_clusters, percentage_gene
             groups = levels(meta[, rescale_separately_on])
         }
 
-        for(k in 1:n_clusters){
+        for(k in seq_len(n_clusters)){
             # By default, should not rescale separately on any columns.
             if(is.null(rescale_separately_on)){ 
                 scores = score_genes_centroid(

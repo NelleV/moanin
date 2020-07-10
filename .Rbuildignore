@@ -7,3 +7,4 @@
 ^[.]build_tools
 ^[.]git
 ^[.]scripts
+^.*\.Rproj$

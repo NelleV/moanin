@@ -54,37 +54,37 @@ consensus_matrix = function(labels, scale=TRUE){
 #' @export
 plot_cdf_consensus = function(labels){
     all_labels = labels
-    if(is.null(names(all_labels))) names(all_labels)<-paste("Set",1:length(all_labels))
+    if(is.null(names(all_labels))) names(all_labels)<-paste("Set",seq_along(all_labels))
     n_clusters = names(all_labels)
-
+    
     colors = grDevices::rainbow(length(n_clusters))
     xrange = c(0, 1)
     yrange = c(0, 1)
-
+    
     graphics::plot(xrange, yrange, type="n")
-
+    
     cdfList<-list()
-    for(i in 1:length(n_clusters)){
+    for(i in seq_along(n_clusters)){
         cluster = n_clusters[i]
         color = colors[i]
-
+        
         labels = all_labels[[cluster]]
         consensus = consensus_matrix(labels, scale=FALSE)
         consensus = consensus / max(consensus)
         consensus = sort(consensus[upper.tri(consensus)])
-        x_axis = 1:length(consensus) / length(consensus)
+        x_axis = seq_along(consensus) / length(consensus)
         cdfList<-c(cdfList,list(consensus))
         graphics::lines(consensus, x_axis, type="b",
-                pch=16,
-                col=color,
-                lwd=1)
+                        pch=16,
+                        col=color,
+                        lwd=1)
     }
-
+    
     graphics::legend("bottomright", legend=n_clusters,
-        lty=rep(1, length(n_clusters)),
-        pch=rep(16, length(n_clusters)),
-        col=colors,
-        title="Clusters", text.font=4)
+                     lty=rep(1, length(n_clusters)),
+                     pch=rep(16, length(n_clusters)),
+                     col=colors,
+                     title="Clusters", text.font=4)
     invisible(cdfList)
 }
 
@@ -137,59 +137,59 @@ plot_cdf_consensus = function(labels){
 #' @export
 get_auc_similarity_scores = function(labels, method=c("consensus", "nmi")){
     method<-match.arg(method)
-
-    all_labels = labels
-    if(is.null(names(all_labels))) names(all_labels)<-paste("Set",1:length(all_labels))
-    n_clusters = names(all_labels)
-
-    auc_scores = rep(0, length(n_clusters))
-    for(i in 1:length(n_clusters)){
-    cluster = n_clusters[i]
-    labels = all_labels[[cluster]]
-    if(method == "consensus"){
-        consensus = consensus_matrix(labels, scale=FALSE)
-        consensus = consensus / max(consensus)
-        scores = consensus[upper.tri(consensus)]
-    }else if(method == "nmi"){
-        scores = get_nmi_scores(labels) 
-    }
-    scores = sort(scores)
-    y_axis = 1:length(scores) / length(scores)
-    auc_score = sum(diff(scores) * zoo::rollmean(y_axis, 2))
     
-    auc_scores[i] = auc_score
+    all_labels = labels
+    if(is.null(names(all_labels))) names(all_labels)<-paste("Set",seq_along(all_labels))
+    n_clusters = names(all_labels)
+    
+    auc_scores = rep(0, length(n_clusters))
+    for(i in seq_along(n_clusters)){
+        cluster = n_clusters[i]
+        labels = all_labels[[cluster]]
+        if(method == "consensus"){
+            consensus = consensus_matrix(labels, scale=FALSE)
+            consensus = consensus / max(consensus)
+            scores = consensus[upper.tri(consensus)]
+        }else if(method == "nmi"){
+            scores = get_nmi_scores(labels) 
+        }
+        scores = sort(scores)
+        y_axis = seq_along(scores) / length(scores)
+        auc_score = sum(diff(scores) * zoo::rollmean(y_axis, 2))
+        
+        auc_scores[i] = auc_score
     }
     return(auc_scores)
 }
 
 
 get_nmi_scores = function(labels){
-
+    
     nmi = function(x, y){
         x_dataframe = as.data.frame(x)
         colnames(x_dataframe) = c("Label")
         x_dataframe$Gene = row.names(x_dataframe)
         x_dataframe = x_dataframe[c("Gene", "Label")]
-
+        
         y_dataframe = as.data.frame(y)
         colnames(y_dataframe) = c("Label")
         y_dataframe$Gene = row.names(y_dataframe)
         y_dataframe = y_dataframe[c("Gene", "Label")]
-
+        
         return(NMI::NMI(x_dataframe, y_dataframe))
     }
-
+    
     n_trials = dim(labels)[2]
     scores = NULL
-    for(trial in 1:n_trials){
-    if(trial == n_trials){
-        break
-    }
-    column = colnames(labels)[trial]
-    columns_to_consider = (trial+1):n_trials
-    label = labels[,trial]
-    scores = c(scores, as.vector(
-        unlist(apply(labels[,columns_to_consider,drop=FALSE], 2, function(x){nmi(x, label)}))))
+    for(trial in seq_len(n_trials)){
+        if(trial == n_trials){
+            break
+        }
+        column = colnames(labels)[trial]
+        columns_to_consider = (trial+1):n_trials
+        label = labels[,trial]
+        scores = c(scores, as.vector(
+            unlist(apply(labels[,columns_to_consider,drop=FALSE], 2, function(x){nmi(x, label)}))))
     }
     return(scores)
 }
@@ -204,7 +204,7 @@ get_nmi_scores = function(labels){
 #' @importFrom grDevices rainbow
 plot_model_explorer = function(labels,colors = rainbow(length(labels))){
     all_labels = labels
-    if(is.null(names(all_labels))) names(all_labels)<-paste("Set",1:length(all_labels))
+    if(is.null(names(all_labels))) names(all_labels)<-paste("Set",seq_along(all_labels))
     n_clusters = names(all_labels)
     if(length(colors)!=length(labels)) stop("colors argument should be same length as labels")
     nmi_scores = list()
@@ -212,30 +212,30 @@ plot_model_explorer = function(labels,colors = rainbow(length(labels))){
     max_trial = 0
     min_score = 1
     max_score = 0
-    for(i in 1:length(n_clusters)){
+    for(i in seq_along(n_clusters)){
         n_cluster = n_clusters[i]
         color = colors[i]
-
+        
         labels = all_labels[[n_cluster]]
         scores = get_nmi_scores(labels)
-
+        
         nmi_scores[[n_cluster]] = sort(scores)
         max_trial = max(max_trial, length(scores))
         min_score = min(min_score, min(scores))
         max_score = max(max_score, max(scores))
-     }
+    }
     xrange = c(min_score, max_score)
     yrange = c(1, max_trial)
     
     graphics::plot(xrange, yrange, type="n", xlab="NMI", ylab="")
-
-    for(i in 1:length(n_clusters)){
+    
+    for(i in seq_along(n_clusters)){
         color = colors[i]
         scores = nmi_scores[[i]]
-        graphics::lines(sort(scores), 1:length(scores), type="b",
-            pch=16,
-            col=color,
-            lwd=1)
+        graphics::lines(sort(scores), seq_along(scores), type="b",
+                        pch=16,
+                        col=color,
+                        lwd=1)
     }
     
     graphics::legend(min_score, length(scores)*0.9, legend=n_clusters,

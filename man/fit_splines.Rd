@@ -25,3 +25,4 @@ matrix of the coefficients for each basis function, each row of the
 \description{
 Fit splines to each gene of data matrix
 }
+\keyword{internal}

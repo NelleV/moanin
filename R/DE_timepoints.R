@@ -68,7 +68,7 @@ DE_timepoints = function(data, moanin_model,
     }
 
     all_results = do.call("cbind",
-			  lapply(1:length(contrast_names),
+			  lapply(seq_along(contrast_names),
 				 combine_results, fit2=fit))
     return(all_results)
 }
@@ -99,7 +99,7 @@ create_timepoints_contrasts = function(group1, group2, moanin_model){
     contrasts = rep(NA, length(all_timepoints))
     msg<-""
     foundMissing<-FALSE
-    for(i in 1:length(all_timepoints)){
+    for(i in seq_along(all_timepoints)){
 	# First, check that the two conditions have been sampled for this
 	# timepoint
 	timepoint = all_timepoints[i]
