@@ -34,11 +34,11 @@ setGeneric("time_variable<-",
 #' time_variable_name(moanin)
 
 setMethod("group_variable_name","Moanin",function(object){
-    object@group_variable
+    object@group_variable_name
 })
 #' @rdname Moanin-methods
 setReplaceMethod("group_variable_name","Moanin",function(object,value){
-    object@group_variable<-value
+    object@group_variable_name<-value
     return(object)
     
 })
@@ -56,11 +56,11 @@ setReplaceMethod("group_variable","Moanin",function(object,value){
 })
 #' @rdname Moanin-methods
 setMethod("time_variable_name","Moanin",function(object){
-    object@time_variable
+    object@time_variable_name
 })
 #' @rdname Moanin-methods
 setReplaceMethod("time_variable_name","Moanin",function(object,value){
-    object@time_variable<-value
+    object@time_variable_name<-value
     return(object)
     
 })
@@ -93,7 +93,7 @@ setMethod("show","Moanin",function(object){
         cat("Moanin object on",N,"samples containing the following information:\n")
         cat(paste0("Group variable given by '",group_variable_name(object),"' with the following levels:\n"))
         print(summary(group_variable(object)))
-        cat(paste0("Time variable given by '",time_varaible_name(object),"'\n"))
+        cat(paste0("Time variable given by '",time_variable_name(object),"'\n"))
         cat("Basis matrix with",ncol(basis_matrix(object)),"basis_matrix functions\n")
         if(!is.null(spline_formula(object))){
             cat("Basis matrix was constructed with the following spline_formula\n")

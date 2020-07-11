@@ -102,22 +102,29 @@ setGeneric(
     }
 )
 #' @rdname Moanin-class
-#' @param meta if \code{data} is of class matrix, argument \code{meta} must be given a \code{data.frame} containing the metadata in columns, and rows. This will be made into the \code{colData} of the resulting \code{Moanin} object.
+#' @param meta if \code{data} is of class matrix or data.frame, argument \code{meta} must be given a \code{data.frame} containing the metadata in columns, and rows. This will be made into the \code{colData} of the resulting \code{Moanin} object.
 #'   corresponding to different samples. 
 #' @export
 setMethod(
     f = "create_moanin_model",
     signature = signature("matrix"),
     definition = function(data, meta, ...){
-        create_moanin_model(SummarizedExperiment(data, colData=meta,...))
+        create_moanin_model(SummarizedExperiment(data, colData=meta),...)
     })
-#' @rdname ClusterExperiment-class
+#' @rdname Moanin-class
+setMethod(
+    f = "create_moanin_model",
+    signature = signature("data.frame"),
+    definition = function(data, meta, ...){
+        create_moanin_model(SummarizedExperiment(data, colData=meta),...)
+    })
+#' @rdname Moanin-class
 setMethod(
     f = "create_moanin_model",
     signature = signature("SummarizedExperiment"),
     definition = function(data, spline_formula=NULL, basis_matrix=NULL,
                                group_variable_name="Group",time_variable_name="Timepoint",
-                               degrees_of_freedom=NULL){
+                               degrees_of_freedom=NULL,drop_levels=TRUE){
 
     if(!is.null(basis_matrix) & !is.null(spline_formula)){
         msg = paste("both basis_matrix and spline_formula ",
@@ -135,19 +142,19 @@ setMethod(
             spline_formula = stats::as.formula(formulaText)# (
             #                 ~Group + Group:splines::ns(Timepoint, df=degrees_of_freedom) + 0)
         }
-        basis_matrix = stats::model.matrix(spline_formula, data=meta)
+        basis_matrix = stats::model.matrix(spline_formula, data=colData(data))
     }else{
         basis_matrix = as.matrix(basis_matrix)
     }
     
-    splines_model = new("Moanin", 
+    splines_model = new("Moanin", data,
                         degrees_of_freedom=degrees_of_freedom,
                         basis_matrix=basis_matrix,
                         spline_formula=spline_formula,
                         time_variable_name=time_variable_name,
                         group_variable_name=group_variable_name
                         )
-    group_variable(splines_model)<-droplevels(group_variable(splines_model))
+    if(drop_levels) group_variable(splines_model)<-droplevels(group_variable(splines_model))
     # Just create this one.
     if(!("WeeklyGroup" %in% colnames(colData(splines_model)))){
         colData(splines_model)$WeeklyGroup = as.factor(
