@@ -32,7 +32,10 @@ this option.}
 \item{rescale_separately_on, }{string, optional, default: NULL
 When provided, will rescale separately different groups of data.}
 
-\item{previous_scores}{an option to give the scores results from a previous run of \code{splines_kmeans_score_and_label}, and only redo the filtering (i.e. if want to change \code{percentage_genes_to_label} without rerunning the calculation of scores)}
+\item{previous_scores}{an option to give the scores results from a previous
+run of \code{splines_kmeans_score_and_label}, and only redo the filtering
+(i.e. if want to change \code{percentage_genes_to_label} without rerunning
+the calculation of scores)}
 }
 \value{
 A list consisting of

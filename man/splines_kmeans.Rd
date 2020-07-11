@@ -49,9 +49,11 @@ Whether to rescale the data or not.}
 A list in the format returned by \code{\link[ClusterR]{KMeans_rcpp}},
    with the following elements added or changed:
 \itemize{
-\item{\code{centroids}}{The centroids are rescaled so that they range from 0-1}
+\item{\code{centroids}}{The centroids are rescaled so that they range from
+0-1}
 \item{\code{moanin_model}}{The given moanin_model}
-\item{\code{fit_splines}}{The value of \code{fit_splines} given to the function }
+\item{\code{fit_splines}}{The value of \code{fit_splines} given to the
+function }
 \item{\code{rescale}}{The value of \code{rescale} given to the function }
 }
 }

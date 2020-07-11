@@ -20,10 +20,10 @@ setClassUnion("formulaOrNULL",members=c("formula", "NULL"))
 #' see the Reference Manual.
 #' @slot time_variable_name character value giving the column in \code{colData} that defines the time variable (must be of class \code{numeric})
 #' @slot group_variable_name character value giving the column in \code{colData} that defines the grouping variable (must be of class \code{factor})
-#' @slot basis A basis matrix, where each row
+#' @slot basis_matrix A basis matrix, where each row
 #'  corresponds to the evaluation of a sample on the basis function (thus one
 #'  column for each basis function).
-#' @slot formula a formula. The formula used in creating the basis matrix
+#' @slot spline_formula a formula. The formula used in creating the basis matrix
 #' @slot degrees_of_freedom a numeric integer. Number of degrees of freedom used in creating basis matrix. If NULL, degrees of freedom is not known (usually if user provided basis without degrees of freedom)
 #' @name Moanin-class
 #' @aliases Moanin
@@ -36,8 +36,8 @@ setClass(
     Class = "Moanin",
     contains = "SummarizedExperiment",
     slots = list(
-        formula="formulaOrNULL", 
-        basis="matrix",
+        spline_formula="formulaOrNULL", 
+        basis_matrix="matrix",
         group_variable_name="character",
         time_variable_name="character",
         degrees_of_freedom="numericOrNULL"
@@ -53,6 +53,7 @@ setValidity("Moanin", function(object) {
     else{
         if(!is.numeric(time_variable(object))) return(time_variable_name(object),"is not a numeric column in the colData of the object")
     }
+    if(nrow(basis_matrix(object)) != ncol(object)) return("number of rows of the basis_matrix doesn't match number of samples of object")
 
     return(TRUE)
 })
@@ -66,17 +67,17 @@ setValidity("Moanin", function(object) {
 #'   the grouping variable to test for DE. By default "Group"
 #' @param time_variable_name A character value giving the column that corresponds to
 #'   the time variable. By default "Timepoint".
-#' @param formula formula object, optional, default: NUlL. Used to construct
+#' @param spline_formula formula object, optional, default: NUlL. Used to construct
 #'   splines from the data in \code{meta}. See details.
-#'@param basis	matrix, optional, default: NULL. A basis matrix, where each row
+#'@param basis_matrix	matrix, optional, default: NULL. A basis matrix, where each row
 #'  corresponds to the evaluation of a sample on the basis function (thus one
 #'  column for each basis function).
 #'@param degrees_of_freedom int, optional. Number of degrees of freedom to use
-#'  if neither the basis nor the formula is provided. If not provided by the
+#'  if neither the basis_matrix nor the spline_formula is provided. If not provided by the
 #'  user, internally will be set to 4
-#'@details If neither \code{formula} nor \code{basis} is given, then by default,
+#'@details If neither \code{spline_formula} nor \code{basis_matrix} is given, then by default,
 #'  the function will create a basis matrix based on the formula:
-#'  \preformatted{formula = ~Group:ns(Timepoint, df=4) + Group + 0}
+#'  \preformatted{spline_formula = ~Group:ns(Timepoint, df=4) + Group + 0}
 #'@details Note that the meta data will have levels dropped (via \code{droplevels}). 
 #'@return An object of class \code{Moanin}
 #' @examples
@@ -114,35 +115,35 @@ setMethod(
 setMethod(
     f = "create_moanin_model",
     signature = signature("SummarizedExperiment"),
-    definition = function(data, formula=NULL, basis=NULL,
+    definition = function(data, spline_formula=NULL, basis_matrix=NULL,
                                group_variable_name="Group",time_variable_name="Timepoint",
                                degrees_of_freedom=NULL){
 
-    if(!is.null(basis) & !is.null(formula)){
-        msg = paste("both basis and formula ",
+    if(!is.null(basis_matrix) & !is.null(spline_formula)){
+        msg = paste("both basis_matrix and spline_formula ",
                     "are provided by the user. Please provide one or ",
                     "the other", sep="")
         stop(msg)
     }
     
-    if(is.null(basis)){
-        if(is.null(formula)){
+    if(is.null(basis_matrix)){
+        if(is.null(spline_formula)){
             if(is.null(degrees_of_freedom)){
                 degrees_of_freedom = 4
             }
             formulaText<-paste0("~",group_variable_name," + ",group_variable_name,":splines::ns(",time_variable_name,",df=",degrees_of_freedom,") + 0")
-            formula = stats::as.formula(formulaText)# (
+            spline_formula = stats::as.formula(formulaText)# (
             #                 ~Group + Group:splines::ns(Timepoint, df=degrees_of_freedom) + 0)
         }
-        basis = stats::model.matrix(formula, data=meta)
+        basis_matrix = stats::model.matrix(spline_formula, data=meta)
     }else{
-        basis = as.matrix(basis)
+        basis_matrix = as.matrix(basis_matrix)
     }
     
     splines_model = new("Moanin", 
                         degrees_of_freedom=degrees_of_freedom,
-                        basis=basis,
-                        formula=formula,
+                        basis_matrix=basis_matrix,
+                        spline_formula=spline_formula,
                         time_variable_name=time_variable_name,
                         group_variable_name=group_variable_name
                         )
