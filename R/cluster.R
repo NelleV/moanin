@@ -32,32 +32,31 @@
 #' out<-splines_kmeans(testData, moanin,n_clusters=5)
 #' table(out$clusters)
 #' @export
-splines_kmeans = function(data, moanin_model, n_clusters=10,
+setMethod("splines_kmeans", "Moanin",
+    function(object, n_clusters=10,
                         init="kmeans++",
                         n_init=10, 
                         max_iter=300, 
                         random_seed=.Random.seed[1],
                         fit_splines=TRUE,
                         rescale=TRUE){
-    meta = moanin_model$meta
-    basis = moanin_model$basis
-    check_data_meta(data, meta)
+    basis = basis_matrix(object)
     
     if(fit_splines){
-        fitted_data = fit_predict_splines(data, moanin_model)
+        fitted_data = fit_predict_splines(object)
     }else{
-        fitted_data = data
+        fitted_data = assay(object)
     }
     
     if(rescale){
-        fitted_data = rescale_values(fitted_data, meta)
+        fitted_data = rescale_values(fitted_data, object)
     }
     
     kmeans_clusters = ClusterR::KMeans_rcpp(
         fitted_data, n_clusters, num_init=n_init, max_iters=max_iter,
         seed=random_seed, initializer=init)
     kmeans_clusters$centroids = rescale_values(
-        kmeans_clusters$centroids, moanin_model)
+        kmeans_clusters$centroids, object)
     names(kmeans_clusters$clusters) = row.names(data)
     
     # Give names to clusters
@@ -71,8 +70,10 @@ splines_kmeans = function(data, moanin_model, n_clusters=10,
     kmeans_clusters$rescale = rescale
     return(kmeans_clusters)
 }
+)
 
-
+## FIXME: This function is not exported but is used in manuscript!
+## Need to fix this!
 splines_kmeans_prediction = function(data, kmeans_clusters){
     moanin_model = kmeans_clusters$moanin_model
     fit_splines = kmeans_clusters$fit_splines
