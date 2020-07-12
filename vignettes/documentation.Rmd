@@ -138,10 +138,10 @@ plot_splines_data(preData[whSig, ][deGenes,], moanin_model=moaninObject,
 
 We can also cluster the data based on their spline fits
 
-```{r clustering, eval=FALSE}
+```{r clustering}
 # First fit the kmeans clusters
 kmeans_clusters = splines_kmeans(
-    log(preData[1:500,]+1), moanin_model=moaninObject, n_clusters=3,
+    log(as.matrix(preData[1:500,])+1), moanin_model=moaninObject, n_clusters=3,
     random_seed=42,
     n_init=20)
 ```
@@ -150,7 +150,7 @@ kmeans_clusters = splines_kmeans(
 We then use the `plot_splines_data`  function, only now applied to the centroids, to visualize the centroids of
 each cluster obtained with the splines k-means model. 
 
-```{r, eval=FALSE}
+```{r}
 plot_splines_data(
     kmeans_clusters$centroids, moanin_model=moaninObject,
     smooth=TRUE)
@@ -158,26 +158,28 @@ plot_splines_data(
 
 ## Assigning genes to clusters
 
-Because there is variability in how well the genes fit a cluster, we would like to be able to score how well a gene fits a cluster. Furthermore, we often chose a subset of genes based on our filter, and we would
+Because there is variability in how well the genes fit a cluster, we would like to be able to score how well a gene fits a cluster. Furthermore, we often chose a subset of genes based on a filtering process, and we would
 like to have a mechanism to assign all genes to a cluster. 
 
 The function `splines_kmeans_score_and_label` gives a goodness-of-fit score between each gene and each cluster. 
 
-```{r, eval=FALSE}
-scores_and_labels = splines_kmeans_score_and_label(data=preData, kmeans_clusters)
+```{r}
+scores_and_labels = splines_kmeans_score_and_label(data=preData[1:2000,], kmeans_clusters)
 ```
+
+Notice that we used more genes here (first 2000), even though previously we only used first 500 to make the clusters. These choices were unrealistic, since in practice we would probably pick high variable genes or differentially expressed genes, rather than the first 500, but at least give a sense of how this works.
 
 The result is a list with elements `scores` and `labels`. `scores` gives the goodness-of-fit score between each gene and each cluster
 
-```{r, eval=FALSE}
+```{r}
 head(scores_and_labels$scores)
 ```
 
 `labels` gives the best cluster assignment for each gene, but only if its score in its best cluster is above a certain threshold (see `?splines_kmeans_score_and_label`)
 
-```{r, eval=FALSE}
+```{r}
 head(scores_and_labels$labels)
-# How many are not assigned a label
+# How many are not assigned a label?
 sum(is.na(scores_and_labels$labels))
 ```
 

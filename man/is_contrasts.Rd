@@ -2,7 +2,7 @@
 % Please edit documentation in R/validation.R
 \name{is_contrasts}
 \alias{is_contrasts}
-\title{Check is contrasts}
+\title{Check input are contrasts}
 \usage{
 is_contrasts(contrasts, moanin_model)
 }
@@ -10,11 +10,11 @@ is_contrasts(contrasts, moanin_model)
 Will check that the contrasts provided are indeed contrasts. contrasts are
  expected to be either a vector of string or a matrix containing the
  contrasts coefficients.
- 
-If a vector of string is provided, the function will call
- limma::makeContrast in order to obtain the contrasts coefficients.
 }
 \details{
+If a vector of string is provided, the function will call
+ limma::makeContrast in order to obtain the contrasts coefficients.
+
 If a contrasts matrix is provided, it will perform a number of checks on
 the contrasts matrix to make sure it contains the number of rows expected,
 and that each contrast indeed sums to 0.

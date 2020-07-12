@@ -11,7 +11,7 @@ splines_kmeans(
   init = "kmeans++",
   n_init = 10,
   max_iter = 300,
-  random_seed = NULL,
+  random_seed = .Random.seed[1],
   fit_splines = TRUE,
   rescale = TRUE
 )
@@ -35,21 +35,25 @@ Number of initialization to perform.}
 \item{max_iter}{int, optional, default: 300
 Maximum number of iteration to perform}
 
-\item{random_seed}{int, optional, default: NULL}
+\item{random_seed}{int, optional, default: NULL. 
+Passed to argument \code{seed} in  \code{\link[ClusterR]{KMeans_rcpp}}. 
+If NULL (default), set to \code{.Random.seed[1]}.}
 
 \item{fit_splines}{boolean, optional, default: TRUE
 Whether to fit splines or not.}
 
 \item{rescale}{boolean, optional, default: TRUE
- Whether to rescale the data or not.
- @return A list in the format returned by \code{\link[ClusterR]{KMeans_rcpp}},
+Whether to rescale the data or not.}
+}
+\value{
+A list in the format returned by \code{\link[ClusterR]{KMeans_rcpp}},
    with the following elements added or changed:
 \itemize{
 \item{\code{centroids}}{The centroids are rescaled so that they range from 0-1}
 \item{\code{moanin_model}}{The given moanin_model}
 \item{\code{fit_splines}}{The value of \code{fit_splines} given to the function }
 \item{\code{rescale}}{The value of \code{rescale} given to the function }
-}}
+}
 }
 \description{
 Performs splines clustering using K-means
@@ -58,5 +62,6 @@ Performs splines clustering using K-means
 data(exampleData)
 # Use the default options
 moanin = create_moanin_model(testMeta)
-splines_kmeans(testData, moanin)
+out<-splines_kmeans(testData, moanin,n_clusters=5)
+table(out$clusters)
 }

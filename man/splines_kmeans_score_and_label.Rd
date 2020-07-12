@@ -9,7 +9,8 @@ splines_kmeans_score_and_label(
   kmeans_clusters,
   percentage_genes_to_label = 0.5,
   max_score = NULL,
-  rescale_separately_on = NULL
+  rescale_separately_on = NULL,
+  previous_scores = NULL
 )
 }
 \arguments{
@@ -30,6 +31,8 @@ this option.}
 
 \item{rescale_separately_on, }{string, optional, default: NULL
 When provided, will rescale separately different groups of data.}
+
+\item{previous_scores}{an option to give the scores results from a previous run of \code{splines_kmeans_score_and_label}, and only redo the filtering (i.e. if want to change \code{percentage_genes_to_label} without rerunning the calculation of scores)}
 }
 \value{
 A list consisting of
@@ -41,8 +44,14 @@ do not have a score lower than a specified quantity}
 each gene and each cluster, the goodness of fit score}
 \item{\code{score_cutoff}}{The required cutoff for a gene receiving an
 assignment}
- }
+}
 }
 \description{
 Assign score and labels from raw data
+}
+\examples{
+data(exampleData)
+moanin = create_moanin_model(testMeta)
+kmClusters=splines_kmeans(testData, moanin)
+scores_and_labels = splines_kmeans_score_and_label(testData, kmClusters)
 }

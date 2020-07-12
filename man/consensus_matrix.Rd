@@ -11,8 +11,8 @@ consensus_matrix(labels, scale = TRUE)
 single clustering routine. Each column should give the cluster assignment
 FIXME: What is the required format of entries??}
 
-\item{scale}{boolean, optional, default: TRUE. Whether to rescale the resulting
-consensus matrix so that entries correspond to proportions.}
+\item{scale}{boolean, optional, default: TRUE. Whether to rescale the
+resulting consensus matrix so that entries correspond to proportions.}
 }
 \value{
 a symmetric matrix of size NxN, where N is the number of rows of the
@@ -23,4 +23,18 @@ a symmetric matrix of size NxN, where N is the number of rows of the
 }
 \description{
 Compute consensus matrix from labels
+}
+\examples{
+data(exampleData)
+moanin = create_moanin_model(testMeta)
+#small function to run splines_kmeans on subsample of 50 genes
+subsampleCluster<-function(){
+   ind<-sample(1:nrow(testData),size=50)
+   km<-splines_kmeans(testData[ind,],moanin,n_clusters=3)
+   assign<-splines_kmeans_score_and_label(testData, km, 
+      percentage_genes_to_label=1.0)$label
+  }
+kmClusters=replicate(10,subsampleCluster())
+cm<-consensus_matrix(kmClusters)
+heatmap(cm)
 }

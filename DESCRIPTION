@@ -1,12 +1,12 @@
 Package: moanin
-Title: An awesome R package for time course RNASeq data analysis
+Title: An R Package for Time Course RNASeq Data Analysis
 Version: 0.0.0
 Author: Nelle Varoquaux <nelle.varoquaux@gmail.com>
 Maintainer: Nelle Varoquaux <nelle.varoquaux@gmail.com>
 Description: Simple and efficient workflow for time-course gene expression data.
-Depends: R (>= 3.5)
+Depends: R (>= 4.0),
+	 topGO
 Imports: MASS (>= 1.0.0),
-	 edge (>= 2.4.0),
 	 limma,
 	 viridis,
 	 edgeR,
@@ -17,21 +17,19 @@ Imports: MASS (>= 1.0.0),
 	 reshape2,
 	 NMI,
 	 zoo,
-	 topGO,
-	 timecoursedata,
 	 ClusterR,
      splines
 Suggests: testthat (>= 1.0.0),
+	  timecoursedata,
 	  knitr,
 	  rmarkdown,
+      roxygen2,
 	  covr,
 	  shiny,
-	  DT,
-	  roxygen2,
-	  kableExtra
+	  DT
 VignetteBuilder: knitr
 License: BSD 3-clause License + file LICENSE
 Encoding: UTF-8
 LazyData: false
 RoxygenNote: 7.1.1
-biocViews: TimeCourse, GeneExpression
+biocViews: TimeCourse, GeneExpression, RNASeq
