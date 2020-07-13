@@ -1,14 +1,10 @@
 library("moanin")
-library("timecoursedata")
-
+data(exampleData)
 context("moanin::splines.R")
 
 test_that("splines::fit_predict_splines", {
-    data(shoemaker2015) 
-    meta = shoemaker2015$meta
-    data = shoemaker2015$data[1:5, ]
 
-    moanin_model = create_moanin_model(meta)
+    moanin_model = create_moanin_model(data=testData,meta=testMeta)
     meta_prediction = create_meta_prediction(moanin_model)
 
     expect_silent(fit_predict_splines(data, moanin_model))
@@ -60,28 +56,29 @@ test_that("splines:score_genes_centroid", {
 })
 
 test_that("splines:rescale_values", {
-    n_genes = 5
-    data(shoemaker2015)
-    data = shoemaker2015$data
-    meta = shoemaker2015$meta
-    data = data[1:n_genes,]
+    moanin_model = moanin::create_moanin_model(data=testData,meta=testMeta)
+    expect_silent(rescaled_data <- rescale_values(moanin_model,use_group=FALSE))
+    expect_equal(rep(0, nrow(moanin_model)), as.vector(row_min(rescaled_data)))
+    expect_equal(rep(1, nrow(moanin_model)), as.vector(row_max(rescaled_data)))
 
-    rescaled_data = rescale_values(data, meta)
-    expect_equal(rep(0, n_genes), as.vector(row_min(rescaled_data)))
-    expect_equal(rep(1, n_genes), as.vector(row_max(rescaled_data)))
+    #check different imputs
+    expect_silent(rescaled_data2<- rescale_values(moanin_model,
+                  data=assay(moanin_model)[1:20,],use_group=FALSE))
+    expect_equal(rescaled_data[1:20,],rescaled_data2)    
+    expect_silent(rescaled_data3<- rescale_values(object=NULL,
+                    data=assay(moanin_model)[1:20,]))
+    expect_equal(rescaled_data3,rescaled_data2)    
+
 })
 
 
 test_that("splines::create_meta_prediction", {
-    data(shoemaker2015) 
-    meta = shoemaker2015$meta
-    data = shoemaker2015$data[1:5, ]
-
-    moanin_model = create_moanin_model(meta)
+    moanin_model = create_moanin_model(data=testData,meta=testMeta)
     expect_silent(create_meta_prediction(moanin_model))
 
-    basis = moanin_model$basis
     # Recreate moanin model without providing the formula
-    moanin_model = create_moanin_model(meta, basis=basis)
+    # (will create warning in create_meta_prediction)
+    basis = basis_matrix(moanin_model)
+    moanin_model = create_moanin_model(data=testData,meta=testMeta, basis=basis)
     expect_warning(create_meta_prediction(moanin_model))
 })

@@ -1,6 +1,6 @@
 library(moanin)
 library(limma)
-
+data(exampleData)
 context("moanin::de_analysis.R")
 
 test_that("time-course DE analysis", {

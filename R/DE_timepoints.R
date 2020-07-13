@@ -111,7 +111,7 @@ setMethod("create_timepoints_contrasts","Moanin",
             groups = as.character(unique(time_by_group_variable(submeta)))
             contrasts[i] = paste0(group1, ".", timepoint, "-", group2, ".", timepoint)
         }else if(length(unique(time_by_group_variable(submeta))) == 1){
-            if(unique(submeta[,gpVar])[1] ==  group1){
+            if(unique(group_variable(submeta))[1] ==  group1){
                 missing_condition = group2
             }else{
                 missing_condition = group1

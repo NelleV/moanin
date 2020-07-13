@@ -49,8 +49,8 @@ fit_predict_splines = function(data, moanin_model,
         degrees_of_freedom = degrees_of_freedom(moanin_model)
         fitting_data = t(as.matrix(data))
         formula_data = list(
-            "Group"=group_variable(meta),
-            "Timepoint"=time_variable(meta),
+            "Group"=group_variable(moanin_model),
+            "Timepoint"=time_variable(moanin_model),
             "fitting_data"=fitting_data,
             "degrees_of_freedom"=degrees_of_freedom(moanin_model))
         names(formula_data)[c(1,2)]<-c(gpVar,tpVar)
@@ -89,8 +89,8 @@ create_meta_prediction = function(moanin_model, num_timepoints=100){
     
     
     for(group in groups){
-        mask = group_variable(meta) == group
-        time = time_variable(meta)[mask]
+        mask = group_variable(moanin_model) == group
+        time = time_variable(moanin_model)[mask]
         
         timepoints_pred = c(
             timepoints_pred,
@@ -123,12 +123,12 @@ create_meta_prediction = function(moanin_model, num_timepoints=100){
 #'      separately.
 #' @export
 setMethod("rescale_values","Moanin",
-    function(object, data=NULL, use_group=TRUE){
+    function(object, data=NULL, use_group=FALSE){
     if(is.null(data)) data=assay(object)
     if(use_group){
         factors_to_consider = levels(group_variable(object))
         for(factor in factors_to_consider){
-            mask = meta[group] == factor
+            mask = group_variable(object) == factor
             ymin = row_min(data[, mask]) 
             data[, mask] = data[, mask] - ymin
             ymax = row_max(data[, mask])
