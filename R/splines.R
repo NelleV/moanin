@@ -36,25 +36,24 @@ fit_splines = function(moanin_model, data=NULL, weights=NULL){
 #' @keywords internal
 fit_predict_splines = function(data, moanin_model, 
                                meta_prediction=NULL){
-    basis = moanin_model$basis
-    meta = moanin_model$meta
-    gpVar = moanin_model$group_variable
-    tpVar = moanin_model$time_variable
+    basis = basis_matrix(moanin_model)
+    gpVar = group_variable_name(moanin_model)
+    tpVar = time_variable_name(moanin_model)
     # if(!is.null(weights)){
     #     stop("moanin::fit_predict_splines: not implemented")
     # }
     if(is.null(meta_prediction)){
         y_fitted = t(stats::lm.fit(basis, t(data))$fitted.values)
     }else{
-        degrees_of_freedom = moanin_model$degrees_of_freedom
+        degrees_of_freedom = degrees_of_freedom(moanin_model)
         fitting_data = t(as.matrix(data))
         formula_data = list(
-            "Group"=meta[,gpVar],
-            "Timepoint"=meta[,tpVar],
+            "Group"=group_variable(meta),
+            "Timepoint"=time_variable(meta),
             "fitting_data"=fitting_data,
-            "degrees_of_freedom"=moanin_model$degrees_of_freedom)
+            "degrees_of_freedom"=degrees_of_freedom(moanin_model))
         names(formula_data)[c(1,2)]<-c(gpVar,tpVar)
-        updated_formula = stats::update(moanin_model$formula, fitting_data ~ .)
+        updated_formula = stats::update(spline_formula(moanin_model), fitting_data ~ .)
         model = stats::lm(updated_formula, formula_data)
         y_fitted = stats::predict(model, meta_prediction)
     }
@@ -73,25 +72,24 @@ create_meta_prediction = function(moanin_model, num_timepoints=100){
     # Create moanin_model for prediction
     timepoints_pred = NULL
     groups_pred = NULL
-    meta = droplevels(moanin_model$meta)
-    gpVar = moanin_model$group_variable
-    tpVar = moanin_model$time_variable
-    groups = levels(meta[,gpVar]) 
+    gpVar = group_variable_name(moanin_model)
+    tpVar = time_variable_name(moanin_model)
+    groups = levels(droplevels(group_variable(moanin_model)) )
     
     # Check that the moanin model has the appropriate information to create a
     # smooth prediction model.
-    if(is.null(moanin_model$formula) | is.null(moanin_model$degrees_of_freedom)){
+    if(is.null(spline_formula(moanin_model)) | is.null(degrees_of_freedom(moanin_model))){
         msg = paste(
             "Smooth prediction is not possible without the formula.",
             "Will only predict on initial points")
         warning(msg)
-        return(moanin_model$meta)
+        return(moanin_model)
     }
     
     
     for(group in groups){
-        mask = meta[,gpVar] == group
-        time = meta[,tpVar][mask]
+        mask = group_variable(meta) == group
+        time = time_variable(meta)[mask]
         
         timepoints_pred = c(
             timepoints_pred,

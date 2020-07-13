@@ -1,3 +1,5 @@
+setGeneric("plot_splines_data", 
+           function(object,data,...) { standardGeneric("plot_splines_data")})
 
 #' Plotting splines
 #'
@@ -30,43 +32,32 @@
 #' @examples
 #' # First, load some data and create a moanin model
 #' data(exampleData)
-#' moanin_model = create_moanin_model(testMeta, degrees_of_freedom=6)
+#' moanin = create_moanin_model(testMeta, degrees_of_freedom=6)
 #'
 #' # The moanin model contains all the information for plotting purposes. The
 #' # plot_splines_function will automatically fit the splines from the
 #' # information contained in the moanin model
 #' genes = c("NM_001042489", "NM_008725")
-#' plot_splines_data(
-#'	testData, moanin_model,
-#'	subset_data=genes,
+#' plot_splines_data(moanin, data=genes,
 #'	mfrow=c(2, 2))
 #'
 #' # The splines can also be smoothed
-#' plot_splines_data(testData, moanin_model,
-#'		     subset_data=genes,
+#' plot_splines_data(moanin, data=genes,
 #'		     smooth=TRUE, mfrow=c(2, 2))
 #' @export
 #' @importFrom graphics axis plot.new plot.window
 #' @importFrom methods new
-
-plot_splines_data = function(data, moanin_model, colors=NULL, smooth=FALSE,
+setMethod("plot_splines_data",c("Moanin","matrix"),
+    function(object, data, colors=NULL, smooth=FALSE,
                              legend=TRUE, legendArgs=NULL, subset_conditions=NULL,
                              subset_data=NULL,
                              simpleY=TRUE,
                              mar=c(2.5, 2.5, 3.0, 1.0),
                              mfrow=NULL, addToPlot=NULL, ...){
     
-    # Start by subsetting the data
-    if(!is.null(subset_data)){
-        mask = subset_data %in% row.names(data)
-        if(!all(mask)){
-            msg = paste0(
-                "Some elements of subset_data do not match row.names of data.")
-            stop(msg)
-        }
-        data = data[subset_data, ]
-    }
-    
+    if(ncol(data)!=ncol(object)) stop("matrix given in argument data must have",
+        "same number of columns as Moanin object given in argument object.")
+        
     n_observations = dim(data)[1]
     n_plots = if(legend) n_observations+1 else n_observations
     if(!is.null(mfrow)){
@@ -106,8 +97,7 @@ plot_splines_data = function(data, moanin_model, colors=NULL, smooth=FALSE,
     
     ## For legend:
     if(is.null(colors)){
-        meta = moanin_model$meta
-        groups = levels(meta[,moanin_model$group_variable])
+        groups = levels(group_variable(object))
         colors = viridis::viridis(length(groups))
         names(colors) = groups
     }
@@ -122,7 +112,7 @@ plot_splines_data = function(data, moanin_model, colors=NULL, smooth=FALSE,
         }
         plot_centroid_individual(
             as.vector(data[i, ]),
-            moanin_model, colors=colors,
+            object, colors=colors,
             smooth=smooth,
             subset_conditions=subset_conditions,
             main=name,
@@ -163,13 +153,29 @@ plot_splines_data = function(data, moanin_model, colors=NULL, smooth=FALSE,
               legendArgs))
     }
 }
+)
+setMethod("plot_splines_data",c("Moanin","character"),
+    function(object, data, ...){
+        plot_splines_data(object,data=assay(object)[data,])
+    }
+)
 
+setMethod("plot_splines_data",c("Moanin","numeric"),
+          function(object, data, ...){
+              plot_splines_data(object,data=assay(object)[data,])
+          }
+)
+setMethod("plot_splines_data",c("Moanin","data.frame"),
+          function(object, data, ...){
+              plot_splines_data(object,data=data.matrix(data))
+          }
+)
 plot_centroid_individual = function(centroid, moanin_model,
                                     colors, smooth=FALSE, subset_conditions=NULL, ...){
-    meta = moanin_model$meta
-    gpVar = moanin_model$group_variable
-    tpVar = moanin_model$time_variable
-    groups = levels(meta[,gpVar])
+    if(!inherits(moanin_model,"Moanin")) stop("Internal coding error: expecting Moanin class")
+    gpVar = group_variable_name(moanin_model)
+    tpVar = time_variable_name(moanin_model)
+    groups = levels(group_variable(moanin_model))
     
     if(!is.null(subset_conditions)){
         if(!all(subset_conditions %in% groups)){
@@ -182,11 +188,11 @@ plot_centroid_individual = function(centroid, moanin_model,
         }
     }
     
-    xrange = range(meta[,tpVar])
+    xrange = range(time_variable(moanin_model))
     if(is.null(dim(centroid))){
         centroid = t(as.matrix(centroid))
     }
-    yrange = range(centroid[, meta[,gpVar] %in% groups])
+    yrange = range(centroid[, group_variable(moanin_model) %in% groups])
     
     graphics::plot(xrange, yrange, type="n", ...)
     if(smooth){
@@ -208,15 +214,15 @@ plot_centroid_individual = function(centroid, moanin_model,
         color = colors[group]
         
         # Start by individual points
-        mask = meta[,gpVar] == group
-        time = meta[,tpVar][mask]
+        mask = group_variable(moanin_model) == group
+        time = time_variable(moanin_model)[mask]
         indx = order(time)
         graphics::lines(time[indx], centroid[mask][indx], type="p",
                         col=color, pch=16,
                         lwd=0)
         if(smooth){
-            mask = meta_prediction[,gpVar] == group
-            time = meta_prediction[,tpVar][mask]
+            mask = group_variable(moanin_model) == group
+            time = time_variable(moanin_model)[mask]
             indx = order(time)
         }
         graphics::lines(time[indx], centroid_fitted[mask][indx], type="l",
@@ -225,11 +231,12 @@ plot_centroid_individual = function(centroid, moanin_model,
     }
 } 
 
-plot_gene_splines = function(data, meta, gene_name, colors=NULL){
-    # First, select the gene:
-    if(!(gene_name %in% row.names(data))){
-        msg = paste("moanin::plot_gene_splines: The gene_name provided '",
-                    gene_name, "' is not in the data", sep="")
-    }
-    gene_data = data[gene_name, ]
-}
+# DELETE ME
+# plot_gene_splines = function(data, meta, gene_name, colors=NULL){
+#     # First, select the gene:
+#     if(!(gene_name %in% row.names(data))){
+#         msg = paste("moanin::plot_gene_splines: The gene_name provided '",
+#                     gene_name, "' is not in the data", sep="")
+#     }
+#     gene_data = data[gene_name, ]
+# }
