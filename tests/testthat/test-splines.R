@@ -7,8 +7,8 @@ test_that("splines::fit_predict_splines", {
     moanin_model = create_moanin_model(data=testData,meta=testMeta)
     meta_prediction = create_meta_prediction(moanin_model)
 
-    expect_silent(fit_predict_splines(data, moanin_model))
-    expect_silent(fit_predict_splines(data, moanin_model,
+    expect_silent(fit_predict_splines(testData, moanin_model))
+    expect_silent(fit_predict_splines(testData, moanin_model,
     				      meta_prediction=meta_prediction))
 
 })

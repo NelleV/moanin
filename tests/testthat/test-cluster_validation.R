@@ -1,4 +1,3 @@
-library("moanin")
 
 context("moanin::cluster_validation.R")
 

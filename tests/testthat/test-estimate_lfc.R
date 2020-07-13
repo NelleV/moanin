@@ -22,7 +22,7 @@ test_that("Estimating log fold change smoke tests", {
 
     # Now same test, but several contrasts
     contrasts = limma::makeContrasts(contrasts=c("C-K", "C-M"),
-				     levels=droplevels(meta$Group))
+				     levels=droplevels(testMeta$Group))
     for(method in methods){
         expect_silent(
 	    estimate_log_fold_change(

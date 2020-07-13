@@ -23,18 +23,15 @@ test_that("validation:check_is_2d", {
 
 
 test_that("validation:is_contrasts", {
-    data(shoemaker2015)
-    meta = shoemaker2015$meta
-    contrasts_formula = c("M-VL", "M-C")
-    moanin_model = create_moanin_model(meta)
-    expect_silent(
-	is_contrasts(contrasts_formula, moanin_model))
-    contrasts = is_contrasts(contrasts_formula,  moanin_model)
+    contrasts_formula = c("M-K", "M-C")
+    moanin_model = create_moanin_model(data=testData,meta=testMeta)
+    expect_silent(contrasts <-
+	    is_contrasts(contrasts_formula, moanin_model))
     expect_silent(is_contrasts(contrasts,  moanin_model))
 
     contrasts = limma::makeContrasts(
-	contrasts=contrasts_formula, levels=levels(meta$Group))
+	    contrasts=contrasts_formula, levels=levels(testMeta$Group))
     expect_silent(
-	is_contrasts(contrasts,  moanin_model))
+	    is_contrasts(contrasts,  moanin_model))
 
 })

@@ -48,14 +48,14 @@ setMethod("splines_kmeans", "Moanin",
                         fit_splines=TRUE,
                         rescale=TRUE){
     basis = basis_matrix(object)
-
+    
     if(fit_splines){
         fitted_data = fit_predict_splines(data=assay(object),object)
     }else{
         fitted_data = assay(object)
     }
     
-    ## CHECK ME: previous version gave the meta information, 
+    ## CHECK ME: previous version gave the meta information to rescale_values, 
     ## but also group=NULL, so meant it wasn't used. Was that a mistake?
     if(rescale){
         fitted_data = rescale_values(data=fitted_data, object=object,use_group=FALSE)
@@ -235,6 +235,7 @@ setMethod("splines_kmeans_score_and_label", "Moanin",
         row.names(all_scores) = row.names(object) 
     }
     else all_scores=previous_scores
+    
     scores = apply(all_scores, 1, min)
     labels = apply(all_scores, 1, which.min)
     names(labels) = row.names(object)
