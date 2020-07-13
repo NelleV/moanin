@@ -5,7 +5,7 @@ setGeneric("plot_splines_data",
 #'
 #'@param data matrix containing the data to be plotted (such as centroids or
 #'  data), where each row of the data provided will be plotted as a separate
-#'  plot.
+#'  plot. If missing, will rely on data in \code{assay(object)}
 #'@inheritParams DE_timecourse
 #'@param colors vector, optional, default NULL. Vector of colors
 #'@param smooth boolean, optional, default: FALSE. Whether to smooth the
@@ -20,8 +20,9 @@ setGeneric("plot_splines_data",
 #'  be the same across all plots and will always be simplified)
 #'@param subset_conditions list if provided, only plots the subset of conditions
 #'  provided. Else, plots all conditions
-#'@param subset_data list if provided, only plots  the subset of data (ie, the
-#'  rows) provided.
+#'@param subset_data list if provided, only plots the subset of data (ie, the
+#'  rows) provided. Important if not providing \code{data} to subset rows
+#'  or there will be too many genes to plot.
 #'@param mfrow a vector of integers of length 2 defining the grid of plots to be
 #'  created (see \code{\link{par}}). If missing, the function will set a value.
 #'@param addToPlot A function that will be called after the plotting, allowing
@@ -32,13 +33,13 @@ setGeneric("plot_splines_data",
 #' @examples
 #' # First, load some data and create a moanin model
 #' data(exampleData)
-#' moanin = create_moanin_model(testMeta, degrees_of_freedom=6)
+#' moanin = create_moanin_model(data=testData,meta=testMeta, degrees_of_freedom=6)
 #'
 #' # The moanin model contains all the information for plotting purposes. The
 #' # plot_splines_function will automatically fit the splines from the
 #' # information contained in the moanin model
 #' genes = c("NM_001042489", "NM_008725")
-#' plot_splines_data(moanin, data=genes,
+#' plot_splines_data(moanin, subset_data=genes,
 #'	mfrow=c(2, 2))
 #'
 #' # The splines can also be smoothed
@@ -57,7 +58,9 @@ setMethod("plot_splines_data",c("Moanin","matrix"),
     
     if(ncol(data)!=ncol(object)) stop("matrix given in argument data must have",
         "same number of columns as Moanin object given in argument object.")
-        
+    if(!is.null(subset_data) ){
+        data<-data[subset_data,]
+    }
     n_observations = dim(data)[1]
     n_plots = if(legend) n_observations+1 else n_observations
     if(!is.null(mfrow)){
@@ -154,20 +157,20 @@ setMethod("plot_splines_data",c("Moanin","matrix"),
     }
 }
 )
-setMethod("plot_splines_data",c("Moanin","character"),
-    function(object, data, ...){
-        plot_splines_data(object,data=assay(object)[data,])
-    }
-)
 
 setMethod("plot_splines_data",c("Moanin","numeric"),
           function(object, data, ...){
-              plot_splines_data(object,data=assay(object)[data,])
+              plot_splines_data(object,data=matrix(data,nrow=1),...)
           }
 )
 setMethod("plot_splines_data",c("Moanin","data.frame"),
           function(object, data, ...){
-              plot_splines_data(object,data=data.matrix(data))
+              plot_splines_data(object,data=data.matrix(data),...)
+          }
+)
+setMethod("plot_splines_data",c("Moanin","missing"),
+          function(object, data, ...){
+              plot_splines_data(object,data=assay(object),...)
           }
 )
 plot_centroid_individual = function(centroid, moanin_model,
