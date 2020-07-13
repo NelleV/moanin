@@ -18,9 +18,9 @@
 #' library(timecoursedata)
 #' data(shoemaker2015)
 #' testData<-shoemaker2015$data[1:500,]
-#' whSamples<-which(shoemaker2015$meta$Group %in% c("C","K"))
+#' whSamples<-which(shoemaker2015$meta$Group %in% c("C","K","M"))
 #' testData<-testData[,whSamples]
-#' testMeta<-shoemaker2015$meta[whSamples,]
+#' testMeta<-droplevels(shoemaker2015$meta[whSamples,])
 #' library(biomaRt)
 #' ensembl = useMart("ensembl")
 #' ensembl = useMart("ensembl")
