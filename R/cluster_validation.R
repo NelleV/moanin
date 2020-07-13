@@ -12,11 +12,11 @@
 #'  in the same cluster (\code{scale=TRUE}).
 #' @examples 
 #' data(exampleData)
-#' moanin = create_moanin_model(testMeta)
+#' moanin = create_moanin_model(data=testData,meta=testMeta)
 #' #small function to run splines_kmeans on subsample of 50 genes
 #' subsampleCluster<-function(){
-#'    ind<-sample(1:nrow(testData),size=50)
-#'    km<-splines_kmeans(testData[ind,],moanin,n_clusters=3)
+#'    ind<-sample(1:nrow(moanin),size=50)
+#'    km<-splines_kmeans(moanin[ind,],n_clusters=3)
 #'    assign<-splines_kmeans_score_and_label(testData, km, 
 #'       percentage_genes_to_label=1.0)$label
 #'   }
@@ -126,12 +126,12 @@ plot_cdf_consensus = function(labels){
 #' @aliases plot_cdf_consensus plot_model_explorer
 #' @examples 
 #' data(exampleData)
-#' moanin = create_moanin_model(testMeta)
+#' moanin = create_moanin_model(data=testData,meta=testMeta)
 #' #small function to run splines_kmeans on subsample of 50 genes
 #' subsampleCluster<-function(){
-#'    ind<-sample(1:nrow(testData),size=50)
-#'    km<-splines_kmeans(testData[ind,],moanin,n_clusters=3)
-#'    assign<-splines_kmeans_score_and_label(testData, km, 
+#'    ind<-sample(1:nrow(moanin),size=50)
+#'    km<-splines_kmeans(moanin[ind,],n_clusters=3)
+#'    assign<-splines_kmeans_score_and_label(moanin, km, 
 #'        percentage_genes_to_label=1.0)$label
 #' }
 #' kmClusters1=replicate(10,subsampleCluster())

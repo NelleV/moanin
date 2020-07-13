@@ -4,20 +4,22 @@
 
 #' Check data and meta
 #' @keywords internal
-check_data_meta = function(data, meta){
+check_data_meta = function(data, object){
+    if(!inherits(object,"Moanin")) stop("Internal coding error: passed object",
+    "is not of class Moanin")
     dim_data = dim(data)
-    dim_meta = dim(meta)
+    dim_meta = dim(object)
     data = as.matrix(data)
-    if(dim_meta[1] != dim_data[2]){
+    if(dim_meta[2] != dim_data[2]){
         stop(
-            "Data and metadata are inconsistent. Data is of shape (Xx",
-            "Metadata is of shape XX")
+            "User-given data and Moanin object are inconsistent. Data is has ", 
+            ncol(data),"columns; Moanin object has", ncol(object))
     }
-    
+
     if(!is.numeric(data)){
         stop("Data should be of type numeric")
     }
-    meta = check_meta(meta)
+
 }
 
 

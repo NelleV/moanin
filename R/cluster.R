@@ -3,6 +3,10 @@ setGeneric("splines_kmeans",
            function(object,...) { standardGeneric("splines_kmeans")})
 setGeneric("splines_kmeans_score_and_label", 
            function(object,...) { standardGeneric("splines_kmeans_score_and_label")})
+setGeneric("splines_kmeans_predict", 
+           function(object,...) { standardGeneric("splines_kmeans_predict")})
+
+
 #' Performs splines clustering using K-means
 #'
 #' @inheritParams DE_timecourse
@@ -24,16 +28,15 @@ setGeneric("splines_kmeans_score_and_label",
 #'\itemize{
 #'\item{\code{centroids}}{The centroids are rescaled so that they range from
 #'0-1}
-#'\item{\code{moanin_model}}{The given moanin_model}
-#'\item{\code{fit_splines}}{The value of \code{fit_splines} given to the
+#'\item{\code{fit_splines}}{Logical, the value of \code{fit_splines} given to the
 #'function }
 #'\item{\code{rescale}}{The value of \code{rescale} given to the function }
 #'} 
 #' @examples 
 #' data(exampleData)
 #' # Use the default options
-#' moanin = create_moanin_model(testMeta)
-#' out<-splines_kmeans(testData, moanin,n_clusters=5)
+#' moanin = create_moanin_model(data=testData, meta=testMeta)
+#' out = splines_kmeans( moanin,n_clusters=5)
 #' table(out$clusters)
 #' @export
 setMethod("splines_kmeans", "Moanin",
@@ -45,77 +48,102 @@ setMethod("splines_kmeans", "Moanin",
                         fit_splines=TRUE,
                         rescale=TRUE){
     basis = basis_matrix(object)
-    
+
     if(fit_splines){
-        fitted_data = fit_predict_splines(object)
+        fitted_data = fit_predict_splines(data=assay(object),object)
     }else{
         fitted_data = assay(object)
     }
     
+    ## CHECK ME: previous version gave the meta information, 
+    ## but also group=NULL, so meant it wasn't used. Was that a mistake?
     if(rescale){
-        fitted_data = rescale_values(fitted_data, object)
+        fitted_data = rescale_values(data=fitted_data, object=object,use_group=FALSE)
     }
     
     kmeans_clusters = ClusterR::KMeans_rcpp(
         fitted_data, n_clusters, num_init=n_init, max_iters=max_iter,
         seed=random_seed, initializer=init)
     kmeans_clusters$centroids = rescale_values(
-        kmeans_clusters$centroids, object)
-    names(kmeans_clusters$clusters) = row.names(data)
+        data=kmeans_clusters$centroids, object=object,use_group=FALSE )
+    names(kmeans_clusters$clusters) = row.names(object)
     
     # Give names to clusters
     cluster_names = vapply(seq_len(n_clusters), FUN=function(x){paste0("C", x)},
                         FUN.VALUE="C")
     row.names(kmeans_clusters$centroids) = cluster_names
-    colnames(kmeans_clusters$centroids) = colnames(data)
+    colnames(kmeans_clusters$centroids) = colnames(object)
     
-    kmeans_clusters$moanin_model = moanin_model
+    #kmeans_clusters$moanin_model = moanin_model
     kmeans_clusters$fit_splines = fit_splines
     kmeans_clusters$rescale = rescale
     return(kmeans_clusters)
 }
 )
 
-## FIXME: This function is not exported but is used in manuscript!
-## Need to fix this!
-splines_kmeans_prediction = function(data, kmeans_clusters){
-    moanin_model = kmeans_clusters$moanin_model
-    fit_splines = kmeans_clusters$fit_splines
-    rescale = kmeans_clusters$rescale
-    
-    meta = moanin_model$meta
-    basis = moanin_model$basis
-    check_data_meta(data, meta)
-    
-    if(fit_splines){
-        fitted_data = fit_predict_splines(data, moanin_model)
-    }else{
-        fitted_data = data
+#' @param method If "distance", predicts based on distance of data to kmeans
+#'   centroids. If "goodnessOfFit", is a wrapper to
+#'   \code{splines_kmeans_score_and_label}, assigning labels based on goodness
+#'   of fit, including any filtering.
+#' @param ... arguments passed to \code{splines_kmeans_score_and_label}
+#' @return \code{splines_kmeans_predict} returns a vector giving the labels for
+#'   the given data.
+#' @rdname splines_kmeans_score_and_label
+#' @export
+setMethod("splines_kmeans_predict", "Moanin",
+          function(object, kmeans_clusters, 
+                   method=c("distance","goodnessOfFit"),data=NULL,...){
+    method=match.arg(method)
+    if(method=="goodnessOfFit"){
+        out<-splines_kmeans_score_and_label(object=object, 
+            kmeans_clusters=kmeans_clusters,...)
+        return(out$labels)
     }
-    
-    if(rescale){
-        fitted_data = rescale_values(fitted_data, meta)
+    if(method=="distance"){
+        fit_splines = kmeans_clusters$fit_splines
+        rescale = kmeans_clusters$rescale
+        check_data_meta(kmeans_clusters$centroids, object)
+        basis = basis_matrix(object)
+        if(is.null(data)) data<-assay(object)
+        else{
+            check_data_meta(data,object)
+        }
+        if(fit_splines){
+            fitted_data = fit_predict_splines(data=data, moanin_model=object)
+        }else{
+            fitted_data = data
+        }
+        
+        if(rescale){
+            fitted_data = rescale_values(data=fitted_data, object=object, 
+                                         use_group=FALSE)
+        }
+        
+        closest_cluster <- function(x) {
+            cluster_dist <- apply(
+                kmeans_clusters$centroids, 1, function(y){sqrt(sum((x-y)^2))})
+            return(which.min(cluster_dist)[1])
+        }
+        
+        all_labels <- apply(fitted_data, 1, closest_cluster) 
+        kmeans_clusters$clusters = all_labels
+        names(kmeans_clusters$clusters) = row.names(data)
+        return(kmeans_clusters$clusters)
     }
-    
-    closest_cluster <- function(x) {
-        cluster_dist <- apply(
-            kmeans_clusters$centroids, 1, function(y){sqrt(sum((x-y)^2))})
-        return(which.min(cluster_dist)[1])
-    }
-    
-    all_labels <- apply(fitted_data, 1, closest_cluster) 
-    kmeans_clusters$clusters = all_labels
-    names(kmeans_clusters$clusters) = row.names(data)
-    return(kmeans_clusters)
-}
 
+}
+)
 
 
 #' Assign score and labels from raw data
 #'
-#' @inheritParams DE_timecourse
-#' @param kmeans_clusters list of list
-#'  List returned by moanin::splines_kmeans
+#' @param object the Moanin object that contains the basis functions used in
+#'   creating the clusters
+#' @param kmeans_clusters the results of running \code{\link{splines_kmeans}}
+#' @param data the data to predict. If not given, will use \code{assay(object)}.
+#'   If given, the number of columns of \code{data} must match that of
+#'   \code{object}
+#' @param kmeans_clusters  List returned by \code{\link{splines_kmeans}}
 #' @param percentage_genes_to_label float, optional, default: 0.5
 #'  Percentage of genes to label. If max_score is provided, will label
 #'  genes that are either in the top `percentage_genes_to_label` or with a
@@ -123,8 +151,6 @@ splines_kmeans_prediction = function(data, kmeans_clusters){
 #' @param max_score optional, default: Null
 #'  When provided, will only label genes below that score. If NULL, ignore
 #'  this option.
-#' @param rescale_separately_on, string, optional, default: NULL
-#'  When provided, will rescale separately different groups of data.
 #' @param previous_scores an option to give the scores results from a previous
 #'   run of \code{splines_kmeans_score_and_label}, and only redo the filtering
 #'   (i.e. if want to change \code{percentage_genes_to_label} without rerunning
@@ -139,36 +165,46 @@ splines_kmeans_prediction = function(data, kmeans_clusters){
 #' \item{\code{score_cutoff}}{The required cutoff for a gene receiving an
 #' assignment}
 #' }
+#' @aliases splines_kmeans_predict
 #' @examples 
 #' data(exampleData)
-#' moanin = create_moanin_model(testMeta)
-#' kmClusters=splines_kmeans(testData, moanin)
-#' scores_and_labels = splines_kmeans_score_and_label(testData, kmClusters)
+#' moanin = create_moanin_model(data=testData, meta=testMeta)
+#' # Cluster on a subset of genes
+#' kmClusters=splines_kmeans(moanin[1:50,],n_clusters=3)
+#' # get scores on all genes
+#' scores_and_labels = splines_kmeans_score_and_label(object=moanin, kmClusters)
+#' head(scores_and_labels$scores)
+#' head(scores_and_labels$labels)
+#' # should be same as above, only just the assignments
+#' predictLabels1 = splines_kmeans_predict(object=moanin, kmClusters, 
+#'      method="goodnessOfFit")
+#' # Instead use distance to centroid:
+#' predictLabels2 = splines_kmeans_predict(object=moanin, kmClusters, 
+#'      method="distance")
 #' @export
 setMethod("splines_kmeans_score_and_label", "Moanin",
-          function(object,...){
-              splines_kmeans_score_and_label(assay(object),...)
-          }
-)
-setMethod("splines_kmeans_score_and_label", "matrix",
-          function(object, kmeans_clusters, 
-        percentage_genes_to_label=0.5,
-        max_score=NULL, rescale_separately_on=NULL, previous_scores=NULL){
+          function(object, kmeans_clusters, data=NULL,
+                   percentage_genes_to_label=0.5,
+                   max_score=NULL, previous_scores=NULL,
+                   rescale_separately=FALSE){
+    if(is.null(data)){
+        data<-assay(object)
+    }
+    else{
+        if(ncol(data)!=ncol(kmeans_clusters$centroids)) stop(
+            "User-given data and kmeans resultsare inconsistent. Data is has ", 
+            ncol(data),"columns; kmeans result was run on", 
+            ncol(kmeans_clusters$centroids), "samples")
+    }
 
     if(is.null(previous_scores)){
-        meta = kmeans_clusters$moanin_model$meta
-
         n_clusters = dim(kmeans_clusters$centroids)[1]
-        all_scores = matrix(NA, nrow=dim(object)[1], ncol=n_clusters)
+        all_scores = matrix(NA, nrow=dim(data)[1], ncol=n_clusters)
 
-
-        if(!is.null(rescale_separately_on)){
-            groups = levels(meta[, rescale_separately_on])
-        }
 
         for(k in seq_len(n_clusters)){
             # By default, should not rescale separately on any columns.
-            if(is.null(rescale_separately_on)){ 
+            if(!rescale_separately){
                 scores = score_genes_centroid(
                     data,
                     kmeans_clusters$centroids[k,],
@@ -177,8 +213,9 @@ setMethod("splines_kmeans_score_and_label", "matrix",
                 all_scores[, k] = scores /  max(scores)
             }else{
                 scores = NULL
+                groups = levels(group_variable(object))
                 for(group in groups){
-                    mask = meta[, rescale_separately_on] == group
+                    mask = group_variable(object) == group
                     partial_scores = score_genes_centroid(
                         data[, mask],
                         kmeans_clusters$centroids[k, mask],
@@ -188,19 +225,19 @@ setMethod("splines_kmeans_score_and_label", "matrix",
                     }else{
                         scores = scores + partial_scores
                     }
-                }   
+                }
                 all_scores[, k] = scores / max(scores)
             }
         }
 
         # Give names to rows
         all_scores = as.matrix(all_scores)
-        row.names(all_scores) = row.names(data) 
+        row.names(all_scores) = row.names(object) 
     }
     else all_scores=previous_scores
     scores = apply(all_scores, 1, min)
     labels = apply(all_scores, 1, which.min)
-    names(labels) = row.names(data)
+    names(labels) = row.names(object)
 
     if(percentage_genes_to_label<1 | !is.null(max_score)){
         max_score_data = stats::quantile(scores, c(percentage_genes_to_label))

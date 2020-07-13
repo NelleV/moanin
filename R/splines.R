@@ -1,3 +1,4 @@
+setGeneric("rescale_values",function(object,...) { standardGeneric("rescale_values")})
 
 #' Fit splines to each gene of data matrix
 #' @param moanin_model object of class Moanin 
@@ -107,52 +108,50 @@ create_meta_prediction = function(moanin_model, num_timepoints=100){
 }
 
 
-#' Rescales centroids and gene expresion values
+#' Rescales rows of data to be between 0 and 1
 #'
-#' @param y 
-#'      The matrix to rescale. Each row should correspond to a gene or a
-#'      centroid and columns to samples.
-#' @param meta, optional
-#'      Metadata data.frame.
-#' @param group, optional, default: NULL
-#'      A column name of the metadata data.frame. The corresponding column
-#'      should be factors. If provided, the values of y will be rescaled such
-#'      that, for each row, all values associated to group A, … of column
-#'      "group" of the metadata is between 0 and 1. For example, if column
-#'      "group" corresponds to a genotype, all the values of a gene for a
-#'      specific genotype will be rescaled between 0 and 1.
+#' @param data The matrix to rescale by row. If NULL, and \code{object} is given, data
+#'   will be taken as \code{assay(object)} Each row should correspond to a gene
+#'   or a centroid, and columns to samples.
+#' @param object a object of class Moanin, only needed if choose to rescale by grouping variable in the moanin object. If NULL, then data will be rescaled jointly across all observations.
+#' @param use_group If true, then the data will be rescaled such that, for each
+#'   row, all values associated to each group (defined by grouping variable of
+#'   \code{object}) is between 0 and 1. For example, if column
 #' @return rescaled y, such that for each row, the values are comprised
-#'      between 0 and 1. Note that if "group" is provided, the values
-#'      associated to the columns of unique values of "group" will be rescaled
+#'      between 0 and 1. Note that if \code{use_group=TRUE} and \code{object} is not NULL, the values
+#'      associated to the columns of unique values of the grouping variable of \code{object} will be rescaled
 #'      separately.
-rescale_values = function(y, meta=NULL, group=NULL){
-    if(is.null(group)){
-        ymin = row_min(y) 
-        y = y - ymin
-        ymax = row_max(y)
-        whNonZero<-which(ymax>0)
-        if(length(whNonZero)>0){
-            y[whNonZero,] = y[whNonZero,] / ymax[whNonZero]
-        }
-    }else{
-        if(is.null(meta)){
-            msg = paste(
-                "moanin::rescale_values if group is provided, then a metadata",
-                "data.frame should be provided as well.")
-            stop(msg)
-        }
-        factors_to_consider = levels(unlist(meta[group]))
+#' @export
+setMethod("rescale_values","Moanin",
+    function(object, data=NULL, use_group=TRUE){
+    if(is.null(data)) data=assay(object)
+    if(use_group){
+        factors_to_consider = levels(group_variable(object))
         for(factor in factors_to_consider){
             mask = meta[group] == factor
-            ymin = row_min(y[, mask]) 
-            y[, mask] = y[, mask] - ymin
-            ymax = row_max(y[, mask])
+            ymin = row_min(data[, mask]) 
+            data[, mask] = data[, mask] - ymin
+            ymax = row_max(data[, mask])
             whNonZero<-which(ymax>0)
-            y[whNonZero,mask] = y[whNonZero,mask] / ymax[whNonZero]
+            data[whNonZero,mask] = data[whNonZero,mask] / ymax[whNonZero]
         }
+        return(data)
     }
-    return(y)
-}
+    else return(rescale_values(object=NULL,data=data) )
+})
+
+setMethod("rescale_values","NULL",
+    function(object, data){
+        ymin = row_min(data) 
+        data = data - ymin
+        ymax = row_max(data)
+        whNonZero<-which(ymax>0)
+        if(length(whNonZero)>0){
+            data[whNonZero,] = data[whNonZero,] / ymax[whNonZero]
+        }
+        return(data)
+})
+
 
 
 # XXX It's wierd that this does not exists in R…
