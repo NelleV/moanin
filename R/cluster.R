@@ -1,4 +1,8 @@
 
+setGeneric("splines_kmeans", 
+           function(object,...) { standardGeneric("splines_kmeans")})
+setGeneric("splines_kmeans_score_and_label", 
+           function(object,...) { standardGeneric("splines_kmeans_score_and_label")})
 #' Performs splines clustering using K-means
 #'
 #' @inheritParams DE_timecourse
@@ -105,6 +109,8 @@ splines_kmeans_prediction = function(data, kmeans_clusters){
     return(kmeans_clusters)
 }
 
+
+
 #' Assign score and labels from raw data
 #'
 #' @inheritParams DE_timecourse
@@ -139,7 +145,13 @@ splines_kmeans_prediction = function(data, kmeans_clusters){
 #' kmClusters=splines_kmeans(testData, moanin)
 #' scores_and_labels = splines_kmeans_score_and_label(testData, kmClusters)
 #' @export
-splines_kmeans_score_and_label = function(data, kmeans_clusters, 
+setMethod("splines_kmeans_score_and_label", "Moanin",
+          function(object,...){
+              splines_kmeans_score_and_label(assay(object),...)
+          }
+)
+setMethod("splines_kmeans_score_and_label", "matrix",
+          function(object, kmeans_clusters, 
         percentage_genes_to_label=0.5,
         max_score=NULL, rescale_separately_on=NULL, previous_scores=NULL){
 
@@ -147,7 +159,7 @@ splines_kmeans_score_and_label = function(data, kmeans_clusters,
         meta = kmeans_clusters$moanin_model$meta
 
         n_clusters = dim(kmeans_clusters$centroids)[1]
-        all_scores = matrix(NA, nrow=dim(data)[1], ncol=n_clusters)
+        all_scores = matrix(NA, nrow=dim(object)[1], ncol=n_clusters)
 
 
         if(!is.null(rescale_separately_on)){
@@ -214,4 +226,5 @@ splines_kmeans_score_and_label = function(data, kmeans_clusters,
     return(list("labels"=labels,
                 "scores"=all_scores,
                 "score_cutoff"=max_score))
-}
+          }
+)

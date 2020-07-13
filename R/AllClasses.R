@@ -132,7 +132,10 @@ setMethod(
                     "the other", sep="")
         stop(msg)
     }
-    
+    # Must be done *before* build basis
+    if(drop_levels){
+        colData(data)[,group_variable_name]<-droplevels(colData(data)[,group_variable_name])
+    }        
     if(is.null(basis_matrix)){
         if(is.null(spline_formula)){
             if(is.null(degrees_of_freedom)){
@@ -154,7 +157,6 @@ setMethod(
                         time_variable_name=time_variable_name,
                         group_variable_name=group_variable_name
                         )
-    if(drop_levels) group_variable(splines_model)<-droplevels(group_variable(splines_model))
     # Just create this one.
     if(!("WeeklyGroup" %in% colnames(colData(splines_model)))){
         colData(splines_model)$WeeklyGroup = as.factor(

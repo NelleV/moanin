@@ -1,5 +1,5 @@
-setGeneric("df", 
-           function(object) { standardGeneric("df")})
+setGeneric("degrees_of_freedom", 
+           function(object) { standardGeneric("degrees_of_freedom")})
 setGeneric("basis_matrix", 
            function(object) { standardGeneric("basis_matrix")})
 setGeneric("spline_formula", 
@@ -20,6 +20,8 @@ setGeneric("time_variable",
            function(object) { standardGeneric("time_variable")})
 setGeneric("time_variable<-", 
            function(object,  value) { standardGeneric("time_variable<-")})
+setGeneric("time_by_group_variable", 
+           function(object) { standardGeneric("time_by_group_variable")})
 
 #' @name Moanin-methods
 #' @title Helper methods for the Moanin class
@@ -32,7 +34,6 @@ setGeneric("time_variable<-",
 #' moanin = create_moanin_model(data=testData,meta=testMeta)
 #' group_variable_name(moanin)
 #' time_variable_name(moanin)
-
 setMethod("group_variable_name","Moanin",function(object){
     object@group_variable_name
 })
@@ -42,6 +43,11 @@ setReplaceMethod("group_variable_name","Moanin",function(object,value){
     return(object)
     
 })
+#' @rdname Moanin-methods
+setMethod("time_by_group_variable","Moanin",function(object){
+    colData(object)$WeeklyGroup
+})
+
 
 #' @rdname Moanin-methods
 setMethod("group_variable","Moanin",function(object){
@@ -76,7 +82,7 @@ setReplaceMethod("time_variable","Moanin",function(object,value){
     return(object)
 })
 #' @rdname Moanin-methods
-setMethod("df","Moanin",function(object){
+setMethod("degrees_of_freedom","Moanin",function(object){
     object@degrees_of_freedom
 })
 #' @rdname Moanin-methods

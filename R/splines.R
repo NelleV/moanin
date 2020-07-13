@@ -1,15 +1,16 @@
 
 #' Fit splines to each gene of data matrix
-#'
-#' @inheritParams DE_timecourse
+#' @param moanin_model object of class Moanin 
+#' @data a matrix of data to fix splines to. If NULL, uses assay(moanin_model)
 #' @param weights A matrix of weights, of the same dimension as \code{data}.
 #'
 #' @return matrix of the coefficients for each basis function, each row of the
 #'   matrix containing the coefficients for the corresponding gene in
 #'   \code{data}.
 #' @keywords internal
-fit_splines = function(data, moanin_model, weights=NULL){
-    basis = moanin_model$basis
+fit_splines = function(moanin_model, data=NULL, weights=NULL){
+    if(is.null(data)) data = assay(moanin_model)
+    basis = basis_matrix(moanin_model)
     n = ncol(basis)
     nr = nrow(data)
     

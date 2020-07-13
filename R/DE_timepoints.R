@@ -1,3 +1,7 @@
+setGeneric("DE_timepoints", 
+           function(object,...) { standardGeneric("DE_timepoints")})
+setGeneric("create_timepoints_contrasts", 
+           function(object,...) { standardGeneric("create_timepoints_contrasts")})
 
 #' Fit weekly differential expression analysis
 #'
@@ -12,19 +16,19 @@
 #' @aliases create_timepoints_contrasts
 #' @examples 
 #' data(exampleData)
-#' moanin = create_moanin_model(testMeta)
-#' contrasts = create_timepoints_contrasts("C", "K", moanin)
+#' moanin = create_moanin_model(data=testData, meta=testMeta)
+#' contrasts = create_timepoints_contrasts(moanin,"C", "K")
 #' head(contrasts)
-#' deTimepoints=DE_timepoints(data=testData, moanin_model=moanin, 
+#' deTimepoints=DE_timepoints(moanin, 
 #'     contrasts=contrasts, use_voom_weights=FALSE)
 #' head(deTimepoints)
 #' @export
-DE_timepoints = function(data, moanin_model,
+setMethod("DE_timepoints","Moanin",
+           function(object,
                          contrasts,
                          use_voom_weights=TRUE){
-    meta = moanin_model$meta
     
-    design = stats::model.matrix(~WeeklyGroup + 0, data=meta)
+    design = stats::model.matrix(~WeeklyGroup + 0, data=colData(object))
     
     cleaned_colnames = gsub("WeeklyGroup", "", colnames(design))
     colnames(design) = cleaned_colnames
@@ -34,12 +38,12 @@ DE_timepoints = function(data, moanin_model,
         levels=design)
     
     if(use_voom_weights){
-        y = edgeR::DGEList(counts=data)
+        y = edgeR::DGEList(counts=assay(object))
         y = edgeR::calcNormFactors(y, method="upperquartile")
         v = limma::voom(y, design, plot=FALSE)
         v = limma::lmFit(v)
     }else{
-        v = limma::lmFit(data, design)	
+        v = limma::lmFit(assay(object), design)	
     }
     
     fit = limma::contrasts.fit(v, allcontrasts)
@@ -51,7 +55,7 @@ DE_timepoints = function(data, moanin_model,
     
     combine_results = function(ii, fit2){
         contrast_formula = contrasts[ii]
-        de_analysis = data.frame(row.names=row.names(data))
+        de_analysis = data.frame(row.names=row.names(object))
         
         base_colname = gsub(" ", "", contrast_formula, fixed=TRUE)
         colname_pval = paste(base_colname, "_pval", sep="")
@@ -73,7 +77,7 @@ DE_timepoints = function(data, moanin_model,
                                  combine_results, fit2=fit))
     return(all_results)
 }
-
+)
 
 #' Creates pairwise contrasts for all timepoints
 #'
@@ -91,12 +95,10 @@ DE_timepoints = function(data, moanin_model,
 #' @seealso \code{\link[limma]{makeContrasts}}
 #' @rdname DE_timepoints
 #' @export
-create_timepoints_contrasts = function(group1, group2, moanin_model){
-    meta = moanin_model$meta
-    gpVar = moanin_model$group_variable
-    tpVar = moanin_model$time_variable
-    meta = meta[meta[,gpVar] %in% c(group1, group2),]
-    all_timepoints = sort(unique(meta[,tpVar]))
+setMethod("create_timepoints_contrasts","Moanin",
+ function(object, group1, group2){
+    object = object[,group_variable(object) %in% c(group1, group2)]
+    all_timepoints = sort(unique(time_variable(object)))
     contrasts = rep(NA, length(all_timepoints))
     msg<-""
     foundMissing<-FALSE
@@ -104,11 +106,11 @@ create_timepoints_contrasts = function(group1, group2, moanin_model){
         # First, check that the two conditions have been sampled for this
         # timepoint
         timepoint = all_timepoints[i]
-        submeta = meta[meta[,tpVar] == timepoint, ]
-        if(length(unique(submeta$WeeklyGroup)) == 2){
-            groups = as.character(unique(submeta$WeeklyGroup))
+        submeta = object[,time_variable(object) == timepoint]
+        if(length(unique(time_by_group_variable(submeta))) == 2){
+            groups = as.character(unique(time_by_group_variable(submeta)))
             contrasts[i] = paste0(group1, ".", timepoint, "-", group2, ".", timepoint)
-        }else if(length(unique(submeta$WeeklyGroup)) == 1){
+        }else if(length(unique(time_by_group_variable(submeta))) == 1){
             if(unique(submeta[,gpVar])[1] ==  group1){
                 missing_condition = group2
             }else{
@@ -121,4 +123,5 @@ create_timepoints_contrasts = function(group1, group2, moanin_model){
     }
     if(foundMissing) warning(msg)
     return(contrasts[!is.na(contrasts)])
-}
+ }
+)
