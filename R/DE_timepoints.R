@@ -131,3 +131,49 @@ setMethod("create_timepoints_contrasts","Moanin",
     return(contrasts[!is.na(contrasts)])
  }
 )
+
+#' Creates pairwise contrasts for all timepoints
+#'
+#' @param de_results results from \code{\link{DE_timepoints}}
+#' @param type type of p-value to count ("qval" or "pval")
+#' @param labels labels to give each bar
+#' @param threshold cutoff for counting gene as DE
+#' @param xlab x-axis label
+#' @param ylab y-axis label
+#' @param main title of plot
+#' @param ... arguments passed to \code{\link{barplot}}
+#' @details \code{create_timepoints_contrasts} creates the needed contrasts for
+#'   comparing two groups for every timepoint in the format needed for
+#'   \code{DE_timepoints} (i.e. \code{\link[limma]{makeContrasts}}, to which the
+#'   contrasts are ultimately passed). The time points are determined by the
+#'   meta data in the \code{moanin_object} provided by the user.
+#' @return This is a plotting function, and returns (invisibly) the results of 
+#'   \code{\link{barplot}}
+#' @aliases perWeek_barplot
+#' @examples 
+#' data(exampleData)
+#' moanin = create_moanin_model(data=testData, meta=testMeta)
+#' contrasts = create_timepoints_contrasts(moanin,"C", "K")
+#' deTimepoints=DE_timepoints(moanin, 
+#'     contrasts=contrasts, use_voom_weights=FALSE)
+#' perWeek_barplot(deTimepoints)
+#' @export
+perWeek_barplot = function(de_results, type=c("qval","pval"),
+                          labels=NULL, threshold=0.05,
+                          xlab="Timepoint", ylab="Number of DE genes", main="", 
+                           ...){
+    
+    type<-match.arg(type)
+    qval_colnames = colnames(de_results)[
+        grepl(type, colnames(de_results))]
+    if(is.null(labels)){
+        stringReplace<-paste0("_",type)
+        labels = sapply(
+            strsplit(gsub(stringReplace, "", qval_colnames), "\\."), .subset2, 3)
+    }
+    number_de_genes_per_time = colSums(de_results[, qval_colnames] < threshold)
+    
+    barplot(number_de_genes_per_time, 
+            names.arg=labels, xlab=xlab,ylab=ylab,
+            main=main, ...)  
+}
