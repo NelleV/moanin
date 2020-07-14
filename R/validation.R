@@ -2,7 +2,7 @@
 
 
 
-#' Check data and meta
+#' Internal Validation Checks
 #' @keywords internal
 #' @name internal
 #' @return Does not return anything. Only hits errors if there are problems.
@@ -28,7 +28,7 @@ check_data_meta = function(data, object){
 #' Check is 2D
 #'
 #' @keywords internal
-#' @return 
+#' @rdname internal
 check_is_2d = function(X){
     dim_data = dim(X)
     if(is.null(dim_data)){
@@ -51,6 +51,7 @@ check_is_2d = function(X){
 #'   expected, and that each contrast indeed sums to 0.
 #' @returns \code{is_contrasts} returns the contrasts, with any corrections.
 #' @keywords internal
+#' @rdname internal
 is_contrasts = function(contrasts, moanin_model){
     if(!inherits(moanin_model, "Moanin") ) 
         stop("Coding error: internal function is_contrasts expect class",

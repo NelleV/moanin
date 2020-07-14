@@ -54,11 +54,11 @@ setClass(
 setValidity("Moanin", function(object) {
     if(! group_variable_name(object) %in% colnames(colData(object))) 
         return(paste("group_variable_name slot must match the name",
-        "of one of the columns of colData"))
+            "of one of the columns of colData"))
     else{
         if(!is.factor(group_variable(object))) 
             return(paste(group_variable_name(object),
-                   "is not a numeric column in the colData of the object"))
+                "is not a numeric column in the colData of the object"))
     }
     if(! time_variable_name(object) %in% colnames(colData(object))) 
         return(paste("time_variable_name slot must match the", 
@@ -66,7 +66,7 @@ setValidity("Moanin", function(object) {
     else{
         if(!is.numeric(time_variable(object))) 
             return(paste(time_variable_name(object),
-               "is not a numeric column in the colData of the object"))
+                "is not a numeric column in the colData of the object"))
     }
     if(nrow(basis_matrix(object)) != ncol(object)) 
         return(paste("number of rows of the basis_matrix doesn't match",

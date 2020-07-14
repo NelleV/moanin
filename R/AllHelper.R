@@ -1,27 +1,27 @@
 setGeneric("degrees_of_freedom", 
-           function(object) { standardGeneric("degrees_of_freedom")})
+    function(object) { standardGeneric("degrees_of_freedom")})
 setGeneric("basis_matrix", 
-           function(object) { standardGeneric("basis_matrix")})
+    function(object) { standardGeneric("basis_matrix")})
 setGeneric("spline_formula", 
-           function(object) { standardGeneric("spline_formula")})
+    function(object) { standardGeneric("spline_formula")})
 setGeneric("group_variable_name", 
-           function(object) { standardGeneric("group_variable_name")})
+    function(object) { standardGeneric("group_variable_name")})
 setGeneric("group_variable_name<-", 
-           function(object, value) { standardGeneric("group_variable_name<-")})
+    function(object, value) { standardGeneric("group_variable_name<-")})
 setGeneric("group_variable", 
-           function(object) { standardGeneric("group_variable")})
+    function(object) { standardGeneric("group_variable")})
 setGeneric("group_variable<-", 
-           function(object, value) { standardGeneric("group_variable<-")})
+    function(object, value) { standardGeneric("group_variable<-")})
 setGeneric("time_variable_name", 
-           function(object) { standardGeneric("time_variable_name")})
+    function(object) { standardGeneric("time_variable_name")})
 setGeneric("time_variable_name<-", 
-           function(object,  value) { standardGeneric("time_variable_name<-")})
+    function(object,  value) { standardGeneric("time_variable_name<-")})
 setGeneric("time_variable", 
-           function(object) { standardGeneric("time_variable")})
+    function(object) { standardGeneric("time_variable")})
 setGeneric("time_variable<-", 
-           function(object,  value) { standardGeneric("time_variable<-")})
+    function(object,  value) { standardGeneric("time_variable<-")})
 setGeneric("time_by_group_variable", 
-           function(object) { standardGeneric("time_by_group_variable")})
+    function(object) { standardGeneric("time_by_group_variable")})
 
 #' @name Moanin-methods
 #' @title Helper methods for the Moanin class
@@ -137,16 +137,19 @@ setMethod("show","Moanin",function(object){
         cat("Basis matrix with",ncol(basis_matrix(object)),
             "basis_matrix functions\n")
         if(!is.null(spline_formula(object))){
-            cat("Basis matrix was constructed with the following spline_formula\n")
-            form<-gsub("\\s{2,}","",deparse(spline_formula(object))) #get rid of extra spaces
+            cat("Basis matrix was constructed with", 
+                "the following spline_formula\n")
+            #get rid of extra spaces:
+            form<-gsub("\\s{2,}","",deparse(spline_formula(object))) 
             cat(paste(form,collapse="",sep=""),"\n")
         }
         else{
             if(is.null(degrees_of_freedom(object)))
-                cat("Basis matrix was provided by user, spline_formula and degrees_of_freedom=NULL\n")
+                cat("Basis matrix was provided by user,",
+                "spline_formula and degrees_of_freedom=NULL\n")
             else
-                cat("Basis matrix and degrees of freedom provided by user, equal to",
-                    degrees_of_freedom(object),"\n")
+                cat("Basis matrix and degrees of freedom provided by user,",
+                    "equal to", degrees_of_freedom(object),"\n")
         }
         cat("\nInformation about the data (a SummarizedExperiment object):\n")
         show(as(object,"SummarizedExperiment"))
@@ -189,7 +192,10 @@ setMethod(
     definition = function(x, i, j, ..., drop=TRUE) {
 
         out<- new("Moanin",
-                as(selectMethod("[",c("SummarizedExperiment","ANY","numeric"))(x,i,j),"SummarizedExperiment"),#have to explicitly give the inherintence... not great.
+                #have to explicitly give the inherintence... not great:
+                as(selectMethod("[",
+                    c("SummarizedExperiment","ANY","numeric"))(x,i,j),
+                   "SummarizedExperiment"),
                 basis_matrix=basis_matrix(x)[j, , drop=FALSE],
                 spline_formula=spline_formula(x),
                 degrees_of_freedom=degrees_of_freedom(x),
