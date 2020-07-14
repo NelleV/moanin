@@ -5,10 +5,6 @@ library(testthat)
 context("moanin::visualization.R")
 
 test_that("visualization::plot_splines_data", {
-    data(shoemaker2015)
-    data = as.matrix(shoemaker2015$data[5, ])
-    meta = shoemaker2015$meta
-
     moanin_model = create_moanin_model(data=testData,meta=testMeta)
     
     singleData = unlist(testData[1,])
