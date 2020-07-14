@@ -80,8 +80,8 @@ prepostContrasts = create_timepoints_contrasts(moaninObject,"Postflowering", "Pr
 We can run the DE analysis, setting `use_voom_weights=TRUE` to make use of `limma` correction for low-counts. We will subset to just the first 500 genes for illustration purposes, though the full set of genes does not take very long
 
 ```{r}
-weeklyPre<-DE_timepoints(
-     data=preData[1:500,], moanin_model=moaninObject, contrasts=c(preContrasts,postContrasts,prepostContrasts),
+weeklyPre<-DE_timepoints(moaninObject[1:500,], 
+    contrasts=c(preContrasts,postContrasts,prepostContrasts),
      use_voom_weights=TRUE)
 ```
 
@@ -100,8 +100,7 @@ An alternative approach is to fit a smooth spline to each gene per group, and pe
 
 ```{r}
 timecourseContrasts<-c("Preflowering-Control","Postflowering-Control","Postflowering-Preflowering")
-splinePre<-DE_timecourse(
-     data=preData[1:500,], moanin_model=moaninObject, contrasts=timecourseContrasts,
+splinePre<-DE_timecourse(moaninObject[1:500,], contrasts=timecourseContrasts,
      use_voom_weights=FALSE)
 ```
 
@@ -114,8 +113,7 @@ head(splinePre)
 There is not a log-fold change column, because it is more complicated to define the log-fold change over a series of timepoints, where potentially the means may even switch from being over-expressed to under-expressed. We provide a function `estimate_log_fold_change` which gives the option of estimating several kinds of log-fold-change. We demonstrate with the method `abs_sum`, which gives the sum of the absolute difference in the means across time points:
 
 ```{r}
-log_fold_change_timepoints = estimate_log_fold_change(
-    data=preData[1:500,], moanin_model=moaninObject, contrasts=timecourseContrasts,  method="sum")
+log_fold_change_timepoints = estimate_log_fold_change(moaninObject[1:500,], contrasts=timecourseContrasts,  method="sum")
 head(log_fold_change_timepoints)
 ```
 
@@ -131,29 +129,28 @@ genes with the largest log-fold-change in `Preflowering-Control` contrast (since
 whSig = which(splinePre[,"Preflowering-Control_qval"]<0.05)
 deGenes = order(abs(log_fold_change_timepoints)[whSig,"Preflowering-Control"],decreasing=TRUE)[1:10]
 
-plot_splines_data(preData[whSig, ][deGenes,], moanin_model=moaninObject,
+plot_splines_data(moaninObject[whSig, ][deGenes,],
     smooth=TRUE, mar=c(1.5,2.5,2,0.1))
 ```
 
+
 # Clustering of time-course data
 
-We can also cluster the data based on their spline fits
+We can also cluster the data based on their spline fits. Here we would like to work with the log transform of the counts which are stored in `moaninObject`, so we set `log_transform=TRUE`. 
 
 ```{r clustering}
 # First fit the kmeans clusters
-kmeans_clusters = splines_kmeans(
-    log(as.matrix(preData[1:500,])+1), moanin_model=moaninObject, n_clusters=3,
-    random_seed=42,
-    n_init=20)
+kmeans_clusters = splines_kmeans(moaninObject[1:500,], n_clusters=3,
+    random_seed=42,  n_init=20)
 ```
 
 
-We then use the `plot_splines_data`  function, only now applied to the centroids, to visualize the centroids of
+We then use the `plot_splines_data`  function, only now applied to the centroids of the kmeans clustering, to visualize the centroids of
 each cluster obtained with the splines k-means model. 
 
 ```{r}
 plot_splines_data(
-    kmeans_clusters$centroids, moanin_model=moaninObject,
+    data=kmeans_clusters$centroids, moaninObject,
     smooth=TRUE)
 ```
 
@@ -165,7 +162,7 @@ like to have a mechanism to assign all genes to a cluster.
 The function `splines_kmeans_score_and_label` gives a goodness-of-fit score between each gene and each cluster. 
 
 ```{r}
-scores_and_labels = splines_kmeans_score_and_label(data=preData[1:2000,], kmeans_clusters)
+scores_and_labels = splines_kmeans_score_and_label(object=moaninObject,data=preData[1:2000,], kmeans_clusters=kmeans_clusters)
 ```
 
 Notice that we used more genes here (first 2000), even though previously we only used first 500 to make the clusters. These choices were unrealistic, since in practice we would probably pick high variable genes or differentially expressed genes, rather than the first 500, but at least give a sense of how this works.

@@ -153,7 +153,7 @@ setMethod(
 
         out<- new("Moanin",
                 as(selectMethod("[",c("SummarizedExperiment","ANY","numeric"))(x,i,j),"SummarizedExperiment"),#have to explicitly give the inherintence... not great.
-                basis_matrix=basis_matrix(x)[j,],
+                basis_matrix=basis_matrix(x)[j, , drop=FALSE],
                 spline_formula=spline_formula(x),
                 degrees_of_freedom=degrees_of_freedom(x),
                 group_variable_name=group_variable_name(x),

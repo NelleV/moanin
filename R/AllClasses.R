@@ -40,7 +40,8 @@ setClass(
         basis_matrix="matrix",
         group_variable_name="character",
         time_variable_name="character",
-        degrees_of_freedom="numericOrNULL"
+        degrees_of_freedom="numericOrNULL",
+        log_transform="logical"
     )
 )
 
@@ -124,7 +125,7 @@ setMethod(
     signature = signature("SummarizedExperiment"),
     definition = function(data, spline_formula=NULL, basis_matrix=NULL,
                                group_variable_name="Group",time_variable_name="Timepoint",
-                               degrees_of_freedom=NULL,drop_levels=TRUE){
+                               degrees_of_freedom=NULL,log_transform=FALSE,drop_levels=TRUE){
 
     if(!is.null(basis_matrix) & !is.null(spline_formula)){
         msg = paste("both basis_matrix and spline_formula ",
@@ -155,7 +156,8 @@ setMethod(
                         basis_matrix=basis_matrix,
                         spline_formula=spline_formula,
                         time_variable_name=time_variable_name,
-                        group_variable_name=group_variable_name
+                        group_variable_name=group_variable_name,
+                        log_transform=log_transform
                         )
     # Just create this one.
     if(!("WeeklyGroup" %in% colnames(colData(splines_model)))){

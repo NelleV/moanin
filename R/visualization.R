@@ -169,9 +169,11 @@ setMethod("plot_splines_data",c("Moanin","data.frame"),
           }
 )
 setMethod("plot_splines_data",c("Moanin","missing"),
-          function(object, data, ...){
-              plot_splines_data(object,data=assay(object),...)
-          }
+        function(object, data, ...){
+            data<-assay(object)
+            if(object@log_transform) log(data+1)
+              plot_splines_data(object,data=data,...)
+        }
 )
 plot_centroid_individual = function(centroid, moanin_model,
                                     colors, smooth=FALSE, subset_conditions=NULL, ...){
