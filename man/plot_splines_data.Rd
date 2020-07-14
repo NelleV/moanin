@@ -92,6 +92,6 @@ plot_splines_data(moanin, subset_data=genes,
 mfrow=c(2, 2))
 
 # The splines can also be smoothed
-plot_splines_data(moanin, data=genes,
+plot_splines_data(moanin, subset_data=genes,
 	     smooth=TRUE, mfrow=c(2, 2))
 }

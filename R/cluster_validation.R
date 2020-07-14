@@ -17,7 +17,7 @@
 #' subsampleCluster<-function(){
 #'    ind<-sample(1:nrow(moanin),size=50)
 #'    km<-splines_kmeans(moanin[ind,],n_clusters=3)
-#'    assign<-splines_kmeans_score_and_label(testData, km, 
+#'    assign<-splines_kmeans_score_and_label(moanin,km, 
 #'       percentage_genes_to_label=1.0)$label
 #'   }
 #' kmClusters=replicate(10,subsampleCluster())

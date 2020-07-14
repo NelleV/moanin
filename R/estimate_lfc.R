@@ -30,7 +30,7 @@ setGeneric("estimate_log_fold_change",
 #' @examples 
 #' data(exampleData)
 #' moanin = create_moanin_model(data=testData,meta=testMeta)
-#' estsTimely = estimate_log_fold_change(data=testData,moanin, 
+#' estsTimely = estimate_log_fold_change(moanin, 
 #'    contrasts=c("K-C"), method="timely")
 #' head(estsTimely)
 #' estsTimecourse = estimate_log_fold_change(moanin, 
