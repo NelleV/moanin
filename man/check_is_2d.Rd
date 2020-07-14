@@ -6,6 +6,9 @@
 \usage{
 check_is_2d(X)
 }
+\value{
+
+}
 \description{
 Check is 2D
 }

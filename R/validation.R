@@ -4,6 +4,8 @@
 
 #' Check data and meta
 #' @keywords internal
+#' @name internal
+#' @return Does not return anything. Only hits errors if there are problems.
 check_data_meta = function(data, object){
     if(!inherits(object,"Moanin")) stop("Internal coding error: passed object",
     "is not of class Moanin")
@@ -26,6 +28,7 @@ check_data_meta = function(data, object){
 #' Check is 2D
 #'
 #' @keywords internal
+#' @return 
 check_is_2d = function(X){
     dim_data = dim(X)
     if(is.null(dim_data)){
@@ -43,13 +46,15 @@ check_is_2d = function(X){
 #' @details If a vector of string is provided, the function will call
 #'  limma::makeContrast in order to obtain the contrasts coefficients.
 #'
-#' @details If a contrasts matrix is provided, it will perform a number of checks on
-#' the contrasts matrix to make sure it contains the number of rows expected,
-#' and that each contrast indeed sums to 0.
-#'
+#' @details If a contrasts matrix is provided, it will perform a number of
+#'   checks on the contrasts matrix to make sure it contains the number of rows
+#'   expected, and that each contrast indeed sums to 0.
+#' @returns \code{is_contrasts} returns the contrasts, with any corrections.
 #' @keywords internal
 is_contrasts = function(contrasts, moanin_model){
-    if(!inherits(moanin_model, "Moanin") ) stop("Coding error: internal function is_contrasts expect class Moanin object")
+    if(!inherits(moanin_model, "Moanin") ) 
+        stop("Coding error: internal function is_contrasts expect class",
+            "Moanin object")
     if(is.vector(contrasts)){
         # XXX Should we add more tests here in order to provide meaningful
         # error messages?
@@ -74,8 +79,8 @@ is_contrasts = function(contrasts, moanin_model){
         }
         
         if(any(colSums(contrasts) != 0)){
-            msg = paste(
-                "When contrasts provided is matrix, all columns should sum to 0.")
+            msg = paste("When contrasts provided is",
+                "matrix, all columns should sum to 0.")
             stop(msg)
         }
     }

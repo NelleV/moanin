@@ -235,7 +235,8 @@ setMethod("DE_timecourse","Moanin",
         
         beta_null = compute_beta_null(basis, beta, contrast)
         
-        pval = compute_pvalue(basis, y, beta, beta_null, ng_labels, weights=weights,
+        pval = compute_pvalue(basis, y, beta, beta_null, ng_labels, 
+                              weights=weights,
                               n_samples=n_samples_fit,
                               n_groups=n_groups,
                               degrees_of_freedom=degrees_of_freedom)

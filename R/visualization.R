@@ -33,14 +33,15 @@ setGeneric("plot_splines_data",
 #' @examples
 #' # First, load some data and create a moanin model
 #' data(exampleData)
-#' moanin = create_moanin_model(data=testData,meta=testMeta, degrees_of_freedom=6)
+#' moanin = create_moanin_model(data=testData,meta=testMeta, 
+#'    degrees_of_freedom=6)
 #'
 #' # The moanin model contains all the information for plotting purposes. The
 #' # plot_splines_function will automatically fit the splines from the
 #' # information contained in the moanin model
 #' genes = c("NM_001042489", "NM_008725")
 #' plot_splines_data(moanin, subset_data=genes,
-#'	mfrow=c(2, 2))
+#' mfrow=c(2, 2))
 #'
 #' # The splines can also be smoothed
 #' plot_splines_data(moanin, subset_data=genes,
@@ -50,13 +51,15 @@ setGeneric("plot_splines_data",
 #' @aliases plot_splines_data,Moanin,matrix-method
 #' @importFrom graphics axis plot.new plot.window
 #' @importFrom methods new
+#' @importFrom viridis viridis
 setMethod("plot_splines_data",c("Moanin","matrix"),
     function(object, data, colors=NULL, smooth=FALSE,
-                             legend=TRUE, legendArgs=NULL, subset_conditions=NULL,
-                             subset_data=NULL,
-                             simpleY=TRUE,
-                             mar=c(2.5, 2.5, 3.0, 1.0),
-                             mfrow=NULL, addToPlot=NULL, ...){
+                legend=TRUE, legendArgs=NULL, 
+                subset_conditions=NULL,
+                subset_data=NULL,
+                simpleY=TRUE,
+                mar=c(2.5, 2.5, 3.0, 1.0),
+                mfrow=NULL, addToPlot=NULL, ...){
     
     if(ncol(data)!=ncol(object)) stop("matrix given in argument data must have",
         "same number of columns as Moanin object given in argument object.")
@@ -68,7 +71,8 @@ setMethod("plot_splines_data",c("Moanin","matrix"),
     if(!is.null(mfrow)){
         if(length(mfrow) != 2){
             msg = sprintf(
-                paste0("Invalid value for argument mfrow. Should be a vector of length 2.",
+                paste0("Invalid value for argument mfrow.",
+                       "Should be a vector of length 2.",
                        "A vector of length %s was provided.", length(mfrow)))
             stop(msg)
             
@@ -189,8 +193,10 @@ setMethod("plot_splines_data",c("Moanin","missing"),
 
 
 plot_centroid_individual = function(centroid, moanin_model,
-                                    colors, smooth=FALSE, subset_conditions=NULL, ...){
-    if(!inherits(moanin_model,"Moanin")) stop("Internal coding error: expecting Moanin class")
+                                    colors, smooth=FALSE, 
+                                    subset_conditions=NULL, ...){
+    if(!inherits(moanin_model,"Moanin")) 
+        stop("Internal coding error: expecting Moanin class")
     gpVar = group_variable_name(moanin_model)
     tpVar = time_variable_name(moanin_model)
     groups = levels(group_variable(moanin_model))

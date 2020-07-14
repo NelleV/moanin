@@ -16,6 +16,8 @@ setGeneric("create_timepoints_contrasts",
 #' @aliases create_timepoints_contrasts DE_timepoints,Moanin-method
 #' @aliases create_timepoints_contrasts,Moanin-method
 #' @name DE_timepoints
+#' @importFrom edgeR DGEList calcNormFactors
+#' @importFrom limma voom lmFit contrasts.fit eBayes
 #' @examples 
 #' data(exampleData)
 #' moanin = create_moanin_model(data=testData, meta=testMeta)
@@ -45,7 +47,7 @@ setMethod("DE_timepoints","Moanin",
         v = limma::voom(y, design, plot=FALSE)
         v = limma::lmFit(v)
     }else{
-        v = limma::lmFit(assay(object), design)	
+        v = limma::lmFit(assay(object), design)
     }
     
     fit = limma::contrasts.fit(v, allcontrasts)
@@ -83,17 +85,17 @@ setMethod("DE_timepoints","Moanin",
 
 #' Creates pairwise contrasts for all timepoints
 #'
-#' @param group1 First group to consider in making contrasts, character value that must match a
-#'   value contained in \code{moanin_model$meta}.
-#' @param group2 Second group to consider in making contrasts, character value that must match a
-#'   value contained in \code{moanin_model$meta}.
-#' @details \code{create_timepoints_contrasts} creates the needed contrasts for comparing two groups for every
-#'   timepoint in the format needed for \code{DE_timepoints} (i.e.
-#'   \code{\link[limma]{makeContrasts}}, to which the contrasts are ultimately
-#'   passed). The time points are determined by the meta data in the
-#'   \code{moanin_object} provided by the user.
-#' @return \code{create_timepoints_contrasts}: a character vector with each element of the vector corresponding to a
-#'   contrast to be compared.
+#' @param group1 First group to consider in making contrasts, character value
+#'   that must match a value contained in \code{moanin_model$meta}.
+#' @param group2 Second group to consider in making contrasts, character value
+#'   that must match a value contained in \code{moanin_model$meta}.
+#' @details \code{create_timepoints_contrasts} creates the needed contrasts for
+#'   comparing two groups for every timepoint in the format needed for
+#'   \code{DE_timepoints} (i.e. \code{\link[limma]{makeContrasts}}, to which the
+#'   contrasts are ultimately passed). The time points are determined by the
+#'   meta data in the \code{moanin_object} provided by the user.
+#' @return \code{create_timepoints_contrasts}: a character vector with each
+#'   element of the vector corresponding to a contrast to be compared.
 #' @seealso \code{\link[limma]{makeContrasts}}
 #' @rdname DE_timepoints
 #' @export
@@ -111,7 +113,8 @@ setMethod("create_timepoints_contrasts","Moanin",
         submeta = object[,time_variable(object) == timepoint]
         if(length(unique(time_by_group_variable(submeta))) == 2){
             groups = as.character(unique(time_by_group_variable(submeta)))
-            contrasts[i] = paste0(group1, ".", timepoint, "-", group2, ".", timepoint)
+            contrasts[i] = paste0(group1, ".", timepoint, "-", group2, ".", 
+                                  timepoint)
         }else if(length(unique(time_by_group_variable(submeta))) == 1){
             if(unique(group_variable(submeta))[1] ==  group1){
                 missing_condition = group2
@@ -119,7 +122,8 @@ setMethod("create_timepoints_contrasts","Moanin",
                 missing_condition = group1
             }
             msg = paste0(msg,paste("timepoint",
-                                   timepoint, "is missing in condition", missing_condition,"\n"))
+                                   timepoint, "is missing in condition", 
+                                   missing_condition,"\n"))
             foundMissing<-TRUE
         }
     }

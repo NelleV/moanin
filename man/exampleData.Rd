@@ -8,9 +8,10 @@
 \alias{testGenesGO}
 \title{Small data set for running examples}
 \format{
-Three objects are loaded, a data frame of expression of 500 genes by 84
-  samples (\code{testData}), a data frame with meta information on those
-  84 samples (\code{testMeta}), and a data frame giving the GOID of the genes in \code{testData}.
+Three objects are loaded, a data frame of expression of 500 genes by
+  84 samples (\code{testData}), a data frame with meta information on those
+  84 samples (\code{testMeta}), and a data frame giving the GOID of the genes
+  in \code{testData}.
 }
 \description{
 Small data set for running examples

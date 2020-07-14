@@ -52,15 +52,25 @@ setClass(
 )
 
 setValidity("Moanin", function(object) {
-    if(! group_variable_name(object) %in% colnames(colData(object))) return("group_variable_name slot must match the name of one of the columns of colData")
+    if(! group_variable_name(object) %in% colnames(colData(object))) 
+        return(paste("group_variable_name slot must match the name",
+        "of one of the columns of colData"))
     else{
-        if(!is.factor(group_variable(object))) return(group_variable_name(object),"is not a numeric column in the colData of the object")
+        if(!is.factor(group_variable(object))) 
+            return(paste(group_variable_name(object),
+                   "is not a numeric column in the colData of the object"))
     }
-    if(! time_variable_name(object) %in% colnames(colData(object))) return("time_variable_name slot must match the name of one of the columns of colData")
+    if(! time_variable_name(object) %in% colnames(colData(object))) 
+        return(paste("time_variable_name slot must match the", 
+            "name of one of the columns of colData"))
     else{
-        if(!is.numeric(time_variable(object))) return(time_variable_name(object),"is not a numeric column in the colData of the object")
+        if(!is.numeric(time_variable(object))) 
+            return(paste(time_variable_name(object),
+               "is not a numeric column in the colData of the object"))
     }
-    if(nrow(basis_matrix(object)) != ncol(object)) return("number of rows of the basis_matrix doesn't match number of samples of object")
+    if(nrow(basis_matrix(object)) != ncol(object)) 
+        return(paste("number of rows of the basis_matrix doesn't match",
+            "number of samples of object"))
 
     return(TRUE)
 })
@@ -71,9 +81,9 @@ setGeneric(
         standardGeneric("create_moanin_model")
     }
 )
-#' Create a Moanin object
-#'@description The constructor \code{create_moanin_model} creates an object of the
-#'  class \code{Moanin}. 
+#'Create a Moanin object
+#'@description The constructor \code{create_moanin_model} creates an object of
+#'  the class \code{Moanin}.
 #'
 #'@param data The input data. Can be a \code{\link{SummarizedExperiment}} class,
 #'  or matrix/data.frame. If the input data is a \code{matrix} or
@@ -81,15 +91,15 @@ setGeneric(
 #'  argument, which will be transformed into \code{colData} of the resulting
 #'  \code{Moanin} object
 #'@param meta Meta data on the samples (columns) of the \code{data} argument.
-#'  Must be given f input \code{data} is a \code{matrix} or \code{data.frame}. If
-#'  input is \code{SummarizedExperiment}, this argument is ignored.
+#'  Must be given f input \code{data} is a \code{matrix} or \code{data.frame}.
+#'  If input is \code{SummarizedExperiment}, this argument is ignored.
 #'@param group_variable_name A character value giving the column that
 #'  corresponds to the grouping variable to test for DE. By default "Group"
 #'@param time_variable_name A character value giving the column that corresponds
 #'  to the time variable. By default "Timepoint".
 #'@param spline_formula formula object, optional, default: NUlL. Used to
 #'  construct splines from the data in \code{meta}. See details.
-#'@param basis_matrix	matrix, optional, default: NULL. A basis matrix, where
+#'@param basis_matrix matrix, optional, default: NULL. A basis matrix, where
 #'  each row corresponds to the evaluation of a sample on the basis function
 #'  (thus one column for each basis function).
 #'@param degrees_of_freedom int, optional. Number of degrees of freedom to use
@@ -105,7 +115,8 @@ setGeneric(
 #'  then by default, the function will create a basis matrix based on the
 #'  formula: \preformatted{spline_formula = ~Group:ns(Timepoint, df=4) + Group +
 #'  0}
-#'@details Note that the meta data will have levels dropped (via \code{droplevels}). 
+#'@details Note that the meta data will have levels dropped (via 
+#'\code{droplevels}). 
 #'@return An object of class \code{Moanin}
 #' @examples
 #' # Load some data
@@ -116,7 +127,8 @@ setGeneric(
 #' moanin
 #'
 #' # Change the number of degrees of freedom
-#' moanin = create_moanin_model(data=testData,meta=testMeta, degrees_of_freedom=6)
+#' moanin = create_moanin_model(data=testData,meta=testMeta, 
+#'    degrees_of_freedom=6)
 #' moanin
 #' @export
 #' @importFrom splines ns
@@ -142,8 +154,8 @@ setMethod(
     f = "create_moanin_model",
     signature = signature("SummarizedExperiment"),
     definition = function(data, spline_formula=NULL, basis_matrix=NULL,
-                               group_variable_name="Group",time_variable_name="Timepoint",
-                               degrees_of_freedom=NULL,log_transform=FALSE,drop_levels=TRUE){
+                group_variable_name="Group",time_variable_name="Timepoint",
+                degrees_of_freedom=NULL,log_transform=FALSE,drop_levels=TRUE){
 
     if(!is.null(basis_matrix) & !is.null(spline_formula)){
         msg = paste("both basis_matrix and spline_formula ",
@@ -153,16 +165,19 @@ setMethod(
     }
     # Must be done *before* build basis
     if(drop_levels){
-        colData(data)[,group_variable_name]<-droplevels(colData(data)[,group_variable_name])
+        colData(data)[,group_variable_name]<-
+            droplevels(colData(data)[,group_variable_name])
     }        
     if(is.null(basis_matrix)){
         if(is.null(spline_formula)){
             if(is.null(degrees_of_freedom)){
                 degrees_of_freedom = 4
             }
-            formulaText<-paste0("~",group_variable_name," + ",group_variable_name,":splines::ns(",time_variable_name,",df=",degrees_of_freedom,") + 0")
-            spline_formula = stats::as.formula(formulaText)# (
-            #                 ~Group + Group:splines::ns(Timepoint, df=degrees_of_freedom) + 0)
+            formulaText<-paste0("~",group_variable_name," + ",
+                                group_variable_name,
+                                ":splines::ns(",time_variable_name,
+                                ",df=",degrees_of_freedom,") + 0")
+            spline_formula = stats::as.formula(formulaText)
         }
         basis_matrix = stats::model.matrix(spline_formula, data=colData(data))
     }else{
@@ -180,7 +195,8 @@ setMethod(
     # Just create this one.
     if(!("WeeklyGroup" %in% colnames(colData(splines_model)))){
         colData(splines_model)$WeeklyGroup = as.factor(
-            make.names(group_variable(splines_model):as.factor(time_variable(splines_model))))
+            make.names(group_variable(splines_model):as.factor(
+                time_variable(splines_model))))
     }
     #somewhat wasteful here, because doing checks twice!
     validObject(splines_model)

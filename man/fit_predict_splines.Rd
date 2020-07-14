@@ -10,7 +10,8 @@ fit_predict_splines(data, moanin_model, meta_prediction = NULL)
 \item{meta_prediction}{}
 }
 \value{
-a matrix of the fitted y values, with dimensions the same as \code{data}
+a matrix of the fitted y values, with dimensions the same as
+  \code{data}
 }
 \description{
 Get fitted values for splines for each gene

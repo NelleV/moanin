@@ -82,7 +82,8 @@ Plotting splines
 \examples{
 # First, load some data and create a moanin model
 data(exampleData)
-moanin = create_moanin_model(data=testData,meta=testMeta, degrees_of_freedom=6)
+moanin = create_moanin_model(data=testData,meta=testMeta, 
+   degrees_of_freedom=6)
 
 # The moanin model contains all the information for plotting purposes. The
 # plot_splines_function will automatically fit the splines from the

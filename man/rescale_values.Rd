@@ -11,22 +11,32 @@
 \S4method{rescale_values}{`NULL`}(object, data)
 }
 \arguments{
-\item{object}{a object of class Moanin, only needed if choose to rescale by grouping variable in the moanin object. If NULL, then data will be rescaled jointly across all observations.}
+\item{object}{a object of class Moanin, only needed if choose to rescale by
+grouping variable in the moanin object. If NULL, then data will be rescaled
+jointly across all observations.}
 
-\item{data}{The matrix to rescale by row. If NULL, and \code{object} is given, data
-will be taken as \code{assay(object)} Each row should correspond to a gene
-or a centroid, and columns to samples.}
+\item{data}{The matrix to rescale by row. If NULL, and \code{object} is
+given, data will be taken as \code{assay(object)} Each row should
+correspond to a gene or a centroid, and columns to samples.}
 
 \item{use_group}{If true, then the data will be rescaled such that, for each
 row, all values associated to each group (defined by grouping variable of
 \code{object}) is between 0 and 1. For example, if column}
 }
 \value{
-rescaled y, such that for each row, the values are comprised
-     between 0 and 1. Note that if \code{use_group=TRUE} and \code{object} is not NULL, the values
-     associated to the columns of unique values of the grouping variable of \code{object} will be rescaled
-     separately.
+rescaled y, such that for each row, the values are comprised between
+  0 and 1. Note that if \code{use_group=TRUE} and \code{object} is not NULL,
+  the values associated to the columns of unique values of the grouping
+  variable of \code{object} will be rescaled separately.
 }
 \description{
 Rescales rows of data to be between 0 and 1
+}
+\examples{
+data(exampleData)
+moanin=create_moanin_model(data=testData, meta=testMeta)
+# Can rescale data in Moanin object
+allData<-rescale_values(moanin)
+# Or provide different data and/or rescale within grouping variable
+smallData<-rescale_values(moanin, data=testData[1:10,], use_group=TRUE)
 }

@@ -41,6 +41,7 @@ setGeneric("splines_kmeans_predict",
 #' moanin = create_moanin_model(data=testData, meta=testMeta)
 #' out = splines_kmeans( moanin,n_clusters=5)
 #' table(out$clusters)
+#' @importFrom ClusterR KMeans_rcpp
 #' @export
 setMethod("splines_kmeans", "Moanin",
     function(object, n_clusters=10,
@@ -62,7 +63,8 @@ setMethod("splines_kmeans", "Moanin",
     ## CHECK ME: previous version gave the meta information to rescale_values, 
     ## but also group=NULL, so meant it wasn't used. Was that a mistake?
     if(rescale){
-        fitted_data = rescale_values(data=fitted_data, object=object,use_group=FALSE)
+        fitted_data = rescale_values(data=fitted_data, object=object,
+                                     use_group=FALSE)
     }
     
     kmeans_clusters = ClusterR::KMeans_rcpp(

@@ -2,9 +2,10 @@
 #'
 #' @name exampleData
 #' @docType data
-#' @format Three objects are loaded, a data frame of expression of 500 genes by 84
-#'   samples (\code{testData}), a data frame with meta information on those
-#'   84 samples (\code{testMeta}), and a data frame giving the GOID of the genes in \code{testData}. 
+#' @format Three objects are loaded, a data frame of expression of 500 genes by
+#'   84 samples (\code{testData}), a data frame with meta information on those
+#'   84 samples (\code{testMeta}), and a data frame giving the GOID of the genes
+#'   in \code{testData}.
 #' @details This data is a subset of the full time course data available as
 #'   \code{\link[timecoursedata]{shoemaker2015}} and is only provided for the
 #'   purpose of running examples, and not for biological meaning. Users should

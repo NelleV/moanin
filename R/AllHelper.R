@@ -38,6 +38,9 @@ setGeneric("time_by_group_variable",
 #' moanin = create_moanin_model(data=testData,meta=testMeta)
 #' group_variable_name(moanin)
 #' time_variable_name(moanin)
+#' @return \code{group_variable_name} and \code{time_variable_name} return the 
+#' name of the column containing the variable. \code{group_variable} and 
+#' \code{time_variable} return the  actual variable. 
 #' @export
 #' @aliases group_variable_name group_variable_name,Moanin-method
 setMethod("group_variable_name","Moanin",function(object){
@@ -125,11 +128,14 @@ setMethod("spline_formula","Moanin",function(object){
 #' @export
 setMethod("show","Moanin",function(object){
         N<-ncol(object)
-        cat("Moanin object on",N,"samples containing the following information:\n")
-        cat(paste0("Group variable given by '",group_variable_name(object),"' with the following levels:\n"))
+        cat("Moanin object on",N,
+            "samples containing the following information:\n")
+        cat(paste0("Group variable given by '",group_variable_name(object),
+                   "' with the following levels:\n"))
         print(summary(group_variable(object)))
         cat(paste0("Time variable given by '",time_variable_name(object),"'\n"))
-        cat("Basis matrix with",ncol(basis_matrix(object)),"basis_matrix functions\n")
+        cat("Basis matrix with",ncol(basis_matrix(object)),
+            "basis_matrix functions\n")
         if(!is.null(spline_formula(object))){
             cat("Basis matrix was constructed with the following spline_formula\n")
             form<-gsub("\\s{2,}","",deparse(spline_formula(object))) #get rid of extra spaces
@@ -139,7 +145,8 @@ setMethod("show","Moanin",function(object){
             if(is.null(degrees_of_freedom(object)))
                 cat("Basis matrix was provided by user, spline_formula and degrees_of_freedom=NULL\n")
             else
-                cat("Basis matrix and degrees of freedom provided by user, equal to",degrees_of_freedom(object),"\n")
+                cat("Basis matrix and degrees of freedom provided by user, equal to",
+                    degrees_of_freedom(object),"\n")
         }
         cat("\nInformation about the data (a SummarizedExperiment object):\n")
         show(as(object,"SummarizedExperiment"))
@@ -148,9 +155,10 @@ setMethod("show","Moanin",function(object){
 
 ### For subsetting
 #' @details Note that when subsetting the data, the dendrogram information and
-#' the co-clustering matrix are lost.
+#'   the co-clustering matrix are lost.
 #' @aliases [,Moanin,ANY,ANY,ANY-method [,Moanin,ANY,character,ANY-method
-#' @param i,j A vector of logical or integer subscripts, indicating the rows and columns to be subsetted for \code{i} and \code{j}, respectively.
+#' @param i,j A vector of logical or integer subscripts, indicating the rows and
+#'   columns to be subsetted for \code{i} and \code{j}, respectively.
 #' @param drop A logical scalar that is ignored.
 #' @rdname Moanin-methods
 #' @export

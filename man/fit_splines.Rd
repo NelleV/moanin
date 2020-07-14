@@ -9,7 +9,8 @@ fit_splines(moanin_model, data = NULL, weights = NULL)
 \arguments{
 \item{moanin_model}{object of class Moanin}
 
-\item{data}{a matrix of data to fix splines to. If NULL, uses assay(moanin_model)}
+\item{data}{a matrix of data to fix splines to. If NULL, uses
+\code{assay(moanin_model)}}
 
 \item{weights}{A matrix of weights, of the same dimension as \code{data}.}
 }

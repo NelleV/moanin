@@ -26,11 +26,11 @@ to be converted into such a matrix.}
 \item{use_voom_weights}{boolean, optional, default: TRUE. 
 Whether to use voom weights.}
 
-\item{group1}{First group to consider in making contrasts, character value that must match a
-value contained in \code{moanin_model$meta}.}
+\item{group1}{First group to consider in making contrasts, character value
+that must match a value contained in \code{moanin_model$meta}.}
 
-\item{group2}{Second group to consider in making contrasts, character value that must match a
-value contained in \code{moanin_model$meta}.}
+\item{group2}{Second group to consider in making contrasts, character value
+that must match a value contained in \code{moanin_model$meta}.}
 }
 \value{
 A \code{data.frame} with three columns for each of the contrasts
@@ -41,8 +41,8 @@ A \code{data.frame} with three columns for each of the contrasts
   \code{\link[stats]{p.adjust}}. The adjustment is done across all p-values
   for all contrasts calculated.
 
-\code{create_timepoints_contrasts}: a character vector with each element of the vector corresponding to a
-  contrast to be compared.
+\code{create_timepoints_contrasts}: a character vector with each
+  element of the vector corresponding to a contrast to be compared.
 }
 \description{
 Fit weekly differential expression analysis
@@ -50,11 +50,11 @@ Fit weekly differential expression analysis
 Creates pairwise contrasts for all timepoints
 }
 \details{
-\code{create_timepoints_contrasts} creates the needed contrasts for comparing two groups for every
-  timepoint in the format needed for \code{DE_timepoints} (i.e.
-  \code{\link[limma]{makeContrasts}}, to which the contrasts are ultimately
-  passed). The time points are determined by the meta data in the
-  \code{moanin_object} provided by the user.
+\code{create_timepoints_contrasts} creates the needed contrasts for
+  comparing two groups for every timepoint in the format needed for
+  \code{DE_timepoints} (i.e. \code{\link[limma]{makeContrasts}}, to which the
+  contrasts are ultimately passed). The time points are determined by the
+  meta data in the \code{moanin_object} provided by the user.
 }
 \examples{
 data(exampleData)

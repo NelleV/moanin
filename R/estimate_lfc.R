@@ -69,7 +69,8 @@ setMethod("estimate_log_fold_change", "Moanin",
                 log_fold_changes[, contrast] = rowSums(timely_lfc[, mask]**2)
             }else if(method == "epicon" || method == "timecourse"){
                 log_fold_changes[, contrast] = (
-                    rowMeans(abs(timely_lfc[, mask])) * sign(rowSums(timely_lfc[, mask])))
+                    rowMeans(abs(timely_lfc[, mask])) * 
+                        sign(rowSums(timely_lfc[, mask])))
             }else if(method == "sum"){
                 log_fold_changes[, contrast] = rowSums(timely_lfc[, mask])
             }
@@ -81,22 +82,22 @@ setMethod("estimate_log_fold_change", "Moanin",
     
 }
 )
-## DELETE ME: Doesn't appear to be used anymore
+# # DELETE ME: Doesn't appear to be used anymore
 # estimate_log_fold_change_sum = function(data, moanin_model, contrasts){
 #     meta=moanin_model$meta
 #     gpVar=moanin_model$group_variable
 #     sample_coefficients = lapply(meta[,gpVar], function(x) return(contrasts[x, ]))
 #     sample_coefficients = as.matrix(sample_coefficients)
-#     
+# 
 #     # First, do weekly contrasts
-#     
+# 
 #     row.names(sample_coefficients) = row.names(meta)
 #     log_fold_changes = data.frame(row.names=row.names(data))
 #     for(column in seq_len(ncol(sample_coefficients))){
 #         sample_coefficient = as.vector(unlist(sample_coefficients[, column]))
-#         log_fold_changes[, column] = as.matrix(data) %*% sample_coefficient 	
+#         log_fold_changes[, column] = as.matrix(data) %*% sample_coefficient
 #     }
-#     
+# 
 # }
 
 # DELETE ME
@@ -115,11 +116,13 @@ setMethod("estimate_log_fold_change", "Moanin",
 reconstruct_meta_from_lfc = function(data_per_time, group_variable_name,
                                      time_variable_name,split_char="."){
     meta_per_time = t(
-        as.data.frame(strsplit(colnames(data_per_time), split_char, fixed=TRUE)))
+        as.data.frame(strsplit(colnames(data_per_time), split_char, 
+                               fixed=TRUE)))
     row.names(meta_per_time) = colnames(data_per_time)
     colnames(meta_per_time) = c(group_variable_name, time_variable_name)
     meta_per_time = as.data.frame(meta_per_time)
-    meta_per_time[, time_variable_name] = as.numeric(meta_per_time[, time_variable_name])
+    meta_per_time[, time_variable_name] = 
+        as.numeric(meta_per_time[, time_variable_name])
     return(meta_per_time)
 }
 
@@ -134,7 +137,8 @@ lfc_per_time = function(object, contrasts){
                                 time_variable_name=tpVar)
     
     averaged_meta[,tpVar] = as.factor(averaged_meta[,tpVar])
-    sample_coefficients = sapply(averaged_meta[,gpVar], function(x) return(contrasts[x, ]))
+    sample_coefficients = sapply(averaged_meta[,gpVar], 
+                                 function(x) return(contrasts[x, ]))
     if(is.null(dim(sample_coefficients))){
         sample_coefficients = as.matrix(sample_coefficients)
     }else{
@@ -143,7 +147,7 @@ lfc_per_time = function(object, contrasts){
     colnames(sample_coefficients) = colnames(contrasts)
     
     log_fold_changes = matrix(NA, dim(object)[1],
-                              dim(contrasts)[2]*length(unique(time_variable(object))))
+                     dim(contrasts)[2]*length(unique(time_variable(object))))
     row.names(log_fold_changes) = row.names(object)
     colnames(log_fold_changes) = sapply(
         colnames(sample_coefficients),FUN=
@@ -168,7 +172,8 @@ lfc_per_time = function(object, contrasts){
 
 
 average_replicates = function(object){
-    timepoint_group = droplevels(group_variable(object):as.factor(time_variable(object)))
+    timepoint_group = 
+        droplevels(group_variable(object):as.factor(time_variable(object)))
     all_levels = levels(timepoint_group)
     
     # selecting certain columns sometimes returns vectors and sometimes 
@@ -184,7 +189,7 @@ average_replicates = function(object){
     }
     
     replicate_averaged = sapply(all_levels,
-                                function(m){.row_means(assay(object)[, timepoint_group==m])})
+                   function(m){.row_means(assay(object)[, timepoint_group==m])})
     return(replicate_averaged)
 }
 
