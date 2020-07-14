@@ -31,9 +31,9 @@
 \S4method{plot_splines_data}{Moanin,missing}(object, data, ...)
 }
 \arguments{
-\item{object}{An object of class \code{\link{Moanin}}, an object containing
+\item{object}{An object of class \code{\link[Moanin-methods]{Moanin}}, an object containing
 all related information for time course data and the splines model that
-will be used (if applicable). See \code{\link{create_moanin_model}} for
+will be used (if applicable). See \code{\link[Moanin-class]{create_moanin_model}} for
 more details.}
 
 \item{data}{matrix containing the data to be plotted (such as centroids or

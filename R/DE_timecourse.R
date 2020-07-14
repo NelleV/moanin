@@ -153,9 +153,9 @@ summarise = function(basis, ng_levels) {
 
 #' Run spline models and test for DE of contrasts.
 #' 
-#' @param object An object of class \code{\link{Moanin}}, an object containing
+#' @param object An object of class \code{\link[Moanin-methods]{Moanin}}, an object containing
 #'   all related information for time course data and the splines model that
-#'   will be used (if applicable). See \code{\link{create_moanin_model}} for
+#'   will be used (if applicable). See \code{\link[Moanin-class]{create_moanin_model}} for
 #'   more details.
 #'@param contrasts Contrasts, either provided as a vector of strings, or a
 #'  matrix of contrasts coefficients obtained using
