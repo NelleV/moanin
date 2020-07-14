@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
   duplicate.label="allow", fig.pos = "H", out.extra = "")
 ```
 
-The package moanin was developped to provide a simple and efficient workflow
+The package moanin was developed to provide a simple and efficient workflow
 for long time-course gene expression data. It makes it simple to do differential expression between conditions based on either individual condition comparisons per time point, or by fitting spline functions per gene. There are also functions to help with clustering and visualization.
 
 We do not detail all of the features of the package here, but some of the main functions. See our more indepth workflow paper at https://github.com/NelleV/2019timecourse-rnaseq-pipeline. 
@@ -31,7 +31,7 @@ This data is available on both the leaf and the root sampled from the same plant
 ```{r}
 library(moanin)
 library(timecoursedata)
-data("varoquaux2019leaf")
+data(varoquaux2019leaf)
 names(varoquaux2019leaf)
 ```
 
@@ -56,7 +56,8 @@ The first step is to create a moanin class, which uses our meta data to create t
 
 
 ```{r}
-moaninObject<-create_moanin_model(meta=preMeta, group_variable="Condition", time_variable = "Week")
+moaninObject<-create_moanin_model(data=preData,meta=preMeta, 
+                            group_variable="Condition", time_variable = "Week")
 moaninObject
 ```
 
@@ -65,15 +66,15 @@ moaninObject
 One type of DE analysis we can do is to compare our watering conditions to each other, for every time point. We do this via a call to `limma` for the DE analysis, but before we can do this, we need to set up the appropriate contrasts. For example, "Preflowering - Control" (see `?makeContrasts` in the limma package). We provide a function to do this for every week, so as to avoid this step.
 
 ```{r}
-preContrasts = create_timepoints_contrasts("Preflowering", "Control", moaninObject)
+preContrasts = create_timepoints_contrasts(moaninObject,"Preflowering", "Control")
 ```
 Notice we also get a warning that timepoint 16 is missing in our Control Samples (in fact, some of these time points only have a single observations per time point, which is not particularly appropriate for DE analysis per week). 
 
 We can also create contrasts to compare Postflowering and Control, and Preflowering and Postflowering. We get many warnings here, because Post-flowering only has samples after week 9. 
 
 ```{r}
-postContrasts = create_timepoints_contrasts("Postflowering", "Control", moaninObject)
-prepostContrasts = create_timepoints_contrasts("Postflowering", "Preflowering", moaninObject)
+postContrasts = create_timepoints_contrasts(moaninObject,"Postflowering", "Control" )
+prepostContrasts = create_timepoints_contrasts(moaninObject,"Postflowering", "Preflowering")
 ```
 
 We can run the DE analysis, setting `use_voom_weights=TRUE` to make use of `limma` correction for low-counts. We will subset to just the first 500 genes for illustration purposes, though the full set of genes does not take very long

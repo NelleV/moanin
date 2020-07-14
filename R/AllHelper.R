@@ -112,5 +112,53 @@ setMethod("show","Moanin",function(object){
             else
                 cat("Basis matrix and degrees of freedom provided by user, equal to",df(object),"\n")
         }
-    
+        cat("\nInformation about the data (a SummarizedExperiment object):\n")
+        show(as(object,"SummarizedExperiment"))
 })
+
+
+### For subsetting
+#' @details Note that when subsetting the data, the dendrogram information and
+#' the co-clustering matrix are lost.
+#' @aliases [,Moanin,ANY,ANY,ANY-method [,Moanin,ANY,character,ANY-method
+#' @param i,j A vector of logical or integer subscripts, indicating the rows and columns to be subsetted for \code{i} and \code{j}, respectively.
+#' @param drop A logical scalar that is ignored.
+#' @rdname Moanin-methods
+#' @export
+setMethod(
+    f = "[",
+    signature = c("Moanin", "ANY", "character"),
+    definition = function(x, i, j, ..., drop=TRUE) {
+        j<-match(j, colnames(x))
+        callGeneric()
+        
+    }
+)
+#' @rdname Moanin-methods
+#' @export
+setMethod(
+    f = "[",
+    signature = c("Moanin", "ANY", "logical"),
+    definition = function(x, i, j, ..., drop=TRUE) {
+        j<-which(j)
+        callGeneric()
+    }
+)
+#' @rdname Moanin-methods
+#' @export
+setMethod(
+    f = "[",
+    signature = c("Moanin", "ANY", "numeric"),
+    definition = function(x, i, j, ..., drop=TRUE) {
+
+        out<- new("Moanin",
+                as(selectMethod("[",c("SummarizedExperiment","ANY","numeric"))(x,i,j),"SummarizedExperiment"),#have to explicitly give the inherintence... not great.
+                basis_matrix=basis_matrix(x)[j,],
+                spline_formula=spline_formula(x),
+                degrees_of_freedom=degrees_of_freedom(x),
+                group_variable_name=group_variable_name(x),
+                time_variable_name=time_variable_name(x)
+        )
+        return(out)
+    }
+)
