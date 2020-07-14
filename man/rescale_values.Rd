@@ -3,9 +3,12 @@
 \name{rescale_values}
 \alias{rescale_values}
 \alias{rescale_values,Moanin-method}
+\alias{rescale_values,NULL-method}
 \title{Rescales rows of data to be between 0 and 1}
 \usage{
 \S4method{rescale_values}{Moanin}(object, data = NULL, use_group = FALSE)
+
+\S4method{rescale_values}{`NULL`}(object, data)
 }
 \arguments{
 \item{object}{a object of class Moanin, only needed if choose to rescale by grouping variable in the moanin object. If NULL, then data will be rescaled jointly across all observations.}

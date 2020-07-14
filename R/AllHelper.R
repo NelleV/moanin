@@ -39,6 +39,7 @@ setGeneric("time_by_group_variable",
 #' group_variable_name(moanin)
 #' time_variable_name(moanin)
 #' @export
+#' @aliases group_variable_name group_variable_name,Moanin-method
 setMethod("group_variable_name","Moanin",function(object){
     object@group_variable_name
 })
@@ -51,7 +52,7 @@ setReplaceMethod("group_variable_name","Moanin",function(object,value){
     
 })
 #' @rdname Moanin-methods
-#' @aliases time_variable_name time_variable_name,Moanin-method
+#' @aliases time_by_group_variable time_by_group_variable,Moanin-method
 #' @export
 setMethod("time_by_group_variable","Moanin",function(object){
     colData(object)$WeeklyGroup
@@ -138,7 +139,7 @@ setMethod("show","Moanin",function(object){
             if(is.null(degrees_of_freedom(object)))
                 cat("Basis matrix was provided by user, spline_formula and degrees_of_freedom=NULL\n")
             else
-                cat("Basis matrix and degrees of freedom provided by user, equal to",df(object),"\n")
+                cat("Basis matrix and degrees of freedom provided by user, equal to",degrees_of_freedom(object),"\n")
         }
         cat("\nInformation about the data (a SummarizedExperiment object):\n")
         show(as(object,"SummarizedExperiment"))

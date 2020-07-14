@@ -1,4 +1,4 @@
-setOldClass("formula", S4Class="formula")
+#setOldClass("formula", S4Class="formula")
 setClassUnion("numericOrNULL",members=c("numeric", "NULL"))
 setClassUnion("formulaOrNULL",members=c("formula", "NULL"))
 
@@ -122,6 +122,7 @@ setGeneric(
 #' @importFrom splines ns
 #' @importFrom stats as.formula
 #' @rdname Moanin-class
+#' @aliases create_moanin_model
 #' @export
 setMethod(
     f = "create_moanin_model",

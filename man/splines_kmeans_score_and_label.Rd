@@ -4,8 +4,7 @@
 \alias{splines_kmeans_predict,Moanin-method}
 \alias{splines_kmeans_score_and_label}
 \alias{splines_kmeans_predict}
-\alias{splines_kmeans_score_and_label,}
-\alias{Moanin-method}
+\alias{splines_kmeans_score_and_label,Moanin-method}
 \title{Assign score and labels from raw data}
 \usage{
 \S4method{splines_kmeans_predict}{Moanin}(
@@ -56,6 +55,9 @@ this option.}
 run of \code{splines_kmeans_score_and_label}, and only redo the filtering
 (i.e. if want to change \code{percentage_genes_to_label} without rerunning
 the calculation of scores)}
+
+\item{rescale_separately}{logical, whether to score separately within
+grouping variable}
 }
 \value{
 \code{splines_kmeans_predict} returns a vector giving the labels for

@@ -142,6 +142,9 @@ setMethod("rescale_values","Moanin",
     else return(rescale_values(object=NULL,data=data) )
 })
 
+#' @aliases rescale_values,NULL-method
+#' @export
+#' @rdname rescale_values
 setMethod("rescale_values","NULL",
     function(object, data){
         ymin = row_min(data) 

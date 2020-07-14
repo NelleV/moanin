@@ -6,12 +6,12 @@ Maintainer: Nelle Varoquaux <nelle.varoquaux@gmail.com>
 Description: Simple and efficient workflow for time-course gene expression data.
 Depends: R (>= 4.0),
     SummarizedExperiment,
-    topGO
+    topGO,
+    stats
 Imports: MASS (>= 1.0.0),
 	 limma,
 	 viridis,
 	 edgeR,
-	 stats,
 	 graphics,
      methods,
 	 grDevices,

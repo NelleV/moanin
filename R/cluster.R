@@ -172,7 +172,7 @@ setMethod("splines_kmeans_predict", "Moanin",
 #' assignment}
 #' }
 #' @aliases splines_kmeans_predict splines_kmeans_predict,Moanin-method 
-#' @aliases splines_kmeans_score_and_label, Moanin-method
+#' @aliases splines_kmeans_score_and_label,Moanin-method
 #' @examples 
 #' data(exampleData)
 #' moanin = create_moanin_model(data=testData, meta=testMeta)
