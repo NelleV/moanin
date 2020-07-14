@@ -2,21 +2,13 @@
 % Please edit documentation in R/DE_timecourse.R
 \name{DE_timecourse}
 \alias{DE_timecourse}
-\title{Run spline models with contrasts.}
+\alias{DE_timecourse,Moanin-method}
+\title{Run spline models and test for DE of contrasts.}
 \usage{
-DE_timecourse(
-  data,
-  moanin_model,
-  contrasts,
-  center = FALSE,
-  use_voom_weights = TRUE
-)
+\S4method{DE_timecourse}{Moanin}(object, contrasts, center = FALSE, use_voom_weights = TRUE)
 }
 \arguments{
-\item{data}{The data matrix, where genes (features) are on the rows and
-samples on the columns.}
-
-\item{moanin_model}{object of class \code{moanin_model}, an object containing
+\item{object}{An object of class \code{\link{Moanin}}, an object containing
 all related information for time course data and the splines model that
 will be used (if applicable). See \code{\link{create_moanin_model}} for
 more details.}
@@ -41,7 +33,7 @@ A \code{data.frame} with two columns for each of the contrasts given
   across all p-values for all contrasts calculated.
 }
 \description{
-Run spline models with contrasts.
+Run spline models and test for DE of contrasts.
 }
 \details{
 The implementation of the spline fit and the calculation of p-values
@@ -52,8 +44,8 @@ The implementation of the spline fit and the calculation of p-values
 }
 \examples{
 data(exampleData)
-moanin = create_moanin_model(testMeta)
-deTimecourse=DE_timecourse(data=testData, moanin_model=moanin, 
+moanin = create_moanin_model(data=testData, meta=testMeta)
+deTimecourse=DE_timecourse(moanin, 
    contrasts="K-C", use_voom_weights=FALSE)
 head(deTimecourse)
 }

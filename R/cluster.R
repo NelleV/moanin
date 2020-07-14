@@ -26,12 +26,14 @@ setGeneric("splines_kmeans_predict",
 #' @return A list in the format returned by \code{\link[ClusterR]{KMeans_rcpp}},
 #'    with the following elements added or changed:
 #'\itemize{
-#'\item{\code{centroids}}{The centroids are rescaled so that they range from
+#'\item{\code{centroids}}{ The centroids are rescaled so that they range from
 #'0-1}
-#'\item{\code{fit_splines}}{Logical, the value of \code{fit_splines} given to the
+#'\item{\code{fit_splines}}{ Logical, the value of \code{fit_splines} given to the
 #'function }
-#'\item{\code{rescale}}{The value of \code{rescale} given to the function }
+#'\item{\code{rescale}}{ The value of \code{rescale} given to the function }
 #'} 
+#' @name splines_kmeans
+#' @aliases splines_kmeans,Moanin-method
 #' @examples 
 #' data(exampleData)
 #' # Use the default options
@@ -92,8 +94,8 @@ setMethod("splines_kmeans", "Moanin",
 #' @rdname splines_kmeans_score_and_label
 #' @export
 setMethod("splines_kmeans_predict", "Moanin",
-          function(object, kmeans_clusters, 
-                   method=c("distance","goodnessOfFit"),data=NULL,...){
+          function(object, kmeans_clusters,data=NULL, 
+                   method=c("distance","goodnessOfFit"),...){
     method=match.arg(method)
     if(method=="goodnessOfFit"){
         out<-splines_kmeans_score_and_label(object=object, 
@@ -137,7 +139,7 @@ setMethod("splines_kmeans_predict", "Moanin",
 
 
 #' Assign score and labels from raw data
-#'
+#' @name splines_kmeans_score_and_label
 #' @param object the Moanin object that contains the basis functions used in
 #'   creating the clusters
 #' @param kmeans_clusters the results of running \code{\link{splines_kmeans}}
@@ -166,7 +168,8 @@ setMethod("splines_kmeans_predict", "Moanin",
 #' \item{\code{score_cutoff}}{The required cutoff for a gene receiving an
 #' assignment}
 #' }
-#' @aliases splines_kmeans_predict
+#' @aliases splines_kmeans_predict splines_kmeans_predict,Moanin-method 
+#' @aliases splines_kmeans_score_and_label, Moanin-method
 #' @examples 
 #' data(exampleData)
 #' moanin = create_moanin_model(data=testData, meta=testMeta)

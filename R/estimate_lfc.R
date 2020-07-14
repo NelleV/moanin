@@ -1,3 +1,6 @@
+setGeneric("estimate_log_fold_change", 
+           function(object,...) { standardGeneric("estimate_log_fold_change")})
+
 #' Estimates log fold change
 #'
 #' @inheritParams DE_timecourse
@@ -22,6 +25,8 @@
 #'   (row). For all methods except for "timely", the data frame will consist of
 #'   one column for each value of the argument \code{contrasts}. For "timely"
 #'   there will be one column for each timepoint and contrast combination.
+#' @name estimate_log_fold_change
+#' @aliases estimate_log_fold_change,Moanin-method
 #' @examples 
 #' data(exampleData)
 #' moanin = create_moanin_model(data=testData,meta=testMeta)
@@ -32,7 +37,8 @@
 #'    contrasts=c("K-C"),method="timecourse")
 #' head(estsTimecourse)
 #' @export
-estimate_log_fold_change = function(object, 
+setMethod("estimate_log_fold_change", "Moanin",
+          function(object, 
         contrasts, 
         method=c("timecourse", "sum", "max", "timely", 
                  "abs_sum", "abs_squared_sum", "min")){
@@ -74,7 +80,7 @@ estimate_log_fold_change = function(object,
     return(log_fold_changes)
     
 }
-
+)
 ## DELETE ME: Doesn't appear to be used anymore
 # estimate_log_fold_change_sum = function(data, moanin_model, contrasts){
 #     meta=moanin_model$meta

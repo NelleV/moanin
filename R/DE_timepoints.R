@@ -13,7 +13,9 @@ setGeneric("create_timepoints_contrasts",
 #'   FDR-adjusted based on the Benjamini-Hochberg method, as implemented in
 #'   \code{\link[stats]{p.adjust}}. The adjustment is done across all p-values
 #'   for all contrasts calculated.
-#' @aliases create_timepoints_contrasts
+#' @aliases create_timepoints_contrasts DE_timepoints,Moanin-method
+#' @aliases create_timepoints_contrasts,Moanin-method
+#' @name DE_timepoints
 #' @examples 
 #' data(exampleData)
 #' moanin = create_moanin_model(data=testData, meta=testMeta)

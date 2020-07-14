@@ -46,6 +46,8 @@ setGeneric("plot_splines_data",
 #' plot_splines_data(moanin, data=genes,
 #'		     smooth=TRUE, mfrow=c(2, 2))
 #' @export
+#' @name plot_splines_data
+#' @aliases plot_splines_data,Moanin,matrix-method
 #' @importFrom graphics axis plot.new plot.window
 #' @importFrom methods new
 setMethod("plot_splines_data",c("Moanin","matrix"),
@@ -158,16 +160,25 @@ setMethod("plot_splines_data",c("Moanin","matrix"),
 }
 )
 
+#' @aliases plot_splines_data,Moanin,numeric-method
+#' @rdname plot_splines_data
+#' @export
 setMethod("plot_splines_data",c("Moanin","numeric"),
           function(object, data, ...){
               plot_splines_data(object,data=matrix(data,nrow=1),...)
           }
 )
+#' @aliases plot_splines_data,Moanin,data.frame-method
+#' @rdname plot_splines_data
+#' @export
 setMethod("plot_splines_data",c("Moanin","data.frame"),
           function(object, data, ...){
               plot_splines_data(object,data=data.matrix(data),...)
           }
 )
+#' @aliases plot_splines_data,Moanin,missing-method
+#' @rdname plot_splines_data
+#' @export
 setMethod("plot_splines_data",c("Moanin","missing"),
         function(object, data, ...){
             data<-assay(object)
@@ -175,6 +186,8 @@ setMethod("plot_splines_data",c("Moanin","missing"),
               plot_splines_data(object,data=data,...)
         }
 )
+
+
 plot_centroid_individual = function(centroid, moanin_model,
                                     colors, smooth=FALSE, subset_conditions=NULL, ...){
     if(!inherits(moanin_model,"Moanin")) stop("Internal coding error: expecting Moanin class")

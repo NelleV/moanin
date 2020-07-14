@@ -2,7 +2,7 @@ setGeneric("rescale_values",function(object,...) { standardGeneric("rescale_valu
 
 #' Fit splines to each gene of data matrix
 #' @param moanin_model object of class Moanin 
-#' @data a matrix of data to fix splines to. If NULL, uses assay(moanin_model)
+#' @param data a matrix of data to fix splines to. If NULL, uses assay(moanin_model)
 #' @param weights A matrix of weights, of the same dimension as \code{data}.
 #'
 #' @return matrix of the coefficients for each basis function, each row of the
@@ -122,6 +122,8 @@ create_meta_prediction = function(moanin_model, num_timepoints=100){
 #'      associated to the columns of unique values of the grouping variable of \code{object} will be rescaled
 #'      separately.
 #' @export
+#' @name rescale_values
+#' @aliases rescale_values,Moanin-method
 setMethod("rescale_values","Moanin",
     function(object, data=NULL, use_group=FALSE){
     if(is.null(data)) data=assay(object)

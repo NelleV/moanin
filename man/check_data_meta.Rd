@@ -4,7 +4,7 @@
 \alias{check_data_meta}
 \title{Check data and meta}
 \usage{
-check_data_meta(data, meta)
+check_data_meta(data, object)
 }
 \description{
 Check data and meta

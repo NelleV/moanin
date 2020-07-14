@@ -3,17 +3,16 @@
 \name{DE_timepoints}
 \alias{DE_timepoints}
 \alias{create_timepoints_contrasts}
+\alias{DE_timepoints,Moanin-method}
+\alias{create_timepoints_contrasts,Moanin-method}
 \title{Fit weekly differential expression analysis}
 \usage{
-DE_timepoints(data, moanin_model, contrasts, use_voom_weights = TRUE)
+\S4method{DE_timepoints}{Moanin}(object, contrasts, use_voom_weights = TRUE)
 
-create_timepoints_contrasts(group1, group2, moanin_model)
+\S4method{create_timepoints_contrasts}{Moanin}(object, group1, group2)
 }
 \arguments{
-\item{data}{The data matrix, where genes (features) are on the rows and
-samples on the columns.}
-
-\item{moanin_model}{object of class \code{moanin_model}, an object containing
+\item{object}{An object of class \code{\link{Moanin}}, an object containing
 all related information for time course data and the splines model that
 will be used (if applicable). See \code{\link{create_moanin_model}} for
 more details.}
@@ -59,10 +58,10 @@ Creates pairwise contrasts for all timepoints
 }
 \examples{
 data(exampleData)
-moanin = create_moanin_model(testMeta)
-contrasts = create_timepoints_contrasts("C", "K", moanin)
+moanin = create_moanin_model(data=testData, meta=testMeta)
+contrasts = create_timepoints_contrasts(moanin,"C", "K")
 head(contrasts)
-deTimepoints=DE_timepoints(data=testData, moanin_model=moanin, 
+deTimepoints=DE_timepoints(moanin, 
     contrasts=contrasts, use_voom_weights=FALSE)
 head(deTimepoints)
 }

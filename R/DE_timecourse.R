@@ -151,11 +151,9 @@ summarise = function(basis, ng_levels) {
 }
 
 
-#' Run spline models with contrasts.
+#' Run spline models and test for DE of contrasts.
 #' 
-#' @param data The data matrix, where genes (features) are on the rows and
-#'   samples on the columns.
-#' @param moanin_model object of class \code{moanin_model}, an object containing
+#' @param object An object of class \code{\link{Moanin}}, an object containing
 #'   all related information for time course data and the splines model that
 #'   will be used (if applicable). See \code{\link{create_moanin_model}} for
 #'   more details.
@@ -184,6 +182,8 @@ summarise = function(basis, ng_levels) {
 #' deTimecourse=DE_timecourse(moanin, 
 #'    contrasts="K-C", use_voom_weights=FALSE)
 #' head(deTimecourse)
+#' @name DE_timecourse
+#' @aliases DE_timecourse,Moanin-method
 #' @export
 setMethod("DE_timecourse","Moanin",
          function(object,
