@@ -56,6 +56,9 @@ function }
 \description{
 Performs splines clustering using K-means
 }
+\details{
+If \code{\link{Moanin}} object's slot has log_transform=TRUE, then the data will be transformed by the function log(x+1) before applying splines and clustering.
+}
 \examples{
 data(exampleData)
 # Use the default options

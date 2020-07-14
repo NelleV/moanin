@@ -23,6 +23,7 @@ setGeneric("splines_kmeans_predict",
 #'  Whether to fit splines or not.
 #' @param rescale   boolean, optional, default: TRUE
 #'  Whether to rescale the data or not.
+#' @details If \code{\link{Moanin}} object's slot has log_transform=TRUE, then the data will be transformed by the function log(x+1) before applying splines and clustering.
 #' @return A list in the format returned by \code{\link[ClusterR]{KMeans_rcpp}},
 #'    with the following elements added or changed:
 #'\itemize{
@@ -158,6 +159,8 @@ setMethod("splines_kmeans_predict", "Moanin",
 #'   run of \code{splines_kmeans_score_and_label}, and only redo the filtering
 #'   (i.e. if want to change \code{percentage_genes_to_label} without rerunning
 #'   the calculation of scores)
+#' @param rescale_separately logical, whether to score separately within
+#'   grouping variable
 #' @return A list consisting of
 #' \itemize{
 #' \item{\code{labels}}{the label or cluster assigned to each gene based on the

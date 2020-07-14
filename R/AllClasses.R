@@ -15,16 +15,22 @@ setClassUnion("formulaOrNULL",members=c("formula", "NULL"))
 #' in the Slots section.
 #'
 #' @description There are several methods implemented for this class. The most
-#' important methods have their own help page. Simple helper methods are described in the
-#' Methods section below. For a comprehensive list of methods specific to this class
-#' see the Reference Manual.
-#' @slot time_variable_name character value giving the column in \code{colData} that defines the time variable (must be of class \code{numeric})
-#' @slot group_variable_name character value giving the column in \code{colData} that defines the grouping variable (must be of class \code{factor})
-#' @slot basis_matrix A basis matrix, where each row
-#'  corresponds to the evaluation of a sample on the basis function (thus one
-#'  column for each basis function).
+#'   important methods have their own help page. Simple helper methods are
+#'   described in the Methods section below. For a comprehensive list of methods
+#'   specific to this class see the Reference Manual.
+#' @slot time_variable_name character value giving the column in \code{colData}
+#'   that defines the time variable (must be of class \code{numeric})
+#' @slot group_variable_name character value giving the column in \code{colData}
+#'   that defines the grouping variable (must be of class \code{factor})
+#' @slot basis_matrix A basis matrix, where each row corresponds to the
+#'   evaluation of a sample on the basis function (thus one column for each
+#'   basis function).
 #' @slot spline_formula a formula. The formula used in creating the basis matrix
-#' @slot degrees_of_freedom a numeric integer. Number of degrees of freedom used in creating basis matrix. If NULL, degrees of freedom is not known (usually if user provided basis without degrees of freedom)
+#' @slot degrees_of_freedom a numeric integer. Number of degrees of freedom used
+#'   in creating basis matrix. If NULL, degrees of freedom is not known (usually
+#'   if user provided basis without degrees of freedom)
+#' @slot log_transform logical, whether to log-transform the data for certain
+#'   methods
 #' @name Moanin-class
 #' @aliases Moanin
 #' @rdname Moanin-class
@@ -59,26 +65,46 @@ setValidity("Moanin", function(object) {
     return(TRUE)
 })
 
+setGeneric(
+    name = "create_moanin_model",
+    def = function(data,  ...) {
+        standardGeneric("create_moanin_model")
+    }
+)
 #' Create a Moanin object
 #'@description The constructor \code{create_moanin_model} creates an object of the
 #'  class \code{Moanin}. 
 #'
-#' 
-#' @param group_variable_name A character value giving the column that corresponds to
-#'   the grouping variable to test for DE. By default "Group"
-#' @param time_variable_name A character value giving the column that corresponds to
-#'   the time variable. By default "Timepoint".
-#' @param spline_formula formula object, optional, default: NUlL. Used to construct
-#'   splines from the data in \code{meta}. See details.
-#'@param basis_matrix	matrix, optional, default: NULL. A basis matrix, where each row
-#'  corresponds to the evaluation of a sample on the basis function (thus one
-#'  column for each basis function).
+#'@param data The input data. Can be a \code{\link{SummarizedExperiment}} class,
+#'  or matrix/data.frame. If the input data is a \code{matrix} or
+#'  \code{data.frame}, then the user must also provide input to the \code{meta}
+#'  argument, which will be transformed into \code{colData} of the resulting
+#'  \code{Moanin} object
+#'@param meta Meta data on the samples (columns) of the \code{data} argument.
+#'  Must be given f input \code{data} is a \code{matrix} or \code{data.frame}. If
+#'  input is \code{SummarizedExperiment}, this argument is ignored.
+#'@param group_variable_name A character value giving the column that
+#'  corresponds to the grouping variable to test for DE. By default "Group"
+#'@param time_variable_name A character value giving the column that corresponds
+#'  to the time variable. By default "Timepoint".
+#'@param spline_formula formula object, optional, default: NUlL. Used to
+#'  construct splines from the data in \code{meta}. See details.
+#'@param basis_matrix	matrix, optional, default: NULL. A basis matrix, where
+#'  each row corresponds to the evaluation of a sample on the basis function
+#'  (thus one column for each basis function).
 #'@param degrees_of_freedom int, optional. Number of degrees of freedom to use
-#'  if neither the basis_matrix nor the spline_formula is provided. If not provided by the
-#'  user, internally will be set to 4
-#'@details If neither \code{spline_formula} nor \code{basis_matrix} is given, then by default,
-#'  the function will create a basis matrix based on the formula:
-#'  \preformatted{spline_formula = ~Group:ns(Timepoint, df=4) + Group + 0}
+#'  if neither the basis_matrix nor the spline_formula is provided. If not
+#'  provided by the user, internally will be set to 4
+#'@param log_transform whether the data should be log-transformed by certain
+#'  methods (see \code{\link{splines_kmeans}})
+#'@param drop_levels Logical, whether to perform \code{\link{droplevels}} on the
+#'  grouping variable (i.e. remove empty levels)
+#'@param ... arguments passed from methods to the \code{SummarizedExperiment}
+#'  method.
+#'@details If neither \code{spline_formula} nor \code{basis_matrix} is given,
+#'  then by default, the function will create a basis matrix based on the
+#'  formula: \preformatted{spline_formula = ~Group:ns(Timepoint, df=4) + Group +
+#'  0}
 #'@details Note that the meta data will have levels dropped (via \code{droplevels}). 
 #'@return An object of class \code{Moanin}
 #' @examples
@@ -96,15 +122,6 @@ setValidity("Moanin", function(object) {
 #' @importFrom splines ns
 #' @importFrom stats as.formula
 #' @rdname Moanin-class
-setGeneric(
-    name = "create_moanin_model",
-    def = function(data,  ...) {
-        standardGeneric("create_moanin_model")
-    }
-)
-#' @rdname Moanin-class
-#' @param meta if \code{data} is of class matrix or data.frame, argument \code{meta} must be given a \code{data.frame} containing the metadata in columns, and rows. This will be made into the \code{colData} of the resulting \code{Moanin} object.
-#'   corresponding to different samples. 
 #' @export
 setMethod(
     f = "create_moanin_model",

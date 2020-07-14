@@ -28,32 +28,44 @@ setGeneric("time_by_group_variable",
 #'
 #' @description This is a collection of helper methods for the Moanin
 #'   class.
+#' @inheritParams DE_timecourse
+#' @param value replacement value
+#' @param x \code{Moanin} object
+#' @param ... arguments passed to subsetting
 #' @examples 
 #' # Load some data
 #' data(exampleData)
 #' moanin = create_moanin_model(data=testData,meta=testMeta)
 #' group_variable_name(moanin)
 #' time_variable_name(moanin)
+#' @export
 setMethod("group_variable_name","Moanin",function(object){
     object@group_variable_name
 })
 #' @rdname Moanin-methods
+#' @aliases group_variable_name<- group_variable_name<-,Moanin-method
+#' @export
 setReplaceMethod("group_variable_name","Moanin",function(object,value){
     object@group_variable_name<-value
     return(object)
     
 })
 #' @rdname Moanin-methods
+#' @aliases time_variable_name time_variable_name,Moanin-method
+#' @export
 setMethod("time_by_group_variable","Moanin",function(object){
     colData(object)$WeeklyGroup
 })
-
-
 #' @rdname Moanin-methods
+#' @aliases group_variable group_variable,Moanin-method
+#' @export
 setMethod("group_variable","Moanin",function(object){
     gpVar<-group_variable_name(object)
     colData(object)[,gpVar]
 })
+#' @rdname Moanin-methods
+#' @aliases group_variable<- group_variable<-,Moanin-method
+#' @export
 setReplaceMethod("group_variable","Moanin",function(object,value){
     gpVar<-group_variable_name(object)
     colData(object)[,gpVar]<-value
@@ -61,39 +73,55 @@ setReplaceMethod("group_variable","Moanin",function(object,value){
     
 })
 #' @rdname Moanin-methods
+#' @aliases time_variable_name time_variable_name,Moanin-method
+#' @export
 setMethod("time_variable_name","Moanin",function(object){
     object@time_variable_name
 })
 #' @rdname Moanin-methods
+#' @aliases time_variable_name<- time_variable_name<-,Moanin-method
+#' @export
 setReplaceMethod("time_variable_name","Moanin",function(object,value){
     object@time_variable_name<-value
     return(object)
     
 })
 #' @rdname Moanin-methods
+#' @aliases time_variable time_variable,Moanin-method
+#' @export
 setMethod("time_variable","Moanin",function(object){
     tpVar<-time_variable_name(object)
     colData(object)[,tpVar]
 })
 #' @rdname Moanin-methods
+#' @aliases time_variable<- time_variable_name<-,Moanin-method
+#' @export
 setReplaceMethod("time_variable","Moanin",function(object,value){
     tpVar<-time_variable_name(object)
     colData(object)[,tpVar]<-value
     return(object)
 })
 #' @rdname Moanin-methods
+#' @aliases degrees_of_freedom degrees_of_freedom,Moanin-method
+#' @export
 setMethod("degrees_of_freedom","Moanin",function(object){
     object@degrees_of_freedom
 })
 #' @rdname Moanin-methods
+#' @aliases basis_matrix basis_matrix,Moanin-method
+#' @export
 setMethod("basis_matrix","Moanin",function(object){
     object@basis_matrix
 })
 #' @rdname Moanin-methods
+#' @aliases spline_formula spline_formula,Moanin-method
+#' @export
 setMethod("spline_formula","Moanin",function(object){
     object@spline_formula
 })
 #' @rdname Moanin-methods
+#' @aliases show show,Moanin-method
+#' @export
 setMethod("show","Moanin",function(object){
         N<-ncol(object)
         cat("Moanin object on",N,"samples containing the following information:\n")
@@ -107,7 +135,7 @@ setMethod("show","Moanin",function(object){
             cat(paste(form,collapse="",sep=""),"\n")
         }
         else{
-            if(is.null(df(object)))
+            if(is.null(degrees_of_freedom(object)))
                 cat("Basis matrix was provided by user, spline_formula and degrees_of_freedom=NULL\n")
             else
                 cat("Basis matrix and degrees of freedom provided by user, equal to",df(object),"\n")
