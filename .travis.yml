@@ -1,45 +1,21 @@
-#----------------------------------------------------------------
-# Travis-CI configuration for Bioconductor packages
-#
-# REFERENCES:
-# * Travis CI: https://travis-ci.org/
-# * tutorial: https://docs.travis-ci.com/user/languages/r
-# * see also: https://blog.rstudio.org/2016/03/09/r-on-travis-ci/
-# * covr: https://github.com/jimhester/covr
-# * Coveralls: https://coveralls.io/
-#
-# Validate your .travis.yml file at http://lint.travis-ci.org/
-#----------------------------------------------------------------
-language: r
-cache: packages
-# Temporarily enable when caching Bioconductor packages
-#script: true
+sudo: required
+services:
+    - docker
 
-# R versions to be tested on
-r:
-#  - bioc-release
-  - bioc-devel
+before_install:
+  - docker pull nellev/moanin
+  - docker run -d -p 127.0.0.1:80:4567 nellev/moanin /bin/sh -c "cd ~; "
+  - docker ps -a
+
+script:
+    - docker run -ti -v $(pwd):/home/rstudio/repo -w /home/rstudio/repo nellev/moanin /bin/bash -e ".build_tools/travis/test_script.sh"
 
 
-## Turn this to true before submission to CRAN/Bioconductor
-warnings_are_errors: false
-
-# r_build_args: "--no-build-vignettes"
-# r_check_args: "--no-vignettes"
-
-## Use patched devtools
-r_github_packages:
-  - NelleV/timecoursedata
-
-
-## Code coverage
-#r_packages:
-#  - covr
-
-## BiocCheck
-bioc_packages:
-  - BiocCheck
-
-after_success:
-#  - Rscript -e 'covr::coveralls(quiet=FALSE)'
-  - R CMD BiocCheck .
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: $GH_TOKEN  # Set in the settings page of your repository, as a secure variable
+  keep-history: true
+  local-dir: docs/
+  on:
+    branch: master
