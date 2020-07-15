@@ -64,10 +64,11 @@ setGeneric("plot_splines_data",
 #' # You can also provide different data for fitting splines, 
 #' # but plot data in Moanin object
 #' # This is helpful for overlaying centroids or predicted data
-#' # Here we do a silly example, where we use the data from genes 1-2 to fit 
-#' # splines, but plot data from genes 3-4, just to demonstrate syntax
-#' plot_splines_data(moanin, data=assay(moanin[1:2,]), subset_data=3:4,
-#'    smooth=TRUE, mfrow=c(2, 2), data_smooth_only=TRUE)
+#' # Here we do a silly example, just to demonstrate syntax, 
+#' # where we use the data from the first gene to fit a
+#' # spline estimate, but plot data from genes 3-4
+#' plot_splines_data(moanin, data=assay(moanin[1,]), subset_data=3:4,
+#'    smooth=TRUE, mfrow=c(2,2), data_smooth_only=TRUE)
 #' @export
 #' @name plot_splines_data
 #' @aliases plot_splines_data,Moanin,matrix-method
@@ -91,6 +92,9 @@ setMethod("plot_splines_data",c("Moanin","matrix"),
         else{
             data = data[subset_data,]
         }
+    }
+    if(data_smooth_only){
+        if(dim(data)[1]>1) stop("If data_smooth_only=TRUE, must provide only a single vector (or matrix of 1 row) to data, for fitting the functional form")
     }
     n_observations = if(data_smooth_only) dim(object)[1] else dim(data)[1]
     ### Work out the mfrow/number of plots and check makes sense
@@ -147,7 +151,7 @@ setMethod("plot_splines_data",c("Moanin","matrix"),
             name = plot_names[i]
         }
         plot_centroid_individual(
-            centroid=as.vector(data[i, ]),
+            centroid=if(data_smooth_only)as.vector(data) else as.vector(data[i, ]),
             object[i,], colors=colors,
             smooth=smooth,
             subset_conditions=subset_conditions,
