@@ -245,8 +245,8 @@ plot_centroid_individual = function(centroid, moanin_model,
                         col=color, pch=16,
                         lwd=0)
         if(smooth){
-            mask = group_variable(moanin_model) == group
-            time = time_variable(moanin_model)[mask]
+            mask = meta_prediction[,gpVar] == group
+            time = meta_prediction[,tpVar][mask]
             indx = order(time)
         }
         graphics::lines(time[indx], centroid_fitted[mask][indx], type="l",
