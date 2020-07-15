@@ -157,10 +157,11 @@ setMethod("splines_kmeans_predict", "Moanin",
 #' @param max_score optional, default: Null
 #'  When provided, will only label genes below that score. If NULL, ignore
 #'  this option.
-#' @param previous_scores an option to give the scores results from a previous
-#'   run of \code{splines_kmeans_score_and_label}, and only redo the filtering
-#'   (i.e. if want to change \code{percentage_genes_to_label} without rerunning
-#'   the calculation of scores)
+#' @param previous_scores matrix of scores, optional. Allows user to give the
+#'   matrix scores results from a previous run of
+#'   \code{splines_kmeans_score_and_label}, and only redo the filtering (i.e. if
+#'   want to change \code{percentage_genes_to_label} without rerunning the
+#'   calculation of scores)
 #' @param rescale_separately logical, whether to score separately within
 #'   grouping variable
 #' @return A list consisting of

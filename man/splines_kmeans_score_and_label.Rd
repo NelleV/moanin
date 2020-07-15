@@ -51,10 +51,11 @@ score below `max_score`.}
 When provided, will only label genes below that score. If NULL, ignore
 this option.}
 
-\item{previous_scores}{an option to give the scores results from a previous
-run of \code{splines_kmeans_score_and_label}, and only redo the filtering
-(i.e. if want to change \code{percentage_genes_to_label} without rerunning
-the calculation of scores)}
+\item{previous_scores}{matrix of scores, optional. Allows user to give the
+matrix scores results from a previous run of
+\code{splines_kmeans_score_and_label}, and only redo the filtering (i.e. if
+want to change \code{percentage_genes_to_label} without rerunning the
+calculation of scores)}
 
 \item{rescale_separately}{logical, whether to score separately within
 grouping variable}
