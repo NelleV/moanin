@@ -138,18 +138,30 @@ setGeneric(
 #' @export
 setMethod(
     f = "create_moanin_model",
-    signature = signature("matrix"),
+    signature = signature("DataFrame"),
     definition = function(data, meta, ...){
+        if(missing(meta)) stop("Must provide argument meta if input is matrix",
+            "/ data.frame")
         create_moanin_model(SummarizedExperiment(data, colData=meta),...)
     })
 #' @rdname Moanin-class
+#' @export
 setMethod(
     f = "create_moanin_model",
     signature = signature("data.frame"),
-    definition = function(data, meta, ...){
-        create_moanin_model(SummarizedExperiment(data, colData=meta),...)
+    definition = function(data, ...){
+        create_moanin_model(DataFrame(data), ...)
     })
 #' @rdname Moanin-class
+#' @export
+setMethod(
+    f = "create_moanin_model",
+    signature = signature("matrix"),
+    definition = function(data,  ...){
+        create_moanin_model(DataFrame(data),...)
+    })
+#' @rdname Moanin-class
+#' @export
 setMethod(
     f = "create_moanin_model",
     signature = signature("SummarizedExperiment"),

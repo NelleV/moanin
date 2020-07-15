@@ -4,15 +4,18 @@
 \name{Moanin-class}
 \alias{Moanin-class}
 \alias{Moanin}
-\alias{create_moanin_model,matrix-method}
+\alias{create_moanin_model,DataFrame-method}
 \alias{create_moanin_model}
 \alias{create_moanin_model,data.frame-method}
+\alias{create_moanin_model,matrix-method}
 \alias{create_moanin_model,SummarizedExperiment-method}
 \title{Class Moanin}
 \usage{
-\S4method{create_moanin_model}{matrix}(data, meta, ...)
+\S4method{create_moanin_model}{DataFrame}(data, meta, ...)
 
 \S4method{create_moanin_model}{data.frame}(data, meta, ...)
+
+\S4method{create_moanin_model}{matrix}(data, meta, ...)
 
 \S4method{create_moanin_model}{SummarizedExperiment}(
   data,

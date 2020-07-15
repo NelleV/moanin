@@ -18,6 +18,7 @@
   subset_conditions = NULL,
   subset_data = NULL,
   simpleY = TRUE,
+  data_smooth_only = FALSE,
   mar = c(2.5, 2.5, 3, 1),
   mfrow = NULL,
   addToPlot = NULL,
@@ -54,12 +55,15 @@ centroids or not.}
 provided. Else, plots all conditions}
 
 \item{subset_data}{list if provided, only plots the subset of data (ie, the
-rows) provided. Important if not providing \code{data} to subset rows
-or there will be too many genes to plot.}
+rows) provided. Can be any valid vector for subsetting a matrix. See details.}
 
 \item{simpleY}{boolean, if true, will minimize the annotation of the y axis to
 only label the axis in the exterior plots (the x-axis is always assumed to
 be the same across all plots and will always be simplified)}
+
+\item{data_smooth_only}{logical. If TRUE, then the data given in \code{data}
+will only be used to plot the functional form, and the data from the
+\code{Moanin} object will be used for the points. See details.}
 
 \item{mar}{vector of margins to set the space around each plot (see
 \code{\link{par}})}
@@ -79,6 +83,14 @@ This function creates a plot and does not return anything to the user.
 \description{
 Plotting splines
 }
+\details{
+If \code{data_smooth_only=TRUE}, then the data plotted will be from
+  \code{assay(object)} and the matrix of \code{data} will only be used to fit
+  functional forms. This is useful, for example, in plotting cluster
+  centroids over the data in \code{object}. Note that in this case,
+  \code{subset_data} will be applied to \code{object} and NOT to \code{data}.
+  This allows you to plot the same centroids over a series of genes.
+}
 \examples{
 # First, load some data and create a moanin model
 data(exampleData)
@@ -95,4 +107,19 @@ mfrow=c(2, 2))
 # The splines can also be smoothed
 plot_splines_data(moanin, subset_data=genes,
    smooth=TRUE, mfrow=c(2, 2))
+   
+# You can provide different data on same subjects,
+# instead of data in moanin object
+# (in which case moanin just provides grouping information)
+plot_splines_data(moanin, data=1/(assay(moanin)), subset_data=genes,
+   smooth=TRUE, mfrow=c(2, 2))
+   
+# You can also provide different data for fitting splines, 
+# but plot data in Moanin object
+# This is helpful for overlaying centroids or predicted data
+# Here we do a silly example, just to demonstrate syntax, 
+# where we use the data from the first gene to fit a
+# spline estimate, but plot data from genes 3-4
+plot_splines_data(moanin, data=assay(moanin[1,]), subset_data=3:4,
+   smooth=TRUE, mfrow=c(2,2), data_smooth_only=TRUE)
 }

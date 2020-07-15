@@ -4,11 +4,14 @@
 \alias{rescale_values}
 \alias{rescale_values,Moanin-method}
 \alias{rescale_values,NULL-method}
+\alias{rescale_values,missing-method}
 \title{Rescales rows of data to be between 0 and 1}
 \usage{
 \S4method{rescale_values}{Moanin}(object, data = NULL, use_group = FALSE)
 
 \S4method{rescale_values}{`NULL`}(object, data)
+
+\S4method{rescale_values}{missing}(object, ...)
 }
 \arguments{
 \item{object}{a object of class Moanin, only needed if choose to rescale by

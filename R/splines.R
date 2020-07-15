@@ -46,6 +46,7 @@ fit_predict_splines = function(data, moanin_model,
     # if(!is.null(weights)){
     #     stop("moanin::fit_predict_splines: not implemented")
     # }
+    if(inherits(data,"DataFrame")) data<-data.frame(data)
     if(is.null(meta_prediction)){
         y_fitted = t(stats::lm.fit(basis, t(data))$fitted.values)
     }else{
