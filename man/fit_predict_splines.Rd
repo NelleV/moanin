@@ -7,18 +7,11 @@
 fit_predict_splines(data, moanin_model, meta_prediction = NULL)
 }
 \arguments{
-\item{data}{The data matrix, where genes (features) are on the rows and
-samples on the columns.}
-
-\item{moanin_model}{object of class \code{moanin_model}, an object containing
-all related information for time course data and the splines model that
-will be used (if applicable). See \code{\link{create_moanin_model}} for
-more details.}
-
 \item{meta_prediction}{}
 }
 \value{
-a matrix of the fitted y values, with dimensions the same as \code{data}
+a matrix of the fitted y values, with dimensions the same as
+  \code{data}
 }
 \description{
 Get fitted values for splines for each gene

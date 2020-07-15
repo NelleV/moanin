@@ -3,19 +3,18 @@
 \name{DE_timepoints}
 \alias{DE_timepoints}
 \alias{create_timepoints_contrasts}
+\alias{DE_timepoints,Moanin-method}
+\alias{create_timepoints_contrasts,Moanin-method}
 \title{Fit weekly differential expression analysis}
 \usage{
-DE_timepoints(data, moanin_model, contrasts, use_voom_weights = TRUE)
+\S4method{DE_timepoints}{Moanin}(object, contrasts, use_voom_weights = TRUE)
 
-create_timepoints_contrasts(group1, group2, moanin_model)
+\S4method{create_timepoints_contrasts}{Moanin}(object, group1, group2)
 }
 \arguments{
-\item{data}{The data matrix, where genes (features) are on the rows and
-samples on the columns.}
-
-\item{moanin_model}{object of class \code{moanin_model}, an object containing
+\item{object}{An object of class \code{\link[Moanin-methods]{Moanin}}, an object containing
 all related information for time course data and the splines model that
-will be used (if applicable). See \code{\link{create_moanin_model}} for
+will be used (if applicable). See \code{\link[Moanin-class]{create_moanin_model}} for
 more details.}
 
 \item{contrasts}{Contrasts, either provided as a vector of strings, or a
@@ -27,11 +26,11 @@ to be converted into such a matrix.}
 \item{use_voom_weights}{boolean, optional, default: TRUE. 
 Whether to use voom weights.}
 
-\item{group1}{First group to consider in making contrasts, character value that must match a
-value contained in \code{moanin_model$meta}.}
+\item{group1}{First group to consider in making contrasts, character value
+that must match a value contained in \code{moanin_model$meta}.}
 
-\item{group2}{Second group to consider in making contrasts, character value that must match a
-value contained in \code{moanin_model$meta}.}
+\item{group2}{Second group to consider in making contrasts, character value
+that must match a value contained in \code{moanin_model$meta}.}
 }
 \value{
 A \code{data.frame} with three columns for each of the contrasts
@@ -42,8 +41,8 @@ A \code{data.frame} with three columns for each of the contrasts
   \code{\link[stats]{p.adjust}}. The adjustment is done across all p-values
   for all contrasts calculated.
 
-\code{create_timepoints_contrasts}: a character vector with each element of the vector corresponding to a
-  contrast to be compared.
+\code{create_timepoints_contrasts}: a character vector with each
+  element of the vector corresponding to a contrast to be compared.
 }
 \description{
 Fit weekly differential expression analysis
@@ -51,18 +50,18 @@ Fit weekly differential expression analysis
 Creates pairwise contrasts for all timepoints
 }
 \details{
-\code{create_timepoints_contrasts} creates the needed contrasts for comparing two groups for every
-  timepoint in the format needed for \code{DE_timepoints} (i.e.
-  \code{\link[limma]{makeContrasts}}, to which the contrasts are ultimately
-  passed). The time points are determined by the meta data in the
-  \code{moanin_object} provided by the user.
+\code{create_timepoints_contrasts} creates the needed contrasts for
+  comparing two groups for every timepoint in the format needed for
+  \code{DE_timepoints} (i.e. \code{\link[limma]{makeContrasts}}, to which the
+  contrasts are ultimately passed). The time points are determined by the
+  meta data in the \code{moanin_object} provided by the user.
 }
 \examples{
 data(exampleData)
-moanin = create_moanin_model(testMeta)
-contrasts = create_timepoints_contrasts("C", "K", moanin)
+moanin = create_moanin_model(data=testData, meta=testMeta)
+contrasts = create_timepoints_contrasts(moanin,"C", "K")
 head(contrasts)
-deTimepoints=DE_timepoints(data=testData, moanin_model=moanin, 
+deTimepoints=DE_timepoints(moanin, 
     contrasts=contrasts, use_voom_weights=FALSE)
 head(deTimepoints)
 }

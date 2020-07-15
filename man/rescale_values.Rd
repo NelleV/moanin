@@ -2,31 +2,41 @@
 % Please edit documentation in R/splines.R
 \name{rescale_values}
 \alias{rescale_values}
-\title{Rescales centroids and gene expresion values}
+\alias{rescale_values,Moanin-method}
+\alias{rescale_values,NULL-method}
+\title{Rescales rows of data to be between 0 and 1}
 \usage{
-rescale_values(y, meta = NULL, group = NULL)
+\S4method{rescale_values}{Moanin}(object, data = NULL, use_group = FALSE)
+
+\S4method{rescale_values}{`NULL`}(object, data)
 }
 \arguments{
-\item{y}{The matrix to rescale. Each row should correspond to a gene or a
-centroid and columns to samples.}
+\item{object}{a object of class Moanin, only needed if choose to rescale by
+grouping variable in the moanin object. If NULL, then data will be rescaled
+jointly across all observations.}
 
-\item{meta, }{optional
-Metadata data.frame.}
+\item{data}{The matrix to rescale by row. If NULL, and \code{object} is
+given, data will be taken as \code{assay(object)} Each row should
+correspond to a gene or a centroid, and columns to samples.}
 
-\item{group, }{optional, default: NULL
-A column name of the metadata data.frame. The corresponding column
-should be factors. If provided, the values of y will be rescaled such
-that, for each row, all values associated to group A, … of column
-"group" of the metadata is between 0 and 1. For example, if column
-"group" corresponds to a genotype, all the values of a gene for a
-specific genotype will be rescaled between 0 and 1.}
+\item{use_group}{If true, then the data will be rescaled such that, for each
+row, all values associated to each group (defined by grouping variable of
+\code{object}) is between 0 and 1. For example, if column}
 }
 \value{
-rescaled y, such that for each row, the values are comprised
-     between 0 and 1. Note that if "group" is provided, the values
-     associated to the columns of unique values of "group" will be rescaled
-     separately.
+rescaled y, such that for each row, the values are comprised between
+  0 and 1. Note that if \code{use_group=TRUE} and \code{object} is not NULL,
+  the values associated to the columns of unique values of the grouping
+  variable of \code{object} will be rescaled separately.
 }
 \description{
-Rescales centroids and gene expresion values
+Rescales rows of data to be between 0 and 1
+}
+\examples{
+data(exampleData)
+moanin=create_moanin_model(data=testData, meta=testMeta)
+# Can rescale data in Moanin object
+allData<-rescale_values(moanin)
+# Or provide different data and/or rescale within grouping variable
+smallData<-rescale_values(moanin, data=testData[1:10,], use_group=TRUE)
 }

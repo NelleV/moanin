@@ -1,3 +1,6 @@
+setGeneric("DE_timecourse", 
+           function(object,...) { standardGeneric("DE_timecourse")})
+
 # This file contains EDGE code adapted to work with limma contrasts
 
 center_data = function(y, ng_labels){
@@ -147,13 +150,12 @@ summarise = function(basis, ng_levels) {
     return(basis_mean)
 }
 
-#' Run spline models with contrasts.
+
+#' Run spline models and test for DE of contrasts.
 #' 
-#' @param data The data matrix, where genes (features) are on the rows and
-#'   samples on the columns.
-#' @param moanin_model object of class \code{moanin_model}, an object containing
+#' @param object An object of class \code{\link[Moanin-methods]{Moanin}}, an object containing
 #'   all related information for time course data and the splines model that
-#'   will be used (if applicable). See \code{\link{create_moanin_model}} for
+#'   will be used (if applicable). See \code{\link[Moanin-class]{create_moanin_model}} for
 #'   more details.
 #'@param contrasts Contrasts, either provided as a vector of strings, or a
 #'  matrix of contrasts coefficients obtained using
@@ -176,30 +178,27 @@ summarise = function(basis, ng_levels) {
 #'   across all p-values for all contrasts calculated.
 #' @examples 
 #' data(exampleData)
-#' moanin = create_moanin_model(testMeta)
-#' deTimecourse=DE_timecourse(data=testData, moanin_model=moanin, 
+#' moanin = create_moanin_model(data=testData, meta=testMeta)
+#' deTimecourse=DE_timecourse(moanin, 
 #'    contrasts="K-C", use_voom_weights=FALSE)
 #' head(deTimecourse)
+#' @name DE_timecourse
+#' @aliases DE_timecourse,Moanin-method
 #' @export
-DE_timecourse = function(data, moanin_model,
+setMethod("DE_timecourse","Moanin",
+         function(object,
                          contrasts,
                          center=FALSE,
                          use_voom_weights=TRUE){
+    basis = basis_matrix(object)
     
-    basis = moanin_model$basis
-    meta = moanin_model$meta
-    
-    gpVar = moanin_model$group_variable
-    ng = nlevels(meta[,gpVar])
-    ng_labels = meta[,gpVar]
-    
-    check_data_meta(data, meta)
-    data = as.matrix(data)
-    
-    contrasts = is_contrasts(contrasts, moanin_model)
+    ng_labels = group_variable(object)
+    ng=nlevels(ng_labels)
+
+    contrasts = is_contrasts(contrasts, object)
     
     if(use_voom_weights){
-        y = edgeR::DGEList(counts=data)
+        y = edgeR::DGEList(counts=assay(object))
         y = edgeR::calcNormFactors(y, method="upperquartile")
         v = limma::voom(y, contrasts, plot=FALSE)
         weights = limma::lmFit(v)
@@ -207,21 +206,20 @@ DE_timecourse = function(data, moanin_model,
         weights = NULL
     }
     
-    y = data
+    y = assay(object)
     
     if(center){
         y = center_data(y)
         basis = t(center_data(t(basis)))
     }
     
-    beta = fit_splines(y, moanin_model, weights=weights)
+    beta = fit_splines(data=y, moanin_model=object, weights=weights)
     
     if(dim(contrasts)[1] != ng){
         stop("The contrast coef vector should be of the same size" +
                  " as the number of groups")
     }
-    
-    results = data.frame(row.names=row.names(data))
+    results = data.frame(row.names=row.names(object))
     for(col in seq_len(ncol(contrasts))){
         contrast = contrasts[, col]
         
@@ -231,13 +229,14 @@ DE_timecourse = function(data, moanin_model,
         
         # Get the number of samples used for this particular contrast:
         groups_of_interest = names(contrast)[contrast != 0]
-        n_samples_fit = sum(meta[,gpVar] %in% groups_of_interest)
+        n_samples_fit = sum(group_variable(object) %in% groups_of_interest)
         n_groups = length(groups_of_interest)
         degrees_of_freedom = dim(basis)[2] / ng
         
         beta_null = compute_beta_null(basis, beta, contrast)
         
-        pval = compute_pvalue(basis, y, beta, beta_null, ng_labels, weights=weights,
+        pval = compute_pvalue(basis, y, beta, beta_null, ng_labels, 
+                              weights=weights,
                               n_samples=n_samples_fit,
                               n_groups=n_groups,
                               degrees_of_freedom=degrees_of_freedom)
@@ -254,4 +253,4 @@ DE_timecourse = function(data, moanin_model,
     return(results)
 }
 
-
+)

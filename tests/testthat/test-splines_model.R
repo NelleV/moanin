@@ -1,16 +1,17 @@
 library("moanin")
-library(timecoursedata)
+data("exampleData")
 
 context("moanin::moanin_model.R")
 
 test_that("moanin_model::create_moanin_model", {
-    data(shoemaker2015)
-    meta = shoemaker2015$meta
-    expect_silent(create_moanin_model(meta))
+    expect_silent(create_moanin_model(data=testData,meta=testMeta))
     formula = ~Group:splines::ns(Timepoint) + 0
-    expect_silent(create_moanin_model(meta, formula=formula))
-    basis = stats::model.matrix(formula, data=meta)
-    expect_silent(create_moanin_model(meta, basis=basis))
+    expect_silent(create_moanin_model(data=testData,meta=testMeta, 
+                                      spline_formula=formula))
+    basis = stats::model.matrix(formula, data=testMeta)
+    expect_silent(create_moanin_model(data=testData,meta=testMeta, 
+                                      basis_matrix=basis))
 
-    expect_error(create_moanin_model(meta, basis=basis, formula=formula))
+    expect_error(create_moanin_model(data=testData,meta=testMeta, 
+                       basis_matrix=basis, spline_formula=formula))
 })

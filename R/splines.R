@@ -1,15 +1,19 @@
+setGeneric("rescale_values",function(object,...) { 
+    standardGeneric("rescale_values")})
 
 #' Fit splines to each gene of data matrix
-#'
-#' @inheritParams DE_timecourse
+#' @param moanin_model object of class Moanin
+#' @param data a matrix of data to fix splines to. If NULL, uses
+#'   \code{assay(moanin_model)}
 #' @param weights A matrix of weights, of the same dimension as \code{data}.
-#'
+#'   
 #' @return matrix of the coefficients for each basis function, each row of the
 #'   matrix containing the coefficients for the corresponding gene in
 #'   \code{data}.
 #' @keywords internal
-fit_splines = function(data, moanin_model, weights=NULL){
-    basis = moanin_model$basis
+fit_splines = function(moanin_model, data=NULL, weights=NULL){
+    if(is.null(data)) data = assay(moanin_model)
+    basis = basis_matrix(moanin_model)
     n = ncol(basis)
     nr = nrow(data)
     
@@ -30,30 +34,31 @@ fit_splines = function(data, moanin_model, weights=NULL){
 #' @inheritParams DE_timecourse
 #' @param meta_prediction 
 #'
-#' @return a matrix of the fitted y values, with dimensions the same as \code{data}
+#' @return a matrix of the fitted y values, with dimensions the same as
+#'   \code{data}
 #'
 #' @keywords internal
 fit_predict_splines = function(data, moanin_model, 
                                meta_prediction=NULL){
-    basis = moanin_model$basis
-    meta = moanin_model$meta
-    gpVar = moanin_model$group_variable
-    tpVar = moanin_model$time_variable
+    basis = basis_matrix(moanin_model)
+    gpVar = group_variable_name(moanin_model)
+    tpVar = time_variable_name(moanin_model)
     # if(!is.null(weights)){
     #     stop("moanin::fit_predict_splines: not implemented")
     # }
     if(is.null(meta_prediction)){
         y_fitted = t(stats::lm.fit(basis, t(data))$fitted.values)
     }else{
-        degrees_of_freedom = moanin_model$degrees_of_freedom
+        degrees_of_freedom = degrees_of_freedom(moanin_model)
         fitting_data = t(as.matrix(data))
         formula_data = list(
-            "Group"=meta[,gpVar],
-            "Timepoint"=meta[,tpVar],
+            "Group"=group_variable(moanin_model),
+            "Timepoint"=time_variable(moanin_model),
             "fitting_data"=fitting_data,
-            "degrees_of_freedom"=moanin_model$degrees_of_freedom)
+            "degrees_of_freedom"=degrees_of_freedom(moanin_model))
         names(formula_data)[c(1,2)]<-c(gpVar,tpVar)
-        updated_formula = stats::update(moanin_model$formula, fitting_data ~ .)
+        updated_formula = stats::update(spline_formula(moanin_model), 
+                                        fitting_data ~ .)
         model = stats::lm(updated_formula, formula_data)
         y_fitted = stats::predict(model, meta_prediction)
     }
@@ -65,32 +70,32 @@ fit_predict_splines = function(data, moanin_model,
 #'
 #' @inheritParams DE_timecourse
 #' @param num_timepoints integer, optional, default: 100.
-#'	Number of timepoints to use for the prediction metadata
+#'  Number of timepoints to use for the prediction metadata
 #'
 #' @keywords internal
 create_meta_prediction = function(moanin_model, num_timepoints=100){
     # Create moanin_model for prediction
     timepoints_pred = NULL
     groups_pred = NULL
-    meta = droplevels(moanin_model$meta)
-    gpVar = moanin_model$group_variable
-    tpVar = moanin_model$time_variable
-    groups = levels(meta[,gpVar]) 
+    gpVar = group_variable_name(moanin_model)
+    tpVar = time_variable_name(moanin_model)
+    groups = levels(droplevels(group_variable(moanin_model)) )
     
     # Check that the moanin model has the appropriate information to create a
     # smooth prediction model.
-    if(is.null(moanin_model$formula) | is.null(moanin_model$degrees_of_freedom)){
+    if(is.null(spline_formula(moanin_model)) | 
+       is.null(degrees_of_freedom(moanin_model))){
         msg = paste(
             "Smooth prediction is not possible without the formula.",
             "Will only predict on initial points")
         warning(msg)
-        return(moanin_model$meta)
+        return(moanin_model)
     }
     
     
     for(group in groups){
-        mask = meta[,gpVar] == group
-        time = meta[,tpVar][mask]
+        mask = group_variable(moanin_model) == group
+        time = time_variable(moanin_model)[mask]
         
         timepoints_pred = c(
             timepoints_pred,
@@ -108,52 +113,64 @@ create_meta_prediction = function(moanin_model, num_timepoints=100){
 }
 
 
-#' Rescales centroids and gene expresion values
+#' Rescales rows of data to be between 0 and 1
 #'
-#' @param y 
-#'      The matrix to rescale. Each row should correspond to a gene or a
-#'      centroid and columns to samples.
-#' @param meta, optional
-#'      Metadata data.frame.
-#' @param group, optional, default: NULL
-#'      A column name of the metadata data.frame. The corresponding column
-#'      should be factors. If provided, the values of y will be rescaled such
-#'      that, for each row, all values associated to group A, … of column
-#'      "group" of the metadata is between 0 and 1. For example, if column
-#'      "group" corresponds to a genotype, all the values of a gene for a
-#'      specific genotype will be rescaled between 0 and 1.
-#' @return rescaled y, such that for each row, the values are comprised
-#'      between 0 and 1. Note that if "group" is provided, the values
-#'      associated to the columns of unique values of "group" will be rescaled
-#'      separately.
-rescale_values = function(y, meta=NULL, group=NULL){
-    if(is.null(group)){
-        ymin = row_min(y) 
-        y = y - ymin
-        ymax = row_max(y)
+#' @param data The matrix to rescale by row. If NULL, and \code{object} is
+#'   given, data will be taken as \code{assay(object)} Each row should
+#'   correspond to a gene or a centroid, and columns to samples.
+#' @param object a object of class Moanin, only needed if choose to rescale by
+#'   grouping variable in the moanin object. If NULL, then data will be rescaled
+#'   jointly across all observations.
+#' @param use_group If true, then the data will be rescaled such that, for each
+#'   row, all values associated to each group (defined by grouping variable of
+#'   \code{object}) is between 0 and 1. For example, if column
+#' @return rescaled y, such that for each row, the values are comprised between
+#'   0 and 1. Note that if \code{use_group=TRUE} and \code{object} is not NULL,
+#'   the values associated to the columns of unique values of the grouping
+#'   variable of \code{object} will be rescaled separately.
+#' @export
+#' @name rescale_values
+#' @examples 
+#' data(exampleData)
+#' moanin=create_moanin_model(data=testData, meta=testMeta)
+#' # Can rescale data in Moanin object
+#' allData<-rescale_values(moanin)
+#' # Or provide different data and/or rescale within grouping variable
+#' smallData<-rescale_values(moanin, data=testData[1:10,], use_group=TRUE)
+#' @aliases rescale_values,Moanin-method
+setMethod("rescale_values","Moanin",
+    function(object, data=NULL, use_group=FALSE){
+    if(is.null(data)) data=assay(object)
+    if(use_group){
+        factors_to_consider = levels(group_variable(object))
+        for(factor in factors_to_consider){
+            mask = group_variable(object) == factor
+            ymin = row_min(data[, mask]) 
+            data[, mask] = data[, mask] - ymin
+            ymax = row_max(data[, mask])
+            whNonZero<-which(ymax>0)
+            data[whNonZero,mask] = data[whNonZero,mask] / ymax[whNonZero]
+        }
+        return(data)
+    }
+    else return(rescale_values(object=NULL,data=data) )
+})
+
+#' @aliases rescale_values,NULL-method
+#' @export
+#' @rdname rescale_values
+setMethod("rescale_values","NULL",
+    function(object, data){
+        ymin = row_min(data) 
+        data = data - ymin
+        ymax = row_max(data)
         whNonZero<-which(ymax>0)
         if(length(whNonZero)>0){
-            y[whNonZero,] = y[whNonZero,] / ymax[whNonZero]
+            data[whNonZero,] = data[whNonZero,] / ymax[whNonZero]
         }
-    }else{
-        if(is.null(meta)){
-            msg = paste(
-                "moanin::rescale_values if group is provided, then a metadata",
-                "data.frame should be provided as well.")
-            stop(msg)
-        }
-        factors_to_consider = levels(unlist(meta[group]))
-        for(factor in factors_to_consider){
-            mask = meta[group] == factor
-            ymin = row_min(y[, mask]) 
-            y[, mask] = y[, mask] - ymin
-            ymax = row_max(y[, mask])
-            whNonZero<-which(ymax>0)
-            y[whNonZero,mask] = y[whNonZero,mask] / ymax[whNonZero]
-        }
-    }
-    return(y)
-}
+        return(data)
+})
+
 
 
 # XXX It's wierd that this does not exists in R…
@@ -215,7 +232,8 @@ align_data_onto_centroid = function(data, centroid, positive_scaling=TRUE){
 }
 
 
-score_genes_centroid = function(data, centroid, positive_scaling=TRUE, scale=TRUE){
+score_genes_centroid = function(data, centroid, positive_scaling=TRUE, 
+                                scale=TRUE){
     n_genes = dim(data)[1]
     centroid = as.numeric(centroid)
     
@@ -254,11 +272,12 @@ score_genes_centroid = function(data, centroid, positive_scaling=TRUE, scale=TRU
 #'   that row.
 #' @examples 
 #' data(exampleData)
-#' moanin = create_moanin_model(testMeta)
-#' contrasts = create_timepoints_contrasts("C", "K", moanin)
-#' deTimepoints=DE_timepoints(data=testData, moanin_model=moanin, 
+#' moanin = create_moanin_model(data=testData,meta=testMeta)
+#' contrasts = create_timepoints_contrasts(moanin,"C", "K")
+#' deTimepoints=DE_timepoints(moanin, 
 #'   contrasts=contrasts, use_voom_weights=FALSE)
-#' fisherPval=pvalues_fisher_method(deTimepoints[,grep("pval",colnames(deTimepoints))])
+#' fisherPval=pvalues_fisher_method(
+#'   deTimepoints[,grep("pval",colnames(deTimepoints))])
 #' head(fisherPval)
 #' @export
 pvalues_fisher_method = function(pvalues){

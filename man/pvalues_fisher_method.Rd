@@ -21,10 +21,11 @@ Combines all p-values per rows.
 }
 \examples{
 data(exampleData)
-moanin = create_moanin_model(testMeta)
-contrasts = create_timepoints_contrasts("C", "K", moanin)
-deTimepoints=DE_timepoints(data=testData, moanin_model=moanin, 
+moanin = create_moanin_model(data=testData,meta=testMeta)
+contrasts = create_timepoints_contrasts(moanin,"C", "K")
+deTimepoints=DE_timepoints(moanin, 
   contrasts=contrasts, use_voom_weights=FALSE)
-fisherPval=pvalues_fisher_method(deTimepoints[,grep("pval",colnames(deTimepoints))])
+fisherPval=pvalues_fisher_method(
+  deTimepoints[,grep("pval",colnames(deTimepoints))])
 head(fisherPval)
 }

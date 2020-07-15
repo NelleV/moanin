@@ -2,11 +2,11 @@
 % Please edit documentation in R/cluster.R
 \name{splines_kmeans}
 \alias{splines_kmeans}
+\alias{splines_kmeans,Moanin-method}
 \title{Performs splines clustering using K-means}
 \usage{
-splines_kmeans(
-  data,
-  moanin_model,
+\S4method{splines_kmeans}{Moanin}(
+  object,
   n_clusters = 10,
   init = "kmeans++",
   n_init = 10,
@@ -17,12 +17,9 @@ splines_kmeans(
 )
 }
 \arguments{
-\item{data}{The data matrix, where genes (features) are on the rows and
-samples on the columns.}
-
-\item{moanin_model}{object of class \code{moanin_model}, an object containing
+\item{object}{An object of class \code{\link[Moanin-methods]{Moanin}}, an object containing
 all related information for time course data and the splines model that
-will be used (if applicable). See \code{\link{create_moanin_model}} for
+will be used (if applicable). See \code{\link[Moanin-class]{create_moanin_model}} for
 more details.}
 
 \item{n_clusters}{int optional, default: 10}
@@ -49,19 +46,23 @@ Whether to rescale the data or not.}
 A list in the format returned by \code{\link[ClusterR]{KMeans_rcpp}},
    with the following elements added or changed:
 \itemize{
-\item{\code{centroids}}{The centroids are rescaled so that they range from 0-1}
-\item{\code{moanin_model}}{The given moanin_model}
-\item{\code{fit_splines}}{The value of \code{fit_splines} given to the function }
-\item{\code{rescale}}{The value of \code{rescale} given to the function }
+\item{\code{centroids}}{ The centroids are rescaled so that they range from
+0-1}
+\item{\code{fit_splines}}{ Logical, the value of \code{fit_splines} given to the
+function }
+\item{\code{rescale}}{ The value of \code{rescale} given to the function }
 }
 }
 \description{
 Performs splines clustering using K-means
 }
+\details{
+If \code{\link{Moanin}} object's slot has log_transform=TRUE, then the data will be transformed by the function log(x+1) before applying splines and clustering.
+}
 \examples{
 data(exampleData)
 # Use the default options
-moanin = create_moanin_model(testMeta)
-out<-splines_kmeans(testData, moanin,n_clusters=5)
+moanin = create_moanin_model(data=testData, meta=testMeta)
+out = splines_kmeans( moanin,n_clusters=5)
 table(out$clusters)
 }

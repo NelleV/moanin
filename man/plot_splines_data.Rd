@@ -2,11 +2,15 @@
 % Please edit documentation in R/visualization.R
 \name{plot_splines_data}
 \alias{plot_splines_data}
+\alias{plot_splines_data,Moanin,matrix-method}
+\alias{plot_splines_data,Moanin,numeric-method}
+\alias{plot_splines_data,Moanin,data.frame-method}
+\alias{plot_splines_data,Moanin,missing-method}
 \title{Plotting splines}
 \usage{
-plot_splines_data(
+\S4method{plot_splines_data}{Moanin,matrix}(
+  object,
   data,
-  moanin_model,
   colors = NULL,
   smooth = FALSE,
   legend = TRUE,
@@ -19,16 +23,22 @@ plot_splines_data(
   addToPlot = NULL,
   ...
 )
+
+\S4method{plot_splines_data}{Moanin,numeric}(object, data, ...)
+
+\S4method{plot_splines_data}{Moanin,data.frame}(object, data, ...)
+
+\S4method{plot_splines_data}{Moanin,missing}(object, data, ...)
 }
 \arguments{
+\item{object}{An object of class \code{\link[Moanin-methods]{Moanin}}, an object containing
+all related information for time course data and the splines model that
+will be used (if applicable). See \code{\link[Moanin-class]{create_moanin_model}} for
+more details.}
+
 \item{data}{matrix containing the data to be plotted (such as centroids or
 data), where each row of the data provided will be plotted as a separate
-plot.}
-
-\item{moanin_model}{object of class \code{moanin_model}, an object containing
-all related information for time course data and the splines model that
-will be used (if applicable). See \code{\link{create_moanin_model}} for
-more details.}
+plot. If missing, will rely on data in \code{assay(object)}}
 
 \item{colors}{vector, optional, default NULL. Vector of colors}
 
@@ -43,8 +53,9 @@ centroids or not.}
 \item{subset_conditions}{list if provided, only plots the subset of conditions
 provided. Else, plots all conditions}
 
-\item{subset_data}{list if provided, only plots  the subset of data (ie, the
-rows) provided.}
+\item{subset_data}{list if provided, only plots the subset of data (ie, the
+rows) provided. Important if not providing \code{data} to subset rows
+or there will be too many genes to plot.}
 
 \item{simpleY}{boolean, if true, will minimize the annotation of the y axis to
 only label the axis in the exterior plots (the x-axis is always assumed to
@@ -71,19 +82,17 @@ Plotting splines
 \examples{
 # First, load some data and create a moanin model
 data(exampleData)
-moanin_model = create_moanin_model(testMeta, degrees_of_freedom=6)
+moanin = create_moanin_model(data=testData,meta=testMeta, 
+   degrees_of_freedom=6)
 
 # The moanin model contains all the information for plotting purposes. The
 # plot_splines_function will automatically fit the splines from the
 # information contained in the moanin model
 genes = c("NM_001042489", "NM_008725")
-plot_splines_data(
-testData, moanin_model,
-subset_data=genes,
+plot_splines_data(moanin, subset_data=genes,
 mfrow=c(2, 2))
 
 # The splines can also be smoothed
-plot_splines_data(testData, moanin_model,
-	     subset_data=genes,
-	     smooth=TRUE, mfrow=c(2, 2))
+plot_splines_data(moanin, subset_data=genes,
+   smooth=TRUE, mfrow=c(2, 2))
 }

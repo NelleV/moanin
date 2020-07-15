@@ -27,10 +27,11 @@ data-frame.}
 
 \item{ontology}{string, optional, default: BP. specficies which ontology to
 use (passed to \code{ontology} argument in creating a new \code{topGOdata}
-object). Can be 'BP', 'CC', or 'NF'. See \code{\link[topGO]{topGOdata-class}}.}
+object). Can be 'BP', 'CC', or 'NF'. See
+\code{\link[topGO]{topGOdata-class}}.}
 
-\item{weighted, }{boolean, optional, default: FALSE. 
-Whether to use the weighted algorithm or not in \code{\link[topGO]{runTest}}.}
+\item{weighted}{boolean, optional, default: FALSE. Whether to use the
+weighted algorithm or not in \code{\link[topGO]{runTest}}.}
 
 \item{node_size}{integer, optional, default: 10. Consider only GO terms with
 node_size number of genes, passed to \code{nodeSize} argument of
@@ -57,15 +58,16 @@ Find enriched GO terms
 Create the Gene to GO Term mapping
 }
 \details{
-\code{find_enriched_go_terms} is a wrapper for running a GO enrichment analysis via
-  the package \code{topGO}. This function creates a
-  \code{\link[topGO]{topGOdata-class}} object, runs the function
-  \code{\link[topGO]{runTest}} to test for enrichment using the
-  \code{statistic="fisher"} option, and then runs
-  \code{\link[topGO]{GenTable}}. This function then does some post-processing
-  of the results, returning only GO terms that satisfy: 
+\code{find_enriched_go_terms} is a wrapper for running a GO
+ enrichment analysis via the package \code{topGO}. This function creates a
+ \code{\link[topGO]{topGOdata-class}} object, runs the function
+ \code{\link[topGO]{runTest}} to test for enrichment using the
+ \code{statistic="fisher"} option, and then runs
+ \code{\link[topGO]{GenTable}}. This function then does some post-processing
+ of the results, returning only GO terms that satisfy:
  \enumerate{
- \item{BH adjusted p-values less than 0.05 using \code{\link[stats]{p.adjust}}}
+ \item{BH adjusted p-values less than 0.05 using
+ \code{\link[stats]{p.adjust}}}
  \item{GO terms are \emph{enriched}, i.e. the number of genes from the GO 
  term found in the subset is greater than expected}
  }

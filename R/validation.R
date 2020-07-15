@@ -1,83 +1,34 @@
 
 
-#' Check that the metadata provided is what we expect
-#'
-#' This method will raise errors if the metadata provided is not as expected.
-#'
-#' @param meta metadata
-#' @param check_replicates boolean, optional, default: FALSE
-#'	  If TRUE, checks whether metadata contains a column Replicate
-#' @return meta returns the metadata with additional columns if necessary.
-#'
-#' @keywords internal
-check_meta = function(meta, check_replicates=FALSE, group_variable="Group",time_variable="Timepoint"){
-    metadata_column_names = colnames(meta)
-    if(!(group_variable %in% metadata_column_names)){
-        stop(
-            "moanin::create_moanin_model: ",
-            "Metadata doesn't contain expected information.",
-            " Group column is missing.")
-    }
-    
-    if(!(time_variable %in% metadata_column_names)){
-        stop(
-            "moanin::create_moanin_model: " ,
-            "Metadata doesn't contain expected information." ,
-            " Timepoint column is missing.")
-    }
-    
-    if(check_replicates & !("Replicate" %in% metadata_column_names)){
-        stop(
-            "moanin::create_moanin_model: " ,
-            "Metadata doesn't contain expected information.",
-            "Replicate column is missing")
-    }
-    
-    # Check that Timepoint is numeric.
-    if(!is.numeric(meta[,time_variable])){
-        stop(
-            "moanin::create_moanin_model: " ,
-            "Timepoint column is expected to be numeric")
-    }
-    
-    if(!is.factor(meta[,group_variable])){
-        stop(
-            "moanin::create_moanin_model: " ,
-            "Group column is expected to be factors")
-    }
-    
-    meta<-droplevels(meta)
-    # Just create this one.
-    if(!("WeeklyGroup" %in% metadata_column_names)){
-        meta["WeeklyGroup"] = as.factor(
-            make.names(meta[,group_variable]:as.factor(meta[,time_variable])))
-    }
-    return(meta) 
-}
 
 
-#' Check data and meta
+#' Internal Validation Checks
 #' @keywords internal
-check_data_meta = function(data, meta){
+#' @name internal
+#' @return Does not return anything. Only hits errors if there are problems.
+check_data_meta = function(data, object){
+    if(!inherits(object,"Moanin")) stop("Internal coding error: passed object",
+    "is not of class Moanin")
     dim_data = dim(data)
-    dim_meta = dim(meta)
+    dim_meta = dim(object)
     data = as.matrix(data)
-    if(dim_meta[1] != dim_data[2]){
+    if(dim_meta[2] != dim_data[2]){
         stop(
-            "Data and metadata are inconsistent. Data is of shape (Xx",
-            "Metadata is of shape XX")
+            "User-given data and Moanin object are inconsistent. Data is has ", 
+            ncol(data),"columns; Moanin object has", ncol(object))
     }
-    
+
     if(!is.numeric(data)){
         stop("Data should be of type numeric")
     }
-    meta = check_meta(meta)
+
 }
 
 
 #' Check is 2D
 #'
 #' @keywords internal
+#' @rdname internal
 check_is_2d = function(X){
     dim_data = dim(X)
     if(is.null(dim_data)){
@@ -95,20 +46,22 @@ check_is_2d = function(X){
 #' @details If a vector of string is provided, the function will call
 #'  limma::makeContrast in order to obtain the contrasts coefficients.
 #'
-#' @details If a contrasts matrix is provided, it will perform a number of checks on
-#' the contrasts matrix to make sure it contains the number of rows expected,
-#' and that each contrast indeed sums to 0.
-#'
+#' @details If a contrasts matrix is provided, it will perform a number of
+#'   checks on the contrasts matrix to make sure it contains the number of rows
+#'   expected, and that each contrast indeed sums to 0.
+#' @returns \code{is_contrasts} returns the contrasts, with any corrections.
 #' @keywords internal
+#' @rdname internal
 is_contrasts = function(contrasts, moanin_model){
-    meta = moanin_model$meta
-    gpVar = moanin_model$group_variable
+    if(!inherits(moanin_model, "Moanin") ) 
+        stop("Coding error: internal function is_contrasts expect class",
+            "Moanin object")
     if(is.vector(contrasts)){
         # XXX Should we add more tests here in order to provide meaningful
         # error messages?
         contrasts = limma::makeContrasts(
             contrasts=contrasts,
-            levels=levels(meta[,gpVar]))
+            levels=levels(group_variable(moanin_model)))
     }else{
         # Basic checks to make sure we have contrasts
         dim_contrasts = dim(contrasts)
@@ -117,7 +70,7 @@ is_contrasts = function(contrasts, moanin_model){
             stop(msg)
         }
         
-        n_groups = length(levels(meta[,gpVar]))
+        n_groups = length(levels(group_variable(moanin_model)))
         if(dim(contrasts)[1] != n_groups){
             msg = paste(
                 "When contrasts provided is a matrix, it should contain the",
@@ -127,8 +80,8 @@ is_contrasts = function(contrasts, moanin_model){
         }
         
         if(any(colSums(contrasts) != 0)){
-            msg = paste(
-                "When contrasts provided is matrix, all columns should sum to 0.")
+            msg = paste("When contrasts provided is",
+                "matrix, all columns should sum to 0.")
             stop(msg)
         }
     }
