@@ -20,15 +20,23 @@ setGeneric("plot_splines_data",
 #'  be the same across all plots and will always be simplified)
 #'@param subset_conditions list if provided, only plots the subset of conditions
 #'  provided. Else, plots all conditions
+#'@param data_smooth_only logical. If TRUE, then the data given in \code{data}
+#'  will only be used to plot the functional form, and the data from the
+#'  \code{Moanin} object will be used for the points. See details.
 #'@param subset_data list if provided, only plots the subset of data (ie, the
-#'  rows) provided. Important if not providing \code{data} to subset rows
-#'  or there will be too many genes to plot.
+#'  rows) provided. Can be any valid vector for subsetting a matrix. See details.
 #'@param mfrow a vector of integers of length 2 defining the grid of plots to be
 #'  created (see \code{\link{par}}). If missing, the function will set a value.
 #'@param addToPlot A function that will be called after the plotting, allowing
 #'  the user to add more to the plot.
 #'@param ... arguments to be passed to the individual plot commands (Will be
 #'  sent to all plot commands)
+#' @details If \code{data_smooth_only=TRUE}, then the data plotted will be from
+#'   \code{assay(object)} and the matrix of \code{data} will only be used to fit
+#'   functional forms. This is useful, for example, in plotting cluster
+#'   centroids over the data in \code{object}. Note that in this case,
+#'   \code{subset_data} will be applied to \code{object} and NOT to \code{data}.
+#'   This allows you to plot the same centroids over a series of genes.
 #'@return This function creates a plot and does not return anything to the user.
 #' @examples
 #' # First, load some data and create a moanin model
@@ -46,6 +54,20 @@ setGeneric("plot_splines_data",
 #' # The splines can also be smoothed
 #' plot_splines_data(moanin, subset_data=genes,
 #'    smooth=TRUE, mfrow=c(2, 2))
+#'    
+#' # You can provide different data on same subjects,
+#' # instead of data in moanin object
+#' # (in which case moanin just provides grouping information)
+#' plot_splines_data(moanin, data=1/(assay(moanin)), subset_data=genes,
+#'    smooth=TRUE, mfrow=c(2, 2))
+#'    
+#' # You can also provide different data for fitting splines, 
+#' # but plot data in Moanin object
+#' # This is helpful for overlaying centroids or predicted data
+#' # Here we do a silly example, where we use the data from genes 1-2 to fit 
+#' # splines, but plot data from genes 3-4, just to demonstrate syntax
+#' plot_splines_data(moanin, data=assay(moanin[1:2,]), subset_data=3:4,
+#'    smooth=TRUE, mfrow=c(2, 2), data_smooth_only=TRUE)
 #' @export
 #' @name plot_splines_data
 #' @aliases plot_splines_data,Moanin,matrix-method
@@ -57,16 +79,21 @@ setMethod("plot_splines_data",c("Moanin","matrix"),
                 legend=TRUE, legendArgs=NULL, 
                 subset_conditions=NULL,
                 subset_data=NULL,
-                simpleY=TRUE,
+                simpleY=TRUE, data_smooth_only=FALSE,
                 mar=c(2.5, 2.5, 3.0, 1.0),
                 mfrow=NULL, addToPlot=NULL, ...){
     
-    if(ncol(data)!=ncol(object)) stop("matrix given in argument data must have",
-        "same number of columns as Moanin object given in argument object.")
+    check_data_meta(data=data,object=object)
     if(!is.null(subset_data) ){
-        data<-data[subset_data,]
+        if(data_smooth_only){
+            object = object[subset_data,]
+        }
+        else{
+            data = data[subset_data,]
+        }
     }
-    n_observations = dim(data)[1]
+    n_observations = if(data_smooth_only) dim(object)[1] else dim(data)[1]
+    ### Work out the mfrow/number of plots and check makes sense
     n_plots = if(legend) n_observations+1 else n_observations
     if(!is.null(mfrow)){
         if(length(mfrow) != 2){
@@ -120,11 +147,11 @@ setMethod("plot_splines_data",c("Moanin","matrix"),
             name = plot_names[i]
         }
         plot_centroid_individual(
-            as.vector(data[i, ]),
-            object, colors=colors,
+            centroid=as.vector(data[i, ]),
+            object[i,], colors=colors,
             smooth=smooth,
             subset_conditions=subset_conditions,
-            main=name,
+            main=name, data=if(data_smooth_only) NULL else as.vector(data[i, ]),
             xaxt=if(!i %in% bottomPlots) "n" else "s",
             yaxt=if(!i %in% sidePlots & simpleY) "n" else "s", ...)
         
@@ -187,14 +214,20 @@ setMethod("plot_splines_data",c("Moanin","missing"),
         function(object, data, ...){
             data<-assay(object)
             if(object@log_transform) log(data+1)
-              plot_splines_data(object,data=data,...)
+              plot_splines_data(object,data=data,data_smooth_only=FALSE,...)
         }
 )
 
-
+# centroid and data are vectors
+# moanin_model will separate them into groups...
 plot_centroid_individual = function(centroid, moanin_model,
                                     colors, smooth=FALSE, 
-                                    subset_conditions=NULL, ...){
+                                    subset_conditions=NULL,
+                                    data_smooth_only, data,...){
+    if(is.null(data)){
+        if(moanin_model@log_transform) data = as.vector(log(assay(moanin_model)+1))
+        else data = as.vector(assay(moanin_model) )
+    }
     if(!inherits(moanin_model,"Moanin")) 
         stop("Internal coding error: expecting Moanin class")
     gpVar = group_variable_name(moanin_model)
@@ -216,8 +249,9 @@ plot_centroid_individual = function(centroid, moanin_model,
     if(is.null(dim(centroid))){
         centroid = t(as.matrix(centroid))
     }
-    yrange = range(centroid[, group_variable(moanin_model) %in% groups])
-    
+    yrangeCentroid = range(centroid[, group_variable(moanin_model) %in% groups])
+    yrangeData = range(data[group_variable(moanin_model) %in% groups])
+    yrange = range(c(yrangeCentroid,yrangeData))
     graphics::plot(xrange, yrange, type="n", ...)
     if(smooth){
         # FIXME this is supposed to be on the fitted lines, but I'm not able
@@ -241,7 +275,7 @@ plot_centroid_individual = function(centroid, moanin_model,
         mask = group_variable(moanin_model) == group
         time = time_variable(moanin_model)[mask]
         indx = order(time)
-        graphics::lines(time[indx], centroid[mask][indx], type="p",
+        graphics::lines(time[indx], data[mask][indx], type="p",
                         col=color, pch=16,
                         lwd=0)
         if(smooth){
