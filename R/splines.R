@@ -170,7 +170,13 @@ setMethod("rescale_values","NULL",
         }
         return(data)
 })
-
+#' @aliases rescale_values,missing-method
+#' @export
+#' @rdname rescale_values
+setMethod("rescale_values","missing",
+          function(object, ...){
+              rescale_values(object=NULL, ... )
+          })
 
 
 # XXX It's wierd that this does not exists in R…
