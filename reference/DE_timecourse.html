@@ -6,13 +6,15 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Run spline models with contrasts. — DE_timecourse • moanin</title>
+<title>Run spline models and test for DE of contrasts. — DE_timecourse • moanin</title>
+
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
 
 <!-- bootstrap-toc -->
@@ -36,10 +38,9 @@
 
 
 
-<meta property="og:title" content="Run spline models with contrasts. — DE_timecourse" />
 
-<meta property="og:description" content="Run spline models with contrasts." />
-
+<meta property="og:title" content="Run spline models and test for DE of contrasts. — DE_timecourse" />
+<meta property="og:description" content="Run spline models and test for DE of contrasts." />
 
 
 
@@ -71,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">moanin</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0-901</span>
       </span>
     </div>
 
@@ -99,7 +100,6 @@
   </ul>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -115,33 +115,26 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Run spline models with contrasts.</h1>
+    <h1>Run spline models and test for DE of contrasts.</h1>
     
     <div class="hidden name"><code>DE_timecourse.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    
-    <p>Run spline models with contrasts.</p>
-    
+    <p>Run spline models and test for DE of contrasts.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>DE_timecourse</span>(<span class='no'>data</span>, <span class='no'>moanin_model</span>, <span class='no'>contrasts</span>, <span class='kw'>center</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>use_voom_weights</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
-    
+    <pre class="usage"><span class='co'># S4 method for Moanin</span>
+<span class='fu'>DE_timecourse</span>(<span class='no'>object</span>, <span class='no'>contrasts</span>, <span class='kw'>center</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>use_voom_weights</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>data</th>
-      <td><p>The data matrix, where genes (features) are on the rows and
-samples on the columns.</p></td>
-    </tr>
-    <tr>
-      <th>moanin_model</th>
-      <td><p>object of class <code>moanin_model</code>, an object containing
+      <th>object</th>
+      <td><p>An object of class <code>Moanin</code>, an object containing
 all related information for time course data and the splines model that
-will be used (if applicable). See <code><a href='create_moanin_model.html'>create_moanin_model</a></code> for
+will be used (if applicable). See <code>create_moanin_model</code> for
 more details.</p></td>
     </tr>
     <tr>
@@ -162,7 +155,7 @@ to be converted into such a matrix.</p></td>
 Whether to use voom weights.</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A <code>data.frame</code> with two columns for each of the contrasts given
@@ -171,18 +164,26 @@ Whether to use voom weights.</p></td>
   adjusted p-values are FDR-adjusted based on the Benjamini-Hochberg method,
   as implemented in <code><a href='https://rdrr.io/r/stats/p.adjust.html'>p.adjust</a></code>. The adjustment is done
   across all p-values for all contrasts calculated.</p>
-    
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>The implementation of the spline fit and the calculation of p-values
-  was based on code from <code><a href='https://rdrr.io/pkg/edge/man/edge.html'>edge</a></code>, and expanded to
-  enable handling of comparisons of groups via contrasts.</p>
-    
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+  was based on code from <code><a href='https://rdrr.io/pkg/edge/man/edge.html'>edge</a></code>, and expanded to enable
+  handling of comparisons of groups via contrasts.#' @seealso
+  <code><a href='https://rdrr.io/pkg/limma/man/makeContrasts.html'>makeContrasts</a></code>, <code><a href='Moanin-class.html'>create_moanin_model</a></code>,
+  <code><a href='DE_timepoints.html'>DE_timepoints</a></code>, <code><a href='https://rdrr.io/pkg/edge/man/edge.html'>edge</a></code></p>
 
-    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/limma/man/makeContrasts.html'>makeContrasts</a></code>, <code><a href='create_moanin_model.html'>create_moanin_model</a></code>, <code><a href='DE_timepoints.html'>DE_timepoints</a></code>, <code><a href='https://rdrr.io/pkg/edge/man/edge.html'>edge</a></code></p></div>
-    
-
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>exampleData</span>)
+<span class='no'>moanin</span> <span class='kw'>=</span> <span class='fu'><a href='Moanin-class.html'>create_moanin_model</a></span>(<span class='kw'>data</span><span class='kw'>=</span><span class='no'>testData</span>, <span class='kw'>meta</span><span class='kw'>=</span><span class='no'>testMeta</span>)
+<span class='no'>deTimecourse</span><span class='kw'>=</span><span class='fu'>DE_timecourse</span>(<span class='no'>moanin</span>,
+   <span class='kw'>contrasts</span><span class='kw'>=</span><span class='st'>"K-C"</span>, <span class='kw'>use_voom_weights</span><span class='kw'>=</span><span class='fl'>FALSE</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>deTimecourse</span>)</div><div class='output co'>#&gt;                        K-C_pval     K-C_qval
+#&gt; NM_009912          4.202051e-16 3.334961e-15
+#&gt; NM_008725          2.235850e-01 2.393844e-01
+#&gt; NM_007473          4.941392e-01 5.136583e-01
+#&gt; ENSMUST00000094955 1.242532e-17 1.242532e-16
+#&gt; NM_001042489       3.261235e-04 5.328816e-04
+#&gt; NM_008159          2.885140e-15 2.090681e-14</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

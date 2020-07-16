@@ -6,13 +6,15 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Creates pairwise contrasts for all timepoints — create_timepoints_contrasts • moanin</title>
+<title>Helper methods for the Moanin class — Moanin-methods • moanin</title>
+
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
 
 <!-- bootstrap-toc -->
@@ -36,10 +38,10 @@
 
 
 
-<meta property="og:title" content="Creates pairwise contrasts for all timepoints — create_timepoints_contrasts" />
 
-<meta property="og:description" content="Creates pairwise contrasts for all timepoints" />
-
+<meta property="og:title" content="Helper methods for the Moanin class — Moanin-methods" />
+<meta property="og:description" content="This is a collection of helper methods for the Moanin
+  class." />
 
 
 
@@ -71,7 +73,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">moanin</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0-901</span>
       </span>
     </div>
 
@@ -99,7 +101,6 @@
   </ul>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -115,65 +116,112 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Creates pairwise contrasts for all timepoints</h1>
+    <h1>Helper methods for the Moanin class</h1>
     
-    <div class="hidden name"><code>create_timepoints_contrasts.Rd</code></div>
+    <div class="hidden name"><code>Moanin-methods.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    
-    <p>Creates pairwise contrasts for all timepoints</p>
-    
+    <p>This is a collection of helper methods for the Moanin
+  class.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>create_timepoints_contrasts</span>(<span class='no'>group1</span>, <span class='no'>group2</span>, <span class='no'>moanin_model</span>)</pre>
-    
+    <pre class="usage"># S4 method for Moanin
+group_variable_name(object)
+
+# S4 method for Moanin
+group_variable_name(object) &lt;- value
+
+# S4 method for Moanin
+time_by_group_variable(object)
+
+# S4 method for Moanin
+group_variable(object)
+
+# S4 method for Moanin
+group_variable(object) &lt;- value
+
+# S4 method for Moanin
+time_variable_name(object)
+
+# S4 method for Moanin
+time_variable_name(object) &lt;- value
+
+# S4 method for Moanin
+time_variable(object)
+
+# S4 method for Moanin
+time_variable(object) &lt;- value
+
+# S4 method for Moanin
+degrees_of_freedom(object)
+
+# S4 method for Moanin
+basis_matrix(object)
+
+# S4 method for Moanin
+spline_formula(object)
+
+# S4 method for Moanin
+show(object)
+
+# S4 method for Moanin,ANY,character,ANY
+[(x, i, j, ..., drop = TRUE)
+
+# S4 method for Moanin,ANY,logical,ANY
+[(x, i, j, ..., drop = TRUE)
+
+# S4 method for Moanin,ANY,numeric,ANY
+[(x, i, j, ..., drop = TRUE)</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>group1</th>
-      <td><p>First group to consider, character value that must match a
-value contained in <code>moanin_model$meta</code>.</p></td>
-    </tr>
-    <tr>
-      <th>group2</th>
-      <td><p>Second group to consider, character value that must match a
-value contained in <code>moanin_model$meta</code>.</p></td>
-    </tr>
-    <tr>
-      <th>moanin_model</th>
-      <td><p>object of class <code>moanin_model</code>, an object containing
+      <th>object</th>
+      <td><p>An object of class <code>Moanin</code>, an object containing
 all related information for time course data and the splines model that
-will be used (if applicable). See <code><a href='create_moanin_model.html'>create_moanin_model</a></code> for
+will be used (if applicable). See <code>create_moanin_model</code> for
 more details.</p></td>
     </tr>
+    <tr>
+      <th>value</th>
+      <td><p>replacement value</p></td>
+    </tr>
+    <tr>
+      <th>x</th>
+      <td><p><code>Moanin</code> object</p></td>
+    </tr>
+    <tr>
+      <th>i, j</th>
+      <td><p>A vector of logical or integer subscripts, indicating the rows and
+columns to be subsetted for <code>i</code> and <code>j</code>, respectively.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>arguments passed to subsetting</p></td>
+    </tr>
+    <tr>
+      <th>drop</th>
+      <td><p>A logical scalar that is ignored.</p></td>
+    </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a character vector with each element of the vector corresponding to a
-  contrast to be compared.</p>
-    
+    <p><code>group_variable_name</code> and <code>time_variable_name</code> return the 
+name of the column containing the variable. <code>group_variable</code> and 
+<code>time_variable</code> return the  actual variable.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This function creates contrasts comparing two groups for every
-  timepoint in the format needed for <code><a href='DE_timepoints.html'>DE_timepoints</a></code> (i.e.
-  <code><a href='https://rdrr.io/pkg/limma/man/makeContrasts.html'>makeContrasts</a></code>, to which the contrasts are ultimately
-  passed). The time points are determined by the meta data in the
-  <code>moanin_object</code> provided by the user.</p>
-    
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p><code><a href='DE_timepoints.html'>DE_timepoints</a></code>,  <code><a href='https://rdrr.io/pkg/limma/man/makeContrasts.html'>makeContrasts</a></code></p></div>
-    
+    <p>Note that when subsetting the data, the dendrogram information and
+  the co-clustering matrix are lost.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>timecoursedata</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>shoemaker2015</span>)
-<span class='no'>meta</span> <span class='kw'>=</span> <span class='no'>shoemaker2015</span>$<span class='no'>meta</span>
-<span class='no'>moanin_model</span> <span class='kw'>=</span> <span class='kw pkg'>moanin</span><span class='kw ns'>::</span><span class='fu'><a href='create_moanin_model.html'>create_moanin_model</a></span>(<span class='no'>meta</span>)
-<span class='no'>contrasts</span> <span class='kw'>=</span> <span class='fu'>create_timepoints_contrasts</span>(<span class='st'>"C"</span>, <span class='st'>"M"</span>, <span class='no'>moanin_model</span>)</div></pre>
+    <pre class="examples"><div class='input'><span class='co'># Load some data</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>exampleData</span>)
+<span class='no'>moanin</span> <span class='kw'>=</span> <span class='fu'><a href='Moanin-class.html'>create_moanin_model</a></span>(<span class='kw'>data</span><span class='kw'>=</span><span class='no'>testData</span>,<span class='kw'>meta</span><span class='kw'>=</span><span class='no'>testMeta</span>)
+<span class='fu'>group_variable_name</span>(<span class='no'>moanin</span>)</div><div class='output co'>#&gt; [1] "Group"</div><div class='input'><span class='fu'>time_variable_name</span>(<span class='no'>moanin</span>)</div><div class='output co'>#&gt; [1] "Timepoint"</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

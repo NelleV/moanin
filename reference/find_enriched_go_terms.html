@@ -8,11 +8,13 @@
 
 <title>Find enriched GO terms — find_enriched_go_terms • moanin</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
 
 <!-- bootstrap-toc -->
@@ -36,10 +38,10 @@
 
 
 
+
 <meta property="og:title" content="Find enriched GO terms — find_enriched_go_terms" />
-
-<meta property="og:description" content="Find enriched GO terms" />
-
+<meta property="og:description" content="Find enriched GO terms
+Create the Gene to GO Term mapping" />
 
 
 
@@ -71,7 +73,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">moanin</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0-901</span>
       </span>
     </div>
 
@@ -99,7 +101,6 @@
   </ul>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -121,14 +122,20 @@
     </div>
 
     <div class="ref-description">
-    
     <p>Find enriched GO terms</p>
-    
+<p>Create the Gene to GO Term mapping</p>
     </div>
 
-    <pre class="usage"><span class='fu'>find_enriched_go_terms</span>(<span class='no'>assignments</span>, <span class='no'>gene_id_to_go</span>, <span class='kw'>ontology</span> <span class='kw'>=</span> <span class='st'>"BP"</span>,
-  <span class='kw'>weighted</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>node_size</span> <span class='kw'>=</span> <span class='fl'>10</span>)</pre>
-    
+    <pre class="usage"><span class='fu'>find_enriched_go_terms</span>(
+  <span class='no'>assignments</span>,
+  <span class='no'>gene_id_to_go</span>,
+  <span class='kw'>ontology</span> <span class='kw'>=</span> <span class='st'>"BP"</span>,
+  <span class='kw'>weighted</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>node_size</span> <span class='kw'>=</span> <span class='fl'>10</span>
+)
+
+<span class='fu'>create_go_term_mapping</span>(<span class='no'>genes</span>, <span class='kw'>gene_col</span> <span class='kw'>=</span> <span class='st'>"refseq_mrna"</span>)</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -141,20 +148,21 @@ gene names. Elements with TRUE will consist of the gene cluster.</p></td>
     <tr>
       <th>gene_id_to_go</th>
       <td><p>List giving the Gene ID to GO object required for topGO
-(see <code><a href='https://rdrr.io/pkg/topGO/man/topGOdata-class.html'>topGOdata-class</a></code>). See also
-<code><a href='create_go_term_mapping.html'>create_go_term_mapping</a></code> for constructing such a list from a
+(see <code><a href='https://rdrr.io/pkg/topGO/man/topGOdata-class.html'>topGOdata-class</a></code>). 
+<code>create_go_term_mapping</code> can construct such a list from a
 data-frame.</p></td>
     </tr>
     <tr>
       <th>ontology</th>
       <td><p>string, optional, default: BP. specficies which ontology to
 use (passed to <code>ontology</code> argument in creating a new <code>topGOdata</code>
-object). Can be 'BP', 'CC', or 'NF'. See <code><a href='https://rdrr.io/pkg/topGO/man/topGOdata-class.html'>topGOdata-class</a></code>.</p></td>
+object). Can be 'BP', 'CC', or 'NF'. See
+<code><a href='https://rdrr.io/pkg/topGO/man/topGOdata-class.html'>topGOdata-class</a></code>.</p></td>
     </tr>
     <tr>
-      <th>weighted, </th>
-      <td><p>boolean, optional, default: FALSE. 
-Whether to use the weighted algorithm or not in <code><a href='https://rdrr.io/pkg/topGO/man/getSigGroups.html'>runTest</a></code>.</p></td>
+      <th>weighted</th>
+      <td><p>boolean, optional, default: FALSE. Whether to use the
+weighted algorithm or not in <code><a href='https://rdrr.io/pkg/topGO/man/getSigGroups.html'>runTest</a></code>.</p></td>
     </tr>
     <tr>
       <th>node_size</th>
@@ -162,32 +170,82 @@ Whether to use the weighted algorithm or not in <code><a href='https://rdrr.io/p
 node_size number of genes, passed to <code>nodeSize</code> argument of
 <code><a href='https://rdrr.io/pkg/topGO/man/topGOdata-class.html'>topGOdata-class</a></code></p></td>
     </tr>
+    <tr>
+      <th>genes</th>
+      <td><p>dataframe, with two required columns. The first gives the gene
+names, with column name by the argument <code>gene_col</code>. The other column
+must be named "go_id" and give the genes GO id. Genes will have multiple GO
+id that they map to, and each go mapping of a gene is a separate row. Thus
+genes will be in multiple rows of the input.</p></td>
+    </tr>
+    <tr>
+      <th>gene_col</th>
+      <td><p>the name of the column of the <code>genes</code> data frame that
+contains the correct gene reference. By default, is "refseq_mrna".</p></td>
+    </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>Returns results in the format of <code><a href='https://rdrr.io/pkg/topGO/man/diagnosticMethods.html'>GenTable</a></code>.</p>
-    
+<p><code>create_go_term_mapping</code> returns a list giving the gene to GO id
+  in the format required by <code><a href='https://rdrr.io/pkg/topGO/man/topGOdata-class.html'>topGOdata-class</a></code>.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This function is a wrapper for running a GO enrichment analysis via
-  the package <code>topGO</code>. This function creates a
-  <code><a href='https://rdrr.io/pkg/topGO/man/topGOdata-class.html'>topGOdata-class</a></code> object, runs the function
-  <code><a href='https://rdrr.io/pkg/topGO/man/getSigGroups.html'>runTest</a></code> to test for enrichment using the
-  <code>statistic="fisher"</code> option, and then runs
-  <code><a href='https://rdrr.io/pkg/topGO/man/diagnosticMethods.html'>GenTable</a></code>. This function then does some post-processing
-  of the results, returning only GO terms that satisfy:</p><ol>
-<li><p>BH adjusted p-values less than 0.05 using <code><a href='https://rdrr.io/r/stats/p.adjust.html'>p.adjust</a></code></p></li>
+    <p><code>find_enriched_go_terms</code> is a wrapper for running a GO
+ enrichment analysis via the package <code>topGO</code>. This function creates a
+ <code><a href='https://rdrr.io/pkg/topGO/man/topGOdata-class.html'>topGOdata-class</a></code> object, runs the function
+ <code><a href='https://rdrr.io/pkg/topGO/man/getSigGroups.html'>runTest</a></code> to test for enrichment using the
+ <code>statistic="fisher"</code> option, and then runs
+ <code><a href='https://rdrr.io/pkg/topGO/man/diagnosticMethods.html'>GenTable</a></code>. This function then does some post-processing
+ of the results, returning only GO terms that satisfy:</p><ol>
+<li><p>BH adjusted p-values less than 0.05 using
+ <code><a href='https://rdrr.io/r/stats/p.adjust.html'>p.adjust</a></code></p></li>
 <li><p>GO terms are <em>enriched</em>, i.e. the number of genes from the GO 
  term found in the subset is greater than expected</p></li>
 </ol>
 
-    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='create_go_term_mapping.html'>create_go_term_mapping</a></code>, <code><a href='https://rdrr.io/pkg/KEGGprofile/man/find_enriched_pathway.html'>find_enriched_pathway</a></code>, <code><a href='https://rdrr.io/pkg/topGO/man/diagnosticMethods.html'>GenTable</a></code>, <code><a href='https://rdrr.io/pkg/topGO/man/getSigGroups.html'>runTest</a></code>, <code><a href='https://rdrr.io/pkg/topGO/man/topGOdata-class.html'>topGOdata-class</a></code>, <code><a href='https://rdrr.io/r/stats/p.adjust.html'>p.adjust</a></code></p></div>
-    
+    <div class='dont-index'><p><code>create_go_term_mapping</code>, <code>find_enriched_pathway</code>, <code><a href='https://rdrr.io/pkg/topGO/man/diagnosticMethods.html'>GenTable</a></code>, <code><a href='https://rdrr.io/pkg/topGO/man/getSigGroups.html'>runTest</a></code>, <code><a href='https://rdrr.io/pkg/topGO/man/topGOdata-class.html'>topGOdata-class</a></code>, <code><a href='https://rdrr.io/r/stats/p.adjust.html'>p.adjust</a></code></p></div>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>exampleData</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>testGenesGO</span>) <span class='co'>#gives the mapping of genes to GO</span></div><div class='output co'>#&gt;        go_id  refseq_mrna
+#&gt; 1 GO:0008376 NM_001001566
+#&gt; 2 GO:0032580 NM_001001566
+#&gt; 3 GO:0016020 NM_001001566
+#&gt; 4 GO:0016021 NM_001001566
+#&gt; 5 GO:0016740 NM_001001566
+#&gt; 6 GO:0005794 NM_001001566</div><div class='input'><span class='no'>geneId2Go</span> <span class='kw'>=</span> <span class='fu'>create_go_term_mapping</span>(<span class='no'>testGenesGO</span>)
+<span class='co'>#create fake assignment of genes to group based on TRUE/FALSE values</span>
+<span class='no'>inGroup</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>FALSE</span>,<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='no'>testData</span>))
+<span class='no'>inGroup</span>[<span class='fl'>1</span>:<span class='fl'>10</span>]<span class='kw'>=</span><span class='fl'>TRUE</span>
+<span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='no'>inGroup</span>)<span class='kw'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='no'>geneId2Go</span>)
+<span class='fu'>find_enriched_go_terms</span>(<span class='no'>inGroup</span>,<span class='no'>geneId2Go</span>)</div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>Building most specific GOs .....</span></div><div class='output co'>#&gt; <span class='message'>	( 2212 GO terms found. )</span></div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>Build GO DAG topology ..........</span></div><div class='output co'>#&gt; <span class='message'>	( 5277 GO terms and 12059 relations. )</span></div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>Annotating nodes ...............</span></div><div class='output co'>#&gt; <span class='message'>	( 337 genes annotated to the GO terms. )</span></div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>			 -- Weight Algorithm -- </span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'>		 The algorithm is scoring 678 nontrivial nodes</span>
+#&gt; <span class='message'>		 parameters: </span>
+#&gt; <span class='message'>			 test statistic: fisher : ratio</span></div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>	 Level 13:	4 nodes to be scored.</span></div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>	 Level 12:	9 nodes to be scored.</span></div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>	 Level 11:	14 nodes to be scored.</span></div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>	 Level 10:	21 nodes to be scored.</span></div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>	 Level 9:	38 nodes to be scored.</span></div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>	 Level 8:	60 nodes to be scored.</span></div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>	 Level 7:	98 nodes to be scored.</span></div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>	 Level 6:	140 nodes to be scored.</span></div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>	 Level 5:	140 nodes to be scored.</span></div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>	 Level 4:	89 nodes to be scored.</span></div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>	 Level 3:	47 nodes to be scored.</span></div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>	 Level 2:	17 nodes to be scored.</span></div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>	 Level 1:	1 nodes to be scored.</span></div><div class='output co'>#&gt; [1] GO.ID             Term              Annotated         Significant      
+#&gt; [5] Expected          resultFisher      resultFisher_padj
+#&gt; &lt;0 rows&gt; (or 0-length row.names)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

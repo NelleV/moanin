@@ -6,13 +6,15 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Rescales centroids and gene expresion values — rescale_values • moanin</title>
+<title>Rescales rows of data to be between 0 and 1 — rescale_values • moanin</title>
+
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
 
 <!-- bootstrap-toc -->
@@ -36,10 +38,9 @@
 
 
 
-<meta property="og:title" content="Rescales centroids and gene expresion values — rescale_values" />
 
-<meta property="og:description" content="Rescales centroids and gene expresion values" />
-
+<meta property="og:title" content="Rescales rows of data to be between 0 and 1 — rescale_values" />
+<meta property="og:description" content="Rescales rows of data to be between 0 and 1" />
 
 
 
@@ -71,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">moanin</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0-901</span>
       </span>
     </div>
 
@@ -99,7 +100,6 @@
   </ul>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -115,52 +115,58 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Rescales centroids and gene expresion values</h1>
+    <h1>Rescales rows of data to be between 0 and 1</h1>
     
     <div class="hidden name"><code>rescale_values.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    
-    <p>Rescales centroids and gene expresion values</p>
-    
+    <p>Rescales rows of data to be between 0 and 1</p>
     </div>
 
-    <pre class="usage"><span class='fu'>rescale_values</span>(<span class='no'>y</span>, <span class='kw'>meta</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>group</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
-    
+    <pre class="usage"><span class='co'># S4 method for Moanin</span>
+<span class='fu'>rescale_values</span>(<span class='no'>object</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>use_group</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+
+<span class='co'># S4 method for `NULL`</span>
+<span class='fu'>rescale_values</span>(<span class='no'>object</span>, <span class='no'>data</span>)</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>y</th>
-      <td><p>The matrix to rescale. Each row should correspond to a gene or a
-centroid and columns to samples.</p></td>
+      <th>object</th>
+      <td><p>a object of class Moanin, only needed if choose to rescale by
+grouping variable in the moanin object. If NULL, then data will be rescaled
+jointly across all observations.</p></td>
     </tr>
     <tr>
-      <th>meta, </th>
-      <td><p>optional
-Metadata data.frame.</p></td>
+      <th>data</th>
+      <td><p>The matrix to rescale by row. If NULL, and <code>object</code> is
+given, data will be taken as <code>assay(object)</code> Each row should
+correspond to a gene or a centroid, and columns to samples.</p></td>
     </tr>
     <tr>
-      <th>group, </th>
-      <td><p>optional, default: NULL
-A column name of the metadata data.frame. The corresponding column
-should be factors. If provided, the values of y will be rescaled such
-that, for each row, all values associated to group A, … of column
-"group" of the metadata is between 0 and 1. For example, if column
-"group" corresponds to a genotype, all the values of a gene for a
-specific genotype will be rescaled between 0 and 1.</p></td>
+      <th>use_group</th>
+      <td><p>If true, then the data will be rescaled such that, for each
+row, all values associated to each group (defined by grouping variable of
+<code>object</code>) is between 0 and 1. For example, if column</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>rescaled y, such that for each row, the values are comprised
-     between 0 and 1. Note that if "group" is provided, the values
-     associated to the columns of unique values of "group" will be rescaled
-     separately.</p>
-    
+    <p>rescaled y, such that for each row, the values are comprised between
+  0 and 1. Note that if <code>use_group=TRUE</code> and <code>object</code> is not NULL,
+  the values associated to the columns of unique values of the grouping
+  variable of <code>object</code> will be rescaled separately.</p>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>exampleData</span>)
+<span class='no'>moanin</span><span class='kw'>=</span><span class='fu'><a href='Moanin-class.html'>create_moanin_model</a></span>(<span class='kw'>data</span><span class='kw'>=</span><span class='no'>testData</span>, <span class='kw'>meta</span><span class='kw'>=</span><span class='no'>testMeta</span>)
+<span class='co'># Can rescale data in Moanin object</span>
+<span class='no'>allData</span><span class='kw'>&lt;-</span><span class='fu'>rescale_values</span>(<span class='no'>moanin</span>)
+<span class='co'># Or provide different data and/or rescale within grouping variable</span>
+<span class='no'>smallData</span><span class='kw'>&lt;-</span><span class='fu'>rescale_values</span>(<span class='no'>moanin</span>, <span class='kw'>data</span><span class='kw'>=</span><span class='no'>testData</span>[<span class='fl'>1</span>:<span class='fl'>10</span>,], <span class='kw'>use_group</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

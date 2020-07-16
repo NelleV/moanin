@@ -8,11 +8,13 @@
 
 <title>Fit splines to each gene of data matrix — fit_splines • moanin</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
 
 <!-- bootstrap-toc -->
@@ -36,10 +38,9 @@
 
 
 
+
 <meta property="og:title" content="Fit splines to each gene of data matrix — fit_splines" />
-
 <meta property="og:description" content="Fit splines to each gene of data matrix" />
-
 
 
 
@@ -71,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">moanin</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0-901</span>
       </span>
     </div>
 
@@ -99,7 +100,6 @@
   </ul>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -121,40 +121,34 @@
     </div>
 
     <div class="ref-description">
-    
     <p>Fit splines to each gene of data matrix</p>
-    
     </div>
 
-    <pre class="usage"><span class='fu'>fit_splines</span>(<span class='no'>data</span>, <span class='no'>moanin_model</span>, <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
-    
+    <pre class="usage"><span class='fu'>fit_splines</span>(<span class='no'>moanin_model</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>data</th>
-      <td><p>The data matrix, where genes (features) are on the rows and
-samples on the columns.</p></td>
+      <th>moanin_model</th>
+      <td><p>object of class Moanin</p></td>
     </tr>
     <tr>
-      <th>moanin_model</th>
-      <td><p>object of class <code>moanin_model</code>, an object containing
-all related information for time course data and the splines model that
-will be used (if applicable). See <code><a href='create_moanin_model.html'>create_moanin_model</a></code> for
-more details.</p></td>
+      <th>data</th>
+      <td><p>a matrix of data to fix splines to. If NULL, uses
+<code>assay(moanin_model)</code></p></td>
     </tr>
     <tr>
       <th>weights</th>
       <td><p>A matrix of weights, of the same dimension as <code>data</code>.</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>matrix of the coefficients for each basis function, each row of the
   matrix containing the coefficients for the corresponding gene in
   <code>data</code>.</p>
-    
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

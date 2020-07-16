@@ -8,11 +8,13 @@
 
 <title>Fit weekly differential expression analysis — DE_timepoints • moanin</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
 
 <!-- bootstrap-toc -->
@@ -36,10 +38,10 @@
 
 
 
+
 <meta property="og:title" content="Fit weekly differential expression analysis — DE_timepoints" />
-
-<meta property="og:description" content="Fit weekly differential expression analysis" />
-
+<meta property="og:description" content="Fit weekly differential expression analysis
+Creates pairwise contrasts for all timepoints" />
 
 
 
@@ -71,7 +73,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">moanin</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0-901</span>
       </span>
     </div>
 
@@ -99,7 +101,6 @@
   </ul>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -121,26 +122,24 @@
     </div>
 
     <div class="ref-description">
-    
     <p>Fit weekly differential expression analysis</p>
-    
+<p>Creates pairwise contrasts for all timepoints</p>
     </div>
 
-    <pre class="usage"><span class='fu'>DE_timepoints</span>(<span class='no'>data</span>, <span class='no'>moanin_model</span>, <span class='no'>contrasts</span>, <span class='kw'>use_voom_weights</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
-    
+    <pre class="usage"><span class='co'># S4 method for Moanin</span>
+<span class='fu'>DE_timepoints</span>(<span class='no'>object</span>, <span class='no'>contrasts</span>, <span class='kw'>use_voom_weights</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+
+<span class='co'># S4 method for Moanin</span>
+<span class='fu'>create_timepoints_contrasts</span>(<span class='no'>object</span>, <span class='no'>group1</span>, <span class='no'>group2</span>)</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>data</th>
-      <td><p>The data matrix, where genes (features) are on the rows and
-samples on the columns.</p></td>
-    </tr>
-    <tr>
-      <th>moanin_model</th>
-      <td><p>object of class <code>moanin_model</code>, an object containing
+      <th>object</th>
+      <td><p>An object of class <code>Moanin</code>, an object containing
 all related information for time course data and the splines model that
-will be used (if applicable). See <code><a href='create_moanin_model.html'>create_moanin_model</a></code> for
+will be used (if applicable). See <code>create_moanin_model</code> for
 more details.</p></td>
     </tr>
     <tr>
@@ -156,8 +155,18 @@ to be converted into such a matrix.</p></td>
       <td><p>boolean, optional, default: TRUE. 
 Whether to use voom weights.</p></td>
     </tr>
+    <tr>
+      <th>group1</th>
+      <td><p>First group to consider in making contrasts, character value
+that must match a value contained in <code>moanin_model$meta</code>.</p></td>
+    </tr>
+    <tr>
+      <th>group2</th>
+      <td><p>Second group to consider in making contrasts, character value
+that must match a value contained in <code>moanin_model$meta</code>.</p></td>
+    </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A <code>data.frame</code> with three columns for each of the contrasts
@@ -167,8 +176,102 @@ Whether to use voom weights.</p></td>
   FDR-adjusted based on the Benjamini-Hochberg method, as implemented in
   <code><a href='https://rdrr.io/r/stats/p.adjust.html'>p.adjust</a></code>. The adjustment is done across all p-values
   for all contrasts calculated.</p>
-    
+<p><code>create_timepoints_contrasts</code>: a character vector with each
+  element of the vector corresponding to a contrast to be compared.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
+    <p><code>create_timepoints_contrasts</code> creates the needed contrasts for
+  comparing two groups for every timepoint in the format needed for
+  <code>DE_timepoints</code> (i.e. <code><a href='https://rdrr.io/pkg/limma/man/makeContrasts.html'>makeContrasts</a></code>, to which the
+  contrasts are ultimately passed). The time points are determined by the
+  meta data in the <code>moanin_object</code> provided by the user.</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/limma/man/makeContrasts.html'>makeContrasts</a></code></p></div>
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>exampleData</span>)
+<span class='no'>moanin</span> <span class='kw'>=</span> <span class='fu'><a href='Moanin-class.html'>create_moanin_model</a></span>(<span class='kw'>data</span><span class='kw'>=</span><span class='no'>testData</span>, <span class='kw'>meta</span><span class='kw'>=</span><span class='no'>testMeta</span>)
+<span class='no'>contrasts</span> <span class='kw'>=</span> <span class='fu'>create_timepoints_contrasts</span>(<span class='no'>moanin</span>,<span class='st'>"C"</span>, <span class='st'>"K"</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>contrasts</span>)</div><div class='output co'>#&gt; [1] "C.0-K.0"   "C.3-K.3"   "C.6-K.6"   "C.9-K.9"   "C.12-K.12" "C.18-K.18"</div><div class='input'><span class='no'>deTimepoints</span><span class='kw'>=</span><span class='fu'>DE_timepoints</span>(<span class='no'>moanin</span>,
+    <span class='kw'>contrasts</span><span class='kw'>=</span><span class='no'>contrasts</span>, <span class='kw'>use_voom_weights</span><span class='kw'>=</span><span class='fl'>FALSE</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>deTimepoints</span>)</div><div class='output co'>#&gt;                    C.0-K.0_pval C.0-K.0_qval C.0-K.0_lfc C.3-K.3_pval
+#&gt; NM_009912            0.97982421    0.9903882   1.4723112 0.9262110656
+#&gt; NM_008725            0.03588304    0.1269233  -0.5963006 0.8268027883
+#&gt; NM_007473            0.68739254    0.8298979   0.7217701 0.7983914753
+#&gt; ENSMUST00000094955   0.03102566    0.1138258  -0.9411395 0.0001132542
+#&gt; NM_001042489         0.66703738    0.8165900   0.9231153 0.2631128563
+#&gt; NM_008159            0.02814324    0.1066609   1.2522998 0.8635470094
+#&gt;                    C.3-K.3_qval C.3-K.3_lfc C.6-K.6_pval C.6-K.6_qval
+#&gt; NM_009912           0.966385074   0.5845097    0.8317967    0.9136774
+#&gt; NM_008725           0.910862373   1.4724864    0.5820653    0.7590271
+#&gt; NM_007473           0.897186295  -1.0921945    0.2043003    0.4096540
+#&gt; ENSMUST00000094955  0.001679617   0.7765046    0.1124245    0.2761303
+#&gt; NM_001042489        0.478760071   0.5031046    0.3612874    0.5781898
+#&gt; NM_008159           0.930403119  -1.5421493    0.6194717    0.7827260
+#&gt;                    C.6-K.6_lfc C.9-K.9_pval C.9-K.9_qval C.9-K.9_lfc
+#&gt; NM_009912           -1.2918000   0.63785487    0.7974610   -1.323696
+#&gt; NM_008725            1.6363998   0.70580577    0.8406739   -1.371349
+#&gt; NM_007473           -0.9523190   0.88111492    0.9394980    1.556452
+#&gt; ENSMUST00000094955   1.3604833   0.02693018    0.1031365   -1.287169
+#&gt; NM_001042489         0.7357659   0.38853903    0.6012429   -1.744406
+#&gt; NM_008159            0.5717245   0.06246384    0.1867778   -1.159570
+#&gt;                    C.12-K.12_pval C.12-K.12_qval C.12-K.12_lfc C.18-K.18_pval
+#&gt; NM_009912              0.80026502     0.89773319     1.9155277    0.931977198
+#&gt; NM_008725              0.16453830     0.35925393    -1.2862970    0.943270940
+#&gt; NM_007473              0.28752114     0.50339082    -0.7946372    0.343379733
+#&gt; ENSMUST00000094955     0.01059202     0.05214075     1.3518499    0.008312487
+#&gt; NM_001042489           0.11072921     0.27340547    -1.6649354    0.743506121
+#&gt; NM_008159              0.27714147     0.49390816    -1.1321695    0.086408488
+#&gt;                    C.18-K.18_qval C.18-K.18_lfc C.24-K.24_pval C.24-K.24_qval
+#&gt; NM_009912              0.96881202     1.4889108    0.708511770    0.841164785
+#&gt; NM_008725              0.97373493    -1.1952419    0.104607788    0.263780445
+#&gt; NM_007473              0.55990173     1.2431380    0.793073251    0.894760899
+#&gt; ENSMUST00000094955     0.04361875    -0.9570470    0.000677458    0.006673769
+#&gt; NM_001042489           0.86296515     0.4673417    0.613652385    0.779537706
+#&gt; NM_008159              0.23051045    -0.6784866    0.379655278    0.593381025
+#&gt;                    C.24-K.24_lfc C.30-K.30_pval C.30-K.30_qval C.30-K.30_lfc
+#&gt; NM_009912             -1.1809659    0.147186413     0.33235642     -1.986354
+#&gt; NM_008725              1.4947617    0.631982987     0.79295231     -1.019314
+#&gt; NM_007473             -1.6558086    0.288135183     0.50398458      1.586516
+#&gt; ENSMUST00000094955    -1.1660751    0.011600519     0.05584844      0.678670
+#&gt; NM_001042489          -1.1076813    0.034370762     0.12281538      1.222367
+#&gt; NM_008159             -0.6952732    0.004594208     0.02786781     -1.659285
+#&gt;                    C.36-K.36_pval C.36-K.36_qval C.36-K.36_lfc C.48-K.48_pval
+#&gt; NM_009912            3.025775e-02   0.1123262469    -0.9344829   9.293097e-07
+#&gt; NM_008725            4.696613e-01   0.6721792603    -1.6005233   1.146810e-01
+#&gt; NM_007473            1.039113e-02   0.0514776635    -1.4708925   5.968840e-01
+#&gt; ENSMUST00000094955   8.292780e-02   0.2249568358    -1.5174660   9.713557e-01
+#&gt; NM_001042489         7.117086e-01   0.8429712419    -1.2774313   1.318379e-03
+#&gt; NM_008159            9.815789e-06   0.0002419385    -1.1642222   5.234054e-08
+#&gt;                    C.48-K.48_qval C.48-K.48_lfc C.60-K.60_pval C.60-K.60_qval
+#&gt; NM_009912            3.535417e-05     2.6322057   1.702467e-04   2.284884e-03
+#&gt; NM_008725            2.800024e-01     1.1956587   5.675888e-02   1.749157e-01
+#&gt; NM_007473            7.677670e-01     0.9019558   1.911065e-02   8.051181e-02
+#&gt; ENSMUST00000094955   9.862909e-01    -1.4867673   4.512280e-01   6.581780e-01
+#&gt; NM_001042489         1.123575e-02    -1.1039644   5.274032e-03   3.110213e-02
+#&gt; NM_008159            3.361319e-06    -1.4330146   6.870139e-09   6.587804e-07
+#&gt;                    C.60-K.60_lfc C.72-K.72_pval C.72-K.72_qval C.72-K.72_lfc
+#&gt; NM_009912             -2.2736182   1.133064e-07   6.721567e-06     -1.989004
+#&gt; NM_008725              2.6490453   8.240388e-01   9.092771e-01      3.823575
+#&gt; NM_007473              1.4168729   3.959116e-01   6.078991e-01      2.550483
+#&gt; ENSMUST00000094955    -1.8475804   2.076119e-02   8.508683e-02     -1.531449
+#&gt; NM_001042489           0.7127491   6.704460e-02   1.954653e-01     -1.405711
+#&gt; NM_008159             -1.0915509   4.619503e-01   6.665950e-01      3.327829
+#&gt;                    C.120-K.120_pval C.120-K.120_qval C.120-K.120_lfc
+#&gt; NM_009912                0.22983567        0.4418703       -2.989103
+#&gt; NM_008725                0.03070290        0.1130371       -1.818405
+#&gt; NM_007473                0.21434196        0.4233617       -1.268488
+#&gt; ENSMUST00000094955       0.12476923        0.2969595        1.123775
+#&gt; NM_001042489             0.11426630        0.2790873        0.889906
+#&gt; NM_008159                0.08399066        0.2267770        1.916022
+#&gt;                    C.168-K.168_pval C.168-K.168_qval C.168-K.168_lfc
+#&gt; NM_009912              5.553002e-04      0.005784377        1.933203
+#&gt; NM_008725              5.660195e-01      0.750105081       -1.140409
+#&gt; NM_007473              6.204548e-01      0.783543817        1.161977
+#&gt; ENSMUST00000094955     2.142585e-03      0.016110761       -1.673580
+#&gt; NM_001042489           8.909952e-01      0.945998265       -1.152500
+#&gt; NM_008159              6.051562e-05      0.001030680        1.744230</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

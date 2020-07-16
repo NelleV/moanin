@@ -8,11 +8,13 @@
 
 <title>Function reference • moanin</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
 
 <!-- bootstrap-toc -->
@@ -36,7 +38,9 @@
 
 
 
+
 <meta property="og:title" content="Function reference" />
+
 
 
 
@@ -67,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">moanin</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0-901</span>
       </span>
     </div>
 
@@ -95,7 +99,6 @@
   </ul>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -150,9 +153,9 @@
       <tr>
         
         <td>
-          <p><code><a href="create_moanin_model.html">create_moanin_model()</a></code> </p>
+          <p><code><a href="Moanin-class.html">create_moanin_model(<i>&lt;matrix&gt;</i>)</a></code> <code><a href="Moanin-class.html">create_moanin_model(<i>&lt;data.frame&gt;</i>)</a></code> <code><a href="Moanin-class.html">create_moanin_model(<i>&lt;SummarizedExperiment&gt;</i>)</a></code> </p>
         </td>
-        <td><p>Create a moanin model</p></td>
+        <td><p>Class Moanin</p></td>
       </tr><tr>
         
         <td>
@@ -164,11 +167,11 @@
         <td>
           <p><code><a href="fit_predict_splines.html">fit_predict_splines()</a></code> </p>
         </td>
-        <td><p>Get fitted values for splines</p></td>
+        <td><p>Get fitted values for splines for each gene</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="plot_splines_data.html">plot_splines_data()</a></code> </p>
+          <p><code><a href="plot_splines_data.html">plot_splines_data(<i>&lt;Moanin&gt;</i>,<i>&lt;matrix&gt;</i>)</a></code> <code><a href="plot_splines_data.html">plot_splines_data(<i>&lt;Moanin&gt;</i>,<i>&lt;numeric&gt;</i>)</a></code> <code><a href="plot_splines_data.html">plot_splines_data(<i>&lt;Moanin&gt;</i>,<i>&lt;data.frame&gt;</i>)</a></code> <code><a href="plot_splines_data.html">plot_splines_data(<i>&lt;Moanin&gt;</i>,<i>&lt;missing&gt;</i>)</a></code> </p>
         </td>
         <td><p>Plotting splines</p></td>
       </tr>
@@ -187,25 +190,19 @@
       <tr>
         
         <td>
-          <p><code><a href="DE_timecourse.html">DE_timecourse()</a></code> </p>
+          <p><code><a href="DE_timecourse.html">DE_timecourse(<i>&lt;Moanin&gt;</i>)</a></code> </p>
         </td>
-        <td><p>Run spline models with contrasts.</p></td>
+        <td><p>Run spline models and test for DE of contrasts.</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="DE_timepoints.html">DE_timepoints()</a></code> </p>
+          <p><code><a href="DE_timepoints.html">DE_timepoints(<i>&lt;Moanin&gt;</i>)</a></code> <code><a href="DE_timepoints.html">create_timepoints_contrasts(<i>&lt;Moanin&gt;</i>)</a></code> </p>
         </td>
         <td><p>Fit weekly differential expression analysis</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="create_timepoints_contrasts.html">create_timepoints_contrasts()</a></code> </p>
-        </td>
-        <td><p>Creates pairwise contrasts for all timepoints</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="estimate_log_fold_change.html">estimate_log_fold_change()</a></code> </p>
+          <p><code><a href="estimate_log_fold_change.html">estimate_log_fold_change(<i>&lt;Moanin&gt;</i>)</a></code> </p>
         </td>
         <td><p>Estimates log fold change</p></td>
       </tr>
@@ -224,39 +221,27 @@
       <tr>
         
         <td>
-          <p><code><a href="splines_kmeans.html">splines_kmeans()</a></code> </p>
+          <p><code><a href="splines_kmeans.html">splines_kmeans(<i>&lt;Moanin&gt;</i>)</a></code> </p>
         </td>
         <td><p>Performs splines clustering using K-means</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="splines_kmeans_score_and_label.html">splines_kmeans_score_and_label()</a></code> </p>
+          <p><code><a href="splines_kmeans_score_and_label.html">splines_kmeans_predict(<i>&lt;Moanin&gt;</i>)</a></code> <code><a href="splines_kmeans_score_and_label.html">splines_kmeans_score_and_label(<i>&lt;Moanin&gt;</i>)</a></code> </p>
         </td>
         <td><p>Assign score and labels from raw data</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="plot_model_explorer.html">plot_model_explorer()</a></code> </p>
+          <p><code><a href="get_auc_similarity_scores.html">plot_cdf_consensus()</a></code> <code><a href="get_auc_similarity_scores.html">get_auc_similarity_scores()</a></code> <code><a href="get_auc_similarity_scores.html">plot_model_explorer()</a></code> </p>
         </td>
-        <td><p>Plot model explorer</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="get_auc_similarity_scores.html">get_auc_similarity_scores()</a></code> </p>
-        </td>
-        <td><p>Plot AUC consensus matrix</p></td>
+        <td><p>Evaluate the consensus between sets of clusterings</p></td>
       </tr><tr>
         
         <td>
           <p><code><a href="consensus_matrix.html">consensus_matrix()</a></code> </p>
         </td>
         <td><p>Compute consensus matrix from labels</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="plot_cdf_consensus.html">plot_cdf_consensus()</a></code> </p>
-        </td>
-        <td><p>Plot CDF consensus matrix</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -273,15 +258,9 @@
       <tr>
         
         <td>
-          <p><code><a href="find_enriched_go_terms.html">find_enriched_go_terms()</a></code> </p>
+          <p><code><a href="find_enriched_go_terms.html">find_enriched_go_terms()</a></code> <code><a href="find_enriched_go_terms.html">create_go_term_mapping()</a></code> </p>
         </td>
         <td><p>Find enriched GO terms</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="create_go_term_mapping.html">create_go_term_mapping()</a></code> </p>
-        </td>
-        <td><p>Create the Gene to GO Term mapping</p></td>
       </tr>
     </tbody><tbody>
       <tr>

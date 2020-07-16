@@ -6,13 +6,15 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Assign score and labels from raw data — splines_kmeans_score_and_label • moanin</title>
+<title>Assign score and labels from raw data — splines_kmeans_predict,Moanin-method • moanin</title>
+
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
 
 <!-- bootstrap-toc -->
@@ -36,10 +38,9 @@
 
 
 
-<meta property="og:title" content="Assign score and labels from raw data — splines_kmeans_score_and_label" />
 
+<meta property="og:title" content="Assign score and labels from raw data — splines_kmeans_predict,Moanin-method" />
 <meta property="og:description" content="Assign score and labels from raw data" />
-
 
 
 
@@ -71,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">moanin</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0-901</span>
       </span>
     </div>
 
@@ -99,7 +100,6 @@
   </ul>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -121,27 +121,57 @@
     </div>
 
     <div class="ref-description">
-    
     <p>Assign score and labels from raw data</p>
-    
     </div>
 
-    <pre class="usage"><span class='fu'>splines_kmeans_score_and_label</span>(<span class='no'>data</span>, <span class='no'>kmeans_clusters</span>,
-  <span class='kw'>percentage_genes_to_label</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>max_score</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>rescale_separately_on</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
-    
+    <pre class="usage"><span class='co'># S4 method for Moanin</span>
+<span class='fu'>splines_kmeans_predict</span>(
+  <span class='no'>object</span>,
+  <span class='no'>kmeans_clusters</span>,
+  <span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>method</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"distance"</span>, <span class='st'>"goodnessOfFit"</span>),
+  <span class='no'>...</span>
+)
+
+<span class='co'># S4 method for Moanin</span>
+<span class='fu'>splines_kmeans_score_and_label</span>(
+  <span class='no'>object</span>,
+  <span class='no'>kmeans_clusters</span>,
+  <span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>percentage_genes_to_label</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
+  <span class='kw'>max_score</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>previous_scores</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>rescale_separately</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+)</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>data</th>
-      <td><p>The data matrix, where genes (features) are on the rows and
-samples on the columns.</p></td>
+      <th>object</th>
+      <td><p>the Moanin object that contains the basis functions used in
+creating the clusters</p></td>
     </tr>
     <tr>
       <th>kmeans_clusters</th>
-      <td><p>list of list
-List returned by moanin::splines_kmeans</p></td>
+      <td><p>List returned by <code><a href='splines_kmeans.html'>splines_kmeans</a></code></p></td>
+    </tr>
+    <tr>
+      <th>data</th>
+      <td><p>the data to predict. If not given, will use <code>assay(object)</code>.
+If given, the number of columns of <code>data</code> must match that of
+<code>object</code></p></td>
+    </tr>
+    <tr>
+      <th>method</th>
+      <td><p>If "distance", predicts based on distance of data to kmeans
+centroids. If "goodnessOfFit", is a wrapper to
+<code>splines_kmeans_score_and_label</code>, assigning labels based on goodness
+of fit, including any filtering.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>arguments passed to <code>splines_kmeans_score_and_label</code></p></td>
     </tr>
     <tr>
       <th>percentage_genes_to_label</th>
@@ -157,15 +187,24 @@ When provided, will only label genes below that score. If NULL, ignore
 this option.</p></td>
     </tr>
     <tr>
-      <th>rescale_separately_on, </th>
-      <td><p>string, optional, default: NULL
-When provided, will rescale separately different groups of data.</p></td>
+      <th>previous_scores</th>
+      <td><p>an option to give the scores results from a previous
+run of <code>splines_kmeans_score_and_label</code>, and only redo the filtering
+(i.e. if want to change <code>percentage_genes_to_label</code> without rerunning
+the calculation of scores)</p></td>
+    </tr>
+    <tr>
+      <th>rescale_separately</th>
+      <td><p>logical, whether to score separately within
+grouping variable</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A list consisting of</p><ul>
+    <p><code>splines_kmeans_predict</code> returns a vector giving the labels for
+  the given data.</p>
+<p>A list consisting of</p><ul>
 <li><p><code>labels</code>the label or cluster assigned to each gene based on the
 cluster with the best (i.e. lowest) score, with no label given to genes that
 do not have a score lower than a specified quantity</p></li>
@@ -175,8 +214,29 @@ each gene and each cluster, the goodness of fit score</p></li>
 assignment</p></li>
 </ul>
 
-    
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>exampleData</span>)
+<span class='no'>moanin</span> <span class='kw'>=</span> <span class='fu'><a href='Moanin-class.html'>create_moanin_model</a></span>(<span class='kw'>data</span><span class='kw'>=</span><span class='no'>testData</span>, <span class='kw'>meta</span><span class='kw'>=</span><span class='no'>testMeta</span>)
+<span class='co'># Cluster on a subset of genes</span>
+<span class='no'>kmClusters</span><span class='kw'>=</span><span class='fu'><a href='splines_kmeans.html'>splines_kmeans</a></span>(<span class='no'>moanin</span>[<span class='fl'>1</span>:<span class='fl'>50</span>,],<span class='kw'>n_clusters</span><span class='kw'>=</span><span class='fl'>3</span>)
+<span class='co'># get scores on all genes</span>
+<span class='no'>scores_and_labels</span> <span class='kw'>=</span> <span class='fu'>splines_kmeans_score_and_label</span>(<span class='kw'>object</span><span class='kw'>=</span><span class='no'>moanin</span>, <span class='no'>kmClusters</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>scores_and_labels</span>$<span class='no'>scores</span>)</div><div class='output co'>#&gt;                         [,1]      [,2]      [,3]
+#&gt; NM_009912          1.0000000 0.4310798 1.0000000
+#&gt; NM_008725          0.9005695 1.0000000 0.9954105
+#&gt; NM_007473          1.0000000 0.9951235 0.9660120
+#&gt; ENSMUST00000094955 0.9792864 1.0000000 0.6498697
+#&gt; NM_001042489       0.9260287 1.0000000 0.9287973
+#&gt; NM_008159          1.0000000 0.6188498 0.9630068</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>scores_and_labels</span>$<span class='no'>labels</span>)</div><div class='output co'>#&gt;          NM_009912          NM_008725          NM_007473 ENSMUST00000094955 
+#&gt;                  2                 NA                 NA                  3 
+#&gt;       NM_001042489          NM_008159 
+#&gt;                 NA                  2 </div><div class='input'><span class='co'># should be same as above, only just the assignments</span>
+<span class='no'>predictLabels1</span> <span class='kw'>=</span> <span class='fu'>splines_kmeans_predict</span>(<span class='kw'>object</span><span class='kw'>=</span><span class='no'>moanin</span>, <span class='no'>kmClusters</span>,
+     <span class='kw'>method</span><span class='kw'>=</span><span class='st'>"goodnessOfFit"</span>)
+<span class='co'># Instead use distance to centroid:</span>
+<span class='no'>predictLabels2</span> <span class='kw'>=</span> <span class='fu'>splines_kmeans_predict</span>(<span class='kw'>object</span><span class='kw'>=</span><span class='no'>moanin</span>, <span class='no'>kmClusters</span>,
+     <span class='kw'>method</span><span class='kw'>=</span><span class='st'>"distance"</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

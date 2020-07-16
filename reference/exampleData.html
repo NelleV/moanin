@@ -8,11 +8,13 @@
 
 <title>Small data set for running examples — exampleData • moanin</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
 
 <!-- bootstrap-toc -->
@@ -36,10 +38,9 @@
 
 
 
+
 <meta property="og:title" content="Small data set for running examples — exampleData" />
-
 <meta property="og:description" content="Small data set for running examples" />
-
 
 
 
@@ -71,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">moanin</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0-901</span>
       </span>
     </div>
 
@@ -99,7 +100,6 @@
   </ul>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -121,25 +121,24 @@
     </div>
 
     <div class="ref-description">
-    
     <p>Small data set for running examples</p>
-    
     </div>
 
-        
+
+
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>Two objects are loaded, a data frame of expression of 500 genes by 84
-  samples (<code>testData</code>), and a data frame with meta information on those
-  84 samples (<code>testMeta</code>).</p>
-    
+    <p>Three objects are loaded, a data frame of expression of 500 genes by
+  84 samples (<code>testData</code>), a data frame with meta information on those
+  84 samples (<code>testMeta</code>), and a data frame giving the GOID of the genes
+  in <code>testData</code>.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>This data is a subset of the full time course data available as
   <code><a href='https://rdrr.io/pkg/timecoursedata/man/shoemaker2015.html'>shoemaker2015</a></code> and is only provided for the
   purpose of running examples, and not for biological meaning. Users should
   refer to the full data set.</p>
-    
+<p>The rownames of <code>testData</code> are RefSeq.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'>#code used to create data:</span>
@@ -147,10 +146,18 @@
 <span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>timecoursedata</span>)
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>shoemaker2015</span>)
 <span class='no'>testData</span><span class='kw'>&lt;-</span><span class='no'>shoemaker2015</span>$<span class='no'>data</span>[<span class='fl'>1</span>:<span class='fl'>500</span>,]
-<span class='no'>whSamples</span><span class='kw'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/which.html'>which</a></span>(<span class='no'>shoemaker2015</span>$<span class='no'>meta</span>$<span class='no'>Group</span> <span class='kw'>%in%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"C"</span>,<span class='st'>"K"</span>))
+<span class='no'>whSamples</span><span class='kw'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/which.html'>which</a></span>(<span class='no'>shoemaker2015</span>$<span class='no'>meta</span>$<span class='no'>Group</span> <span class='kw'>%in%</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"C"</span>,<span class='st'>"K"</span>,<span class='st'>"M"</span>))
 <span class='no'>testData</span><span class='kw'>&lt;-</span><span class='no'>testData</span>[,<span class='no'>whSamples</span>]
-<span class='no'>testMeta</span><span class='kw'>&lt;-</span><span class='no'>shoemaker2015</span>$<span class='no'>meta</span>[<span class='no'>whSamples</span>,]
-<span class='fu'><a href='https://rdrr.io/r/base/save.html'>save</a></span>(<span class='kw'>list</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"testData"</span>,<span class='st'>"testMeta"</span>),<span class='kw'>file</span><span class='kw'>=</span><span class='st'>"data/exampleData.rda"</span>)
+<span class='no'>testMeta</span><span class='kw'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/droplevels.html'>droplevels</a></span>(<span class='no'>shoemaker2015</span>$<span class='no'>meta</span>[<span class='no'>whSamples</span>,])
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>biomaRt</span>)
+<span class='no'>ensembl</span> <span class='kw'>=</span> <span class='fu'>useMart</span>(<span class='st'>"ensembl"</span>)
+<span class='no'>ensembl</span> <span class='kw'>=</span> <span class='fu'>useMart</span>(<span class='st'>"ensembl"</span>)
+<span class='no'>ensembl</span> <span class='kw'>=</span> <span class='fu'>useDataset</span>(<span class='st'>"mmusculus_gene_ensembl"</span>, <span class='kw'>mart</span><span class='kw'>=</span><span class='no'>ensembl</span>)
+<span class='no'>testGenesGO</span> <span class='kw'>=</span> <span class='fu'>getBM</span>(<span class='kw'>attributes</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"go_id"</span>, <span class='st'>"refseq_mrna"</span>),
+              <span class='kw'>values</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span>(<span class='no'>testData</span>),
+              <span class='kw'>filters</span><span class='kw'>=</span><span class='st'>"refseq_mrna"</span>,
+              <span class='kw'>mart</span><span class='kw'>=</span><span class='no'>ensembl</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/save.html'>save</a></span>(<span class='kw'>list</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"testData"</span>,<span class='st'>"testMeta"</span>,<span class='st'>"testGenesGO"</span>),<span class='kw'>file</span><span class='kw'>=</span><span class='st'>"data/exampleData.rda"</span>)
 }</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

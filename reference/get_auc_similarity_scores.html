@@ -6,13 +6,15 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Plot AUC consensus matrix — get_auc_similarity_scores • moanin</title>
+<title>Evaluate the consensus between sets of clusterings — plot_cdf_consensus • moanin</title>
+
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
 
 <!-- bootstrap-toc -->
@@ -36,10 +38,11 @@
 
 
 
-<meta property="og:title" content="Plot AUC consensus matrix — get_auc_similarity_scores" />
 
-<meta property="og:description" content="Plot AUC consensus matrix" />
-
+<meta property="og:title" content="Evaluate the consensus between sets of clusterings — plot_cdf_consensus" />
+<meta property="og:description" content="Methods for evaluating the consensus between sets of
+  clusterings, usually in the context of subsetting of the data or different
+  numbers of clusters." />
 
 
 
@@ -71,7 +74,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">moanin</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0-901</span>
       </span>
     </div>
 
@@ -99,7 +102,6 @@
   </ul>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -115,19 +117,23 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Plot AUC consensus matrix</h1>
+    <h1>Evaluate the consensus between sets of clusterings</h1>
     
     <div class="hidden name"><code>get_auc_similarity_scores.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    
-    <p>Plot AUC consensus matrix</p>
-    
+    <p>Methods for evaluating the consensus between sets of
+  clusterings, usually in the context of subsetting of the data or different
+  numbers of clusters.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>get_auc_similarity_scores</span>(<span class='no'>labels</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"consensus"</span>, <span class='st'>"nmi"</span>))</pre>
-    
+    <pre class="usage"><span class='fu'>plot_cdf_consensus</span>(<span class='no'>labels</span>)
+
+<span class='fu'>get_auc_similarity_scores</span>(<span class='no'>labels</span>, <span class='kw'>method</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"consensus"</span>, <span class='st'>"nmi"</span>))
+
+<span class='fu'>plot_model_explorer</span>(<span class='no'>labels</span>, <span class='kw'>colors</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/grDevices/palettes.html'>rainbow</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>labels</span>)))</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -141,11 +147,65 @@ of the data.</p></td>
     </tr>
     <tr>
       <th>method</th>
-      <td><p>method for calculation of similarity, one of "consensus" or "nmi". See details.</p></td>
+      <td><p>method for calculation of similarity for the AUC measure, one
+of "consensus" or "nmi". See details.</p></td>
+    </tr>
+    <tr>
+      <th>colors</th>
+      <td><p>a vector of colors, of length equal to the length of
+<code>labels</code></p></td>
     </tr>
     </table>
-    
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p><code>plot_cdf_consensus</code> invisibily returns list of the upper
+  triangle values, with the list of same length as that of <code>labels</code>.</p>
+<p><code>get_auc_similarity_scores</code> returns a vector, equal to length
+  of the list <code>labels</code>, giving the AUC value for each element of
+  <code>labels</code>.</p>
+<p>This function is a plotting function does not return anything</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>For each element of the list <code>labels</code>,
+  <code>plot_cdf_consensus</code> calculates the consensus between the clusterings
+  in the matrix, i.e. the number of times that pairs of rows are in the same
+  cluster for different clusterings (columns) of the matrix using the
+  <code><a href='consensus_matrix.html'>consensus_matrix</a></code> function. Then the set of values (the N(N-1)
+  values in the upper triangle of the matrix), are converted into a cdf
+  function and plotted.</p>
+<p>For each set of clusterings given by <code>labels</code> (i.e. for each
+  matrix <code>M</code> which is an element of the list <code>labels</code>)
+  <code>get_auc_similarity_scores</code> calculates a pairwise measure of
+  similarity between the columns of <code>M</code>. These pairwise scores are
+  plotted against their rank, and the final AUC measure is the area under
+  this curve.</p>
+<p>For method "consensus", the pairwise measure is given by calculating
+  the consensus matrix using <code><a href='consensus_matrix.html'>consensus_matrix</a></code> with
+  <code>scale=FALSE</code>. The consensus matrix is divided by the max of <code>M</code>.</p>
+<p>For method "nmi", the pairwise value is the NMI value between each
+  pair of columns of the matrix of clusterings using the
+  <code><a href='https://rdrr.io/pkg/NMI/man/NMI.html'>NMI</a></code> function.</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='consensus_matrix.html'>consensus_matrix</a></code>, <code><a href='https://rdrr.io/pkg/NMI/man/NMI.html'>NMI</a></code>,
+  <code>plot_cdf_consensus</code></p></div>
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>exampleData</span>)
+<span class='no'>moanin</span> <span class='kw'>=</span> <span class='fu'><a href='Moanin-class.html'>create_moanin_model</a></span>(<span class='kw'>data</span><span class='kw'>=</span><span class='no'>testData</span>,<span class='kw'>meta</span><span class='kw'>=</span><span class='no'>testMeta</span>)
+<span class='co'>#small function to run splines_kmeans on subsample of 50 genes</span>
+<span class='no'>subsampleCluster</span><span class='kw'>&lt;-</span><span class='kw'>function</span>(){
+   <span class='no'>ind</span><span class='kw'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fl'>1</span>:<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='no'>moanin</span>),<span class='kw'>size</span><span class='kw'>=</span><span class='fl'>50</span>)
+   <span class='no'>km</span><span class='kw'>&lt;-</span><span class='fu'><a href='splines_kmeans.html'>splines_kmeans</a></span>(<span class='no'>moanin</span>[<span class='no'>ind</span>,],<span class='kw'>n_clusters</span><span class='kw'>=</span><span class='fl'>3</span>)
+   <span class='no'>assign</span><span class='kw'>&lt;-</span><span class='fu'><a href='splines_kmeans_score_and_label.html'>splines_kmeans_score_and_label</a></span>(<span class='no'>moanin</span>, <span class='no'>km</span>,
+       <span class='kw'>percentage_genes_to_label</span><span class='kw'>=</span><span class='fl'>1.0</span>)$<span class='no'>label</span>
+}
+<span class='no'>kmClusters1</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>replicate</a></span>(<span class='fl'>10</span>,<span class='fu'>subsampleCluster</span>())
+<span class='no'>kmClusters2</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>replicate</a></span>(<span class='fl'>10</span>,<span class='fu'>subsampleCluster</span>())
+<span class='co'># Note, because of the small number of replicates (10), </span>
+<span class='co'># these plots are not representative of what to expect.</span>
+<span class='no'>out</span><span class='kw'>&lt;-</span><span class='fu'>plot_cdf_consensus</span>(<span class='kw'>labels</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='no'>kmClusters1</span>,<span class='no'>kmClusters2</span>))</div><div class='img'><img src='get_auc_similarity_scores-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>get_auc_similarity_scores</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='no'>kmClusters1</span>,<span class='no'>kmClusters2</span>))</div><div class='output co'>#&gt; [1] 0.6450942 0.6450942</div><div class='input'><span class='fu'>plot_model_explorer</span>(<span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='no'>kmClusters1</span>,<span class='no'>kmClusters2</span>))</div><div class='img'><img src='get_auc_similarity_scores-2.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -8,11 +8,13 @@
 
 <title>Estimates log fold change — estimate_log_fold_change • moanin</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
 
 <!-- bootstrap-toc -->
@@ -36,10 +38,9 @@
 
 
 
+
 <meta property="og:title" content="Estimates log fold change — estimate_log_fold_change" />
-
 <meta property="og:description" content="Estimates log fold change" />
-
 
 
 
@@ -71,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">moanin</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0-901</span>
       </span>
     </div>
 
@@ -99,7 +100,6 @@
   </ul>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -121,28 +121,24 @@
     </div>
 
     <div class="ref-description">
-    
     <p>Estimates log fold change</p>
-    
     </div>
 
-    <pre class="usage"><span class='fu'>estimate_log_fold_change</span>(<span class='no'>data</span>, <span class='no'>moanin_model</span>, <span class='no'>contrasts</span>,
-  <span class='kw'>method</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"timecourse"</span>, <span class='st'>"sum"</span>, <span class='st'>"max"</span>, <span class='st'>"timely"</span>, <span class='st'>"epicon"</span>, <span class='st'>"abs_sum"</span>,
-  <span class='st'>"abs_squared_sum"</span>, <span class='st'>"min"</span>))</pre>
-    
+    <pre class="usage"><span class='co'># S4 method for Moanin</span>
+<span class='fu'>estimate_log_fold_change</span>(
+  <span class='no'>object</span>,
+  <span class='no'>contrasts</span>,
+  <span class='kw'>method</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"timecourse"</span>, <span class='st'>"sum"</span>, <span class='st'>"max"</span>, <span class='st'>"timely"</span>, <span class='st'>"abs_sum"</span>, <span class='st'>"abs_squared_sum"</span>, <span class='st'>"min"</span>)
+)</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>data</th>
-      <td><p>The data matrix, where genes (features) are on the rows and
-samples on the columns.</p></td>
-    </tr>
-    <tr>
-      <th>moanin_model</th>
-      <td><p>object of class <code>moanin_model</code>, an object containing
+      <th>object</th>
+      <td><p>An object of class <code>Moanin</code>, an object containing
 all related information for time course data and the splines model that
-will be used (if applicable). See <code><a href='create_moanin_model.html'>create_moanin_model</a></code> for
+will be used (if applicable). See <code>create_moanin_model</code> for
 more details.</p></td>
     </tr>
     <tr>
@@ -154,23 +150,65 @@ more details.</p></td>
       <td><p>method for calculating the log-fold change. See details.</p></td>
     </tr>
     </table>
-    
+
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>A data.frame giving the estimated log-fold change for each gene
+  (row). For all methods except for "timely", the data frame will consist of
+  one column for each value of the argument <code>contrasts</code>. For "timely"
+  there will be one column for each timepoint and contrast combination.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>The following methods exist for calculating the log-fold change
   between conditions over time (default is "timecourse"):</p><ul>
-<li><p><code>timecourse</code></p></li>
-<li><p><code>sum</code></p></li>
-<li><p><code>max</code></p></li>
-<li><p><code>timely</code></p></li>
-<li><p><code>epicon</code></p></li>
-<li><p><code>abs_sum</code></p></li>
-<li><p><code>abs_squared_sum</code></p></li>
-<li><p><code>min</code></p></li>
+<li><p><code>timely</code>The log-fold change for each individual timepoint
+(\(lfc(t)\))</p></li>
+<li><p><code>timecourse</code>The average absolute per-week fold-change,
+multiplied by the sign of the average per-week fold-change.</p></li>
+<li><p><code>sum</code>Sum of per-week log fold change, over all timepoints</p></li>
+<li><p><code>max</code>Max of per-week log fold change, over all timepoints</p></li>
+<li><p><code>abs_sum</code>Sum of the absolute value of the per-week log fold
+change, over all timepoints</p></li>
+<li><p><code>abs_squared_sum</code>Sum of the square value of the per-week log
+fold change, over all timepoint</p></li>
+<li><p><code>min</code>Min of per-week log fold change, over all timepoints</p></li>
 </ul>
 
-    
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>exampleData</span>)
+<span class='no'>moanin</span> <span class='kw'>=</span> <span class='fu'><a href='Moanin-class.html'>create_moanin_model</a></span>(<span class='kw'>data</span><span class='kw'>=</span><span class='no'>testData</span>,<span class='kw'>meta</span><span class='kw'>=</span><span class='no'>testMeta</span>)
+<span class='no'>estsTimely</span> <span class='kw'>=</span> <span class='fu'>estimate_log_fold_change</span>(<span class='no'>moanin</span>,
+   <span class='kw'>contrasts</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"K-C"</span>), <span class='kw'>method</span><span class='kw'>=</span><span class='st'>"timely"</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>estsTimely</span>)</div><div class='output co'>#&gt;                           K-C:0       K-C:3       K-C:6       K-C:9      K-C:12
+#&gt; NM_009912           0.006142387 -0.02249478  0.05159468  0.11439732 -0.06146186
+#&gt; NM_008725          -2.654785490 -0.27343865  0.68829245 -0.47188066  1.74633186
+#&gt; NM_007473           0.160362295 -0.10176553 -0.50795729 -0.05957733 -0.42501853
+#&gt; ENSMUST00000094955 -0.350591967 -0.64630114 -0.25647962 -0.35991022 -0.41771162
+#&gt; NM_001042489       -0.088974987 -0.23213806  0.18915007 -0.17861133 -0.33206436
+#&gt; NM_008159           0.386377015 -0.02983951  0.08627550  0.32663505  0.18930621
+#&gt;                         K-C:18      K-C:24     K-C:30      K-C:36       K-C:48
+#&gt; NM_009912          -0.02073242 -0.09083955 -0.3541720 -0.53331742 -1.277439619
+#&gt; NM_008725           0.08891687 -2.04306556  0.5988342  0.90478316 -1.985072414
+#&gt; NM_007473          -0.37838655 -0.10451264 -0.4244740  1.03998928 -0.210841392
+#&gt; ENSMUST00000094955 -0.43184782 -0.56349779 -0.4123224 -0.28054680 -0.005760532
+#&gt; NM_001042489        0.06765746 -0.10443410 -0.4429174  0.07642017  0.683764131
+#&gt; NM_008159           0.30017465  0.15285657 -0.5034323 -0.81198828 -1.029925872
+#&gt;                        K-C:60     K-C:72    K-C:120     K-C:168
+#&gt; NM_009912          -0.9508426 -1.3977873 -0.2928437 -0.86763035
+#&gt; NM_008725           2.4051843 -0.2778756  2.7361353  0.71780185
+#&gt; NM_007473          -0.9481227 -0.3388556  0.4967829  0.19739522
+#&gt; ENSMUST00000094955  0.1210526  0.3766247  0.2479095  0.50586716
+#&gt; NM_001042489        0.5895878  0.3821725  0.3287660  0.02832949
+#&gt; NM_008159          -1.1093377 -0.1279111 -0.3025480 -0.72920750</div><div class='input'><span class='no'>estsTimecourse</span> <span class='kw'>=</span> <span class='fu'>estimate_log_fold_change</span>(<span class='no'>moanin</span>,
+   <span class='kw'>contrasts</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"K-C"</span>),<span class='kw'>method</span><span class='kw'>=</span><span class='st'>"timecourse"</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>estsTimecourse</span>)</div><div class='output co'>#&gt;                           K-C
+#&gt; NM_009912          -0.4315497
+#&gt; NM_008725           1.2565999
+#&gt; NM_007473          -0.3852887
+#&gt; ENSMUST00000094955 -0.3554588
+#&gt; NM_001042489        0.2660706
+#&gt; NM_008159          -0.4347011</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

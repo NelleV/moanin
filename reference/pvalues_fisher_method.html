@@ -8,11 +8,13 @@
 
 <title>Fisher's method to combine pvalues — pvalues_fisher_method • moanin</title>
 
+
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
 
 <!-- bootstrap-toc -->
@@ -36,10 +38,9 @@
 
 
 
+
 <meta property="og:title" content="Fisher's method to combine pvalues — pvalues_fisher_method" />
-
-<meta property="og:description" content="Combines all p-value per rows." />
-
+<meta property="og:description" content="Combines all p-values per rows." />
 
 
 
@@ -71,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">moanin</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0-901</span>
       </span>
     </div>
 
@@ -99,7 +100,6 @@
   </ul>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -121,13 +121,11 @@
     </div>
 
     <div class="ref-description">
-    
-    <p>Combines all p-value per rows.</p>
-    
+    <p>Combines all p-values per rows.</p>
     </div>
 
     <pre class="usage"><span class='fu'>pvalues_fisher_method</span>(<span class='no'>pvalues</span>)</pre>
-    
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
@@ -138,14 +136,25 @@ tests or sources of p-values, and rows corresponding to the genes from
 which the p-values come.</p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>a vector of p-values, one for each row of <code>pvalues</code>, that is the
   result of Fisher's combined probability test applied to the p-values in
   that row.</p>
-    
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>exampleData</span>)
+<span class='no'>moanin</span> <span class='kw'>=</span> <span class='fu'><a href='Moanin-class.html'>create_moanin_model</a></span>(<span class='kw'>data</span><span class='kw'>=</span><span class='no'>testData</span>,<span class='kw'>meta</span><span class='kw'>=</span><span class='no'>testMeta</span>)
+<span class='no'>contrasts</span> <span class='kw'>=</span> <span class='fu'><a href='DE_timepoints.html'>create_timepoints_contrasts</a></span>(<span class='no'>moanin</span>,<span class='st'>"C"</span>, <span class='st'>"K"</span>)
+<span class='no'>deTimepoints</span><span class='kw'>=</span><span class='fu'><a href='DE_timepoints.html'>DE_timepoints</a></span>(<span class='no'>moanin</span>,
+  <span class='kw'>contrasts</span><span class='kw'>=</span><span class='no'>contrasts</span>, <span class='kw'>use_voom_weights</span><span class='kw'>=</span><span class='fl'>FALSE</span>)
+<span class='no'>fisherPval</span><span class='kw'>=</span><span class='fu'>pvalues_fisher_method</span>(
+  <span class='no'>deTimepoints</span>[,<span class='fu'><a href='https://rdrr.io/r/base/grep.html'>grep</a></span>(<span class='st'>"pval"</span>,<span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='no'>deTimepoints</span>))])
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>fisherPval</span>)</div><div class='output co'>#&gt;          NM_009912          NM_008725          NM_007473 ENSMUST00000094955 
+#&gt;       1.943304e-11       9.752936e-02       1.380378e-01       1.267241e-11 
+#&gt;       NM_001042489          NM_008159 
+#&gt;       1.937846e-03       2.135203e-19 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

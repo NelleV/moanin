@@ -6,13 +6,15 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Plot CDF consensus matrix — plot_cdf_consensus • moanin</title>
+<title>Creates pairwise contrasts for all timepoints — perWeek_barplot • moanin</title>
+
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous" />
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
 
 <!-- bootstrap-toc -->
@@ -36,10 +38,9 @@
 
 
 
-<meta property="og:title" content="Plot CDF consensus matrix — plot_cdf_consensus" />
 
-<meta property="og:description" content="Plot CDF consensus matrix" />
-
+<meta property="og:title" content="Creates pairwise contrasts for all timepoints — perWeek_barplot" />
+<meta property="og:description" content="Creates pairwise contrasts for all timepoints" />
 
 
 
@@ -71,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">moanin</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0-901</span>
       </span>
     </div>
 
@@ -99,7 +100,6 @@
   </ul>
 </li>
       </ul>
-      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
@@ -115,47 +115,82 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Plot CDF consensus matrix</h1>
+    <h1>Creates pairwise contrasts for all timepoints</h1>
     
-    <div class="hidden name"><code>plot_cdf_consensus.Rd</code></div>
+    <div class="hidden name"><code>perWeek_barplot.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    
-    <p>Plot CDF consensus matrix</p>
-    
+    <p>Creates pairwise contrasts for all timepoints</p>
     </div>
 
-    <pre class="usage"><span class='fu'>plot_cdf_consensus</span>(<span class='no'>labels</span>)</pre>
-    
+    <pre class="usage"><span class='fu'>perWeek_barplot</span>(
+  <span class='no'>de_results</span>,
+  <span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"qval"</span>, <span class='st'>"pval"</span>),
+  <span class='kw'>labels</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>threshold</span> <span class='kw'>=</span> <span class='fl'>0.05</span>,
+  <span class='kw'>xlab</span> <span class='kw'>=</span> <span class='st'>"Timepoint"</span>,
+  <span class='kw'>ylab</span> <span class='kw'>=</span> <span class='st'>"Number of DE genes"</span>,
+  <span class='kw'>main</span> <span class='kw'>=</span> <span class='st'>""</span>,
+  <span class='no'>...</span>
+)</pre>
+
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
+      <th>de_results</th>
+      <td><p>results from <code><a href='DE_timepoints.html'>DE_timepoints</a></code></p></td>
+    </tr>
+    <tr>
+      <th>type</th>
+      <td><p>type of p-value to count ("qval" or "pval")</p></td>
+    </tr>
+    <tr>
       <th>labels</th>
-      <td><p>a list. Each element of
-the list is a matrix that gives the results of a clustering routine in each
-column (see <code><a href='consensus_matrix.html'>consensus_matrix</a></code>). Usually each column would be
-the result of running the clustering on a subsample or bootstrap resample
-of the data.</p></td>
+      <td><p>labels to give each bar</p></td>
+    </tr>
+    <tr>
+      <th>threshold</th>
+      <td><p>cutoff for counting gene as DE</p></td>
+    </tr>
+    <tr>
+      <th>xlab</th>
+      <td><p>x-axis label</p></td>
+    </tr>
+    <tr>
+      <th>ylab</th>
+      <td><p>y-axis label</p></td>
+    </tr>
+    <tr>
+      <th>main</th>
+      <td><p>title of plot</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>arguments passed to <code><a href='https://rdrr.io/r/graphics/barplot.html'>barplot</a></code></p></td>
     </tr>
     </table>
-    
+
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>list of the cdf values calculated, of same length as that of
-  <code>labels</code>.</p>
-    
+    <p>This is a plotting function, and returns (invisibly) the results of 
+  <code><a href='https://rdrr.io/r/graphics/barplot.html'>barplot</a></code></p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>For each element of the list <code>labels</code>, the function calculates
-  the consensus between the clusterings in the matrix, i.e. the number of
-  times that pairs of rows are in the same cluster for different clusterings
-  (columns) of the matrix using the <code><a href='consensus_matrix.html'>consensus_matrix</a></code> function.
-  Then the set of values (the N(N-1) values in the upper triangle of the
-  matrix), are converted into a cdf function.</p>
-    
+    <p><code>create_timepoints_contrasts</code> creates the needed contrasts for
+  comparing two groups for every timepoint in the format needed for
+  <code>DE_timepoints</code> (i.e. <code><a href='https://rdrr.io/pkg/limma/man/makeContrasts.html'>makeContrasts</a></code>, to which the
+  contrasts are ultimately passed). The time points are determined by the
+  meta data in the <code>moanin_object</code> provided by the user.</p>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>exampleData</span>)
+<span class='no'>moanin</span> <span class='kw'>=</span> <span class='fu'><a href='Moanin-class.html'>create_moanin_model</a></span>(<span class='kw'>data</span><span class='kw'>=</span><span class='no'>testData</span>, <span class='kw'>meta</span><span class='kw'>=</span><span class='no'>testMeta</span>)
+<span class='no'>contrasts</span> <span class='kw'>=</span> <span class='fu'><a href='DE_timepoints.html'>create_timepoints_contrasts</a></span>(<span class='no'>moanin</span>,<span class='st'>"C"</span>, <span class='st'>"K"</span>)
+<span class='no'>deTimepoints</span><span class='kw'>=</span><span class='fu'><a href='DE_timepoints.html'>DE_timepoints</a></span>(<span class='no'>moanin</span>,
+    <span class='kw'>contrasts</span><span class='kw'>=</span><span class='no'>contrasts</span>, <span class='kw'>use_voom_weights</span><span class='kw'>=</span><span class='fl'>FALSE</span>)
+<span class='fu'>perWeek_barplot</span>(<span class='no'>deTimepoints</span>)</div><div class='img'><img src='perWeek_barplot-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
