@@ -299,7 +299,8 @@
 <p>We can also cluster the data based on their spline fits. Here we would like to work with the log transform of the counts which are stored in <code>moaninObject</code>, so we set <code>log_transform=TRUE</code>.</p>
 <div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="co"># First fit the kmeans clusters</span>
 <span class="no">kmeans_clusters</span> <span class="kw">=</span> <span class="fu"><a href="../reference/splines_kmeans.html">splines_kmeans</a></span>(<span class="no">moaninObject</span>[<span class="fl">1</span>:<span class="fl">500</span>,], <span class="kw">n_clusters</span><span class="kw">=</span><span class="fl">3</span>,
-    <span class="kw">random_seed</span><span class="kw">=</span><span class="fl">42</span>,  <span class="kw">n_init</span><span class="kw">=</span><span class="fl">20</span>)</pre></body></html></div>
+    <span class="kw">random_seed</span><span class="kw">=</span><span class="fl">42</span>,
+    <span class="kw">n_init</span><span class="kw">=</span><span class="fl">20</span>)</pre></body></html></div>
 <p>We then use the <code>plot_splines_data</code> function, only now applied to the centroids of the kmeans clustering, to visualize the centroids of each cluster obtained with the splines k-means model.</p>
 <div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="fu"><a href="../reference/plot_splines_data.html">plot_splines_data</a></span>(
     <span class="kw">data</span><span class="kw">=</span><span class="no">kmeans_clusters</span>$<span class="no">centroids</span>, <span class="no">moaninObject</span>,

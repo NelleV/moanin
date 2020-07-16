@@ -199,7 +199,7 @@ of "consensus" or "nmi". See details.</p></td>
    <span class='no'>ind</span><span class='kw'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fl'>1</span>:<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='no'>moanin</span>),<span class='kw'>size</span><span class='kw'>=</span><span class='fl'>50</span>)
    <span class='no'>km</span><span class='kw'>&lt;-</span><span class='fu'><a href='splines_kmeans.html'>splines_kmeans</a></span>(<span class='no'>moanin</span>[<span class='no'>ind</span>,],<span class='kw'>n_clusters</span><span class='kw'>=</span><span class='fl'>3</span>)
    <span class='no'>assign</span><span class='kw'>&lt;-</span><span class='fu'><a href='splines_kmeans_score_and_label.html'>splines_kmeans_score_and_label</a></span>(<span class='no'>moanin</span>, <span class='no'>km</span>,
-       <span class='kw'>percentage_genes_to_label</span><span class='kw'>=</span><span class='fl'>1.0</span>)$<span class='no'>label</span>
+       <span class='kw'>proportion_genes_to_label</span><span class='kw'>=</span><span class='fl'>1.0</span>)$<span class='no'>label</span>
 }
 <span class='no'>kmClusters1</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>replicate</a></span>(<span class='fl'>10</span>,<span class='fu'>subsampleCluster</span>())
 <span class='no'>kmClusters2</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>replicate</a></span>(<span class='fl'>10</span>,<span class='fu'>subsampleCluster</span>())

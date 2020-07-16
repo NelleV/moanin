@@ -124,7 +124,7 @@
     <p>Fit splines to each gene of data matrix</p>
     </div>
 
-    <pre class="usage"><span class='fu'>fit_splines</span>(<span class='no'>moanin_model</span>, <span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>fit_splines</span>(<span class='no'>moanin_model</span>, <span class='no'>data</span>, <span class='kw'>weights</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -135,8 +135,7 @@
     </tr>
     <tr>
       <th>data</th>
-      <td><p>a matrix of data to fix splines to. If NULL, uses
-<code>assay(moanin_model)</code></p></td>
+      <td><p>a matrix of data to fix splines to</p></td>
     </tr>
     <tr>
       <th>weights</th>

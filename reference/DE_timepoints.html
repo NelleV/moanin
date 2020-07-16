@@ -180,7 +180,12 @@ that must match a value contained in <code>moanin_model$meta</code>.</p></td>
   element of the vector corresponding to a contrast to be compared.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p><code>create_timepoints_contrasts</code> creates the needed contrasts for
+    <p>If <code>use_voom_weights=TRUE</code>, then the voom weights will be fit
+  and the limma</p>
+<p>If <code>use_voom_weights=TRUE</code>, the data is given directly to limma
+  via <code>assay(object)</code>, unless log_transform(object)=TRUE, in which case
+  it will be applied to <code><a href='https://rdrr.io/r/base/Log.html'>log(assay(object)+1)</a></code>.</p>
+<p><code>create_timepoints_contrasts</code> creates the needed contrasts for
   comparing two groups for every timepoint in the format needed for
   <code>DE_timepoints</code> (i.e. <code><a href='https://rdrr.io/pkg/limma/man/makeContrasts.html'>makeContrasts</a></code>, to which the
   contrasts are ultimately passed). The time points are determined by the

@@ -135,6 +135,7 @@
   <span class='kw'>subset_conditions</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>subset_data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>simpleY</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>centroid</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>mar</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2.5</span>, <span class='fl'>2.5</span>, <span class='fl'>3</span>, <span class='fl'>1</span>),
   <span class='kw'>mfrow</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>addToPlot</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
@@ -145,6 +146,9 @@
 <span class='fu'>plot_splines_data</span>(<span class='no'>object</span>, <span class='no'>data</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for Moanin,data.frame</span>
+<span class='fu'>plot_splines_data</span>(<span class='no'>object</span>, <span class='no'>data</span>, <span class='no'>...</span>)
+
+<span class='co'># S4 method for Moanin,DataFrame</span>
 <span class='fu'>plot_splines_data</span>(<span class='no'>object</span>, <span class='no'>data</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for Moanin,missing</span>
@@ -162,9 +166,9 @@ more details.</p></td>
     </tr>
     <tr>
       <th>data</th>
-      <td><p>matrix containing the data to be plotted (such as centroids or
-data), where each row of the data provided will be plotted as a separate
-plot. If missing, will rely on data in <code>assay(object)</code></p></td>
+      <td><p>matrix containing the data to be plotted, where each row of the
+data provided will be plotted as a separate plot. If missing, will rely on
+data in <code>assay(object)</code></p></td>
     </tr>
     <tr>
       <th>colors</th>
@@ -192,14 +196,18 @@ provided. Else, plots all conditions</p></td>
     <tr>
       <th>subset_data</th>
       <td><p>list if provided, only plots the subset of data (ie, the
-rows) provided. Important if not providing <code>data</code> to subset rows
-or there will be too many genes to plot.</p></td>
+rows) provided. Can be any valid vector for subsetting a matrix. See details.</p></td>
     </tr>
     <tr>
       <th>simpleY</th>
       <td><p>boolean, if true, will minimize the annotation of the y axis to
 only label the axis in the exterior plots (the x-axis is always assumed to
 be the same across all plots and will always be simplified)</p></td>
+    </tr>
+    <tr>
+      <th>centroid</th>
+      <td><p>numeric vector (or matrix of 1 row) with data to use to fit
+the splines. If <code>NULL</code>, the splines plotted will be from the data.</p></td>
     </tr>
     <tr>
       <th>mar</th>
@@ -226,6 +234,16 @@ sent to all plot commands)</p></td>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>This function creates a plot and does not return anything to the user.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>If <code>data</code> is NULL, the data plotted will be from
+  <code>assay(object)</code>, after log-transformation if <code>log_transform(object)=TRUE</code>.</p>
+<p>If <code>centroid</code> is missing, then splines will be estimated (per
+  group) for the the data in <code>data</code> -- separately for each row of
+  <code>data</code>. If <code>centroid</code> is provided, this data will be used to plot
+  a spline function, and this same spline will be plotted for each row of
+  <code>data</code>. This is useful, for example, in plotting cluster centroids
+  over a series of genes.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># First, load some data and create a moanin model</span>
@@ -242,7 +260,20 @@ sent to all plot commands)</p></td>
 
 <span class='co'># The splines can also be smoothed</span>
 <span class='fu'>plot_splines_data</span>(<span class='no'>moanin</span>, <span class='kw'>subset_data</span><span class='kw'>=</span><span class='no'>genes</span>,
-   <span class='kw'>smooth</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>mfrow</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>, <span class='fl'>2</span>))</div><div class='img'><img src='plot_splines_data-1.png' alt='' width='700' height='433' /></div><div class='img'><img src='plot_splines_data-2.png' alt='' width='700' height='433' /></div></pre>
+   <span class='kw'>smooth</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>mfrow</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>, <span class='fl'>2</span>))</div><div class='img'><img src='plot_splines_data-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='co'># You can provide different data on same subjects,</span>
+<span class='co'># instead of data in moanin object</span>
+<span class='co'># (in which case moanin just provides grouping information)</span>
+<span class='fu'>plot_splines_data</span>(<span class='no'>moanin</span>, <span class='kw'>data</span><span class='kw'>=</span><span class='fl'>1</span>/<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='fu'>assay</span>(<span class='no'>moanin</span>)), <span class='kw'>subset_data</span><span class='kw'>=</span><span class='no'>genes</span>,
+   <span class='kw'>smooth</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>mfrow</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>, <span class='fl'>2</span>))</div><div class='img'><img src='plot_splines_data-2.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='co'># You can also provide data for fitting splines, </span>
+<span class='co'># but plot the data in Moanin object</span>
+<span class='co'># This is helpful for overlaying centroids or predicted data</span>
+<span class='co'># Here we do a silly example, just to demonstrate syntax, </span>
+<span class='co'># where we use the data from the first gene as our centroid to fit a</span>
+<span class='co'># spline estimate, but plot data from genes 3-4</span>
+<span class='fu'>plot_splines_data</span>(<span class='no'>moanin</span>, <span class='kw'>centroid</span><span class='kw'>=</span><span class='fu'>assay</span>(<span class='no'>moanin</span>[<span class='fl'>1</span>,]), <span class='kw'>subset_data</span><span class='kw'>=</span><span class='fl'>3</span>:<span class='fl'>4</span>,
+   <span class='kw'>smooth</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>mfrow</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>,<span class='fl'>2</span>))</div><div class='img'><img src='plot_splines_data-3.png' alt='' width='700' height='433' /></div><div class='img'><img src='plot_splines_data-4.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

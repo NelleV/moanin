@@ -138,7 +138,7 @@
   <span class='no'>object</span>,
   <span class='no'>kmeans_clusters</span>,
   <span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>percentage_genes_to_label</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
+  <span class='kw'>proportion_genes_to_label</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
   <span class='kw'>max_score</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>previous_scores</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>rescale_separately</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
@@ -174,10 +174,10 @@ of fit, including any filtering.</p></td>
       <td><p>arguments passed to <code>splines_kmeans_score_and_label</code></p></td>
     </tr>
     <tr>
-      <th>percentage_genes_to_label</th>
+      <th>proportion_genes_to_label</th>
       <td><p>float, optional, default: 0.5
 Percentage of genes to label. If max_score is provided, will label
-genes that are either in the top `percentage_genes_to_label` or with a
+genes that are either in the top `proportion_genes_to_label` or with a
 score below `max_score`.</p></td>
     </tr>
     <tr>
@@ -188,10 +188,11 @@ this option.</p></td>
     </tr>
     <tr>
       <th>previous_scores</th>
-      <td><p>an option to give the scores results from a previous
-run of <code>splines_kmeans_score_and_label</code>, and only redo the filtering
-(i.e. if want to change <code>percentage_genes_to_label</code> without rerunning
-the calculation of scores)</p></td>
+      <td><p>matrix of scores, optional. Allows user to give the
+matrix scores results from a previous run of
+<code>splines_kmeans_score_and_label</code>, and only redo the filtering (i.e. if
+want to change <code>proportion_genes_to_label</code> without rerunning the
+calculation of scores)</p></td>
     </tr>
     <tr>
       <th>rescale_separately</th>
