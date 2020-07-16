@@ -94,7 +94,7 @@ If neither \code{spline_formula} nor \code{basis_matrix} is given,
 Note that the meta data will have levels dropped (via 
 \code{droplevels}).
 
-Furthermore, data that is given as a class \code{matrix} or
+Input to \code{data} that is given as a class \code{matrix} or
  \code{data.frame} will be converted to class \code{DataFrame}. The reason
  for this is that \code{DataFrame} allows replicate row names, while
  \code{data.frame} does not. Therefore use of a \code{data.frame} becomes a

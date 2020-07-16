@@ -50,6 +50,13 @@ Fit weekly differential expression analysis
 Creates pairwise contrasts for all timepoints
 }
 \details{
+If \code{use_voom_weights=TRUE}, then the voom weights will be fit
+  and the limma
+
+If \code{use_voom_weights=TRUE}, the data is given directly to limma
+  via \code{assay(object)}, unless log_transform(object)=TRUE, in which case
+  it will be applied to \code{log(assay(object)+1)}.
+
 \code{create_timepoints_contrasts} creates the needed contrasts for
   comparing two groups for every timepoint in the format needed for
   \code{DE_timepoints} (i.e. \code{\link[limma]{makeContrasts}}, to which the

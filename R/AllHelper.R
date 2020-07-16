@@ -205,3 +205,9 @@ setMethod(
         return(out)
     }
 )
+# return log data if appropriate
+setMethod("get_log_data","Moanin",function(object){
+    if(object@log_transform) y<-log(assay(object)+1)
+    else y<-assay(object)
+    return(y)
+})

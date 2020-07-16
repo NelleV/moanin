@@ -7,6 +7,8 @@
 fit_predict_splines(data, moanin_model, meta_prediction = NULL)
 }
 \arguments{
+\item{data}{a matrix with data (required doesn't pull from moanin_model)}
+
 \item{meta_prediction}{}
 }
 \value{

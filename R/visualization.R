@@ -216,8 +216,7 @@ setMethod("plot_splines_data",c("Moanin","data.frame"),
 #' @export
 setMethod("plot_splines_data",c("Moanin","missing"),
         function(object, data, ...){
-            data<-assay(object)
-            if(object@log_transform) log(data+1)
+            data<-get_log_transform(object)
               plot_splines_data(object,data=data,data_smooth_only=FALSE,...)
         }
 )
@@ -229,8 +228,8 @@ plot_centroid_individual = function(centroid, moanin_model,
                                     subset_conditions=NULL,
                                     data_smooth_only, data,...){
     if(is.null(data)){
-        if(moanin_model@log_transform) data = as.vector(log(assay(moanin_model)+1))
-        else data = as.vector(assay(moanin_model) )
+        if(moanin_model@log_transform) 
+            data=as.vector(get_log_data(moanin_model))
     }
     if(!inherits(moanin_model,"Moanin")) 
         stop("Internal coding error: expecting Moanin class")

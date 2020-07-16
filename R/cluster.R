@@ -52,8 +52,7 @@ setMethod("splines_kmeans", "Moanin",
                         fit_splines=TRUE,
                         rescale=TRUE){
     basis = basis_matrix(object)
-    if(object@log_transform) data<-log(assay(object)+1)
-    else data<-assay(object)
+    data<-get_log_data(object)
     if(fit_splines){
         fitted_data = fit_predict_splines(data=data,object)
     }else{
@@ -110,7 +109,8 @@ setMethod("splines_kmeans_predict", "Moanin",
         rescale = kmeans_clusters$rescale
         check_data_meta(kmeans_clusters$centroids, object)
         basis = basis_matrix(object)
-        if(is.null(data)) data<-assay(object)
+        if(is.null(data)){data<-get_log_data(object)
+        }
         else{
             check_data_meta(data,object)
         }
@@ -198,7 +198,7 @@ setMethod("splines_kmeans_score_and_label", "Moanin",
                    max_score=NULL, previous_scores=NULL,
                    rescale_separately=FALSE){
     if(is.null(data)){
-        data<-assay(object)
+        data<-get_log_data(object)
     }
     else{
         if(ncol(data)!=ncol(kmeans_clusters$centroids)) stop(
