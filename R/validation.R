@@ -7,10 +7,6 @@
 #' @name internal
 #' @return Does not return anything. Only hits errors if there are problems.
 check_data_meta = function(data, object){
-    if(!is.numeric(data) & !inherits(data,"DataFrame")){
-        stop("Data should be of type numeric or DataFrame")
-    }
-    
     if(!inherits(object,"Moanin")) stop("Internal coding error: passed object",
         "is not of class Moanin")
     if(is.null(dim(data))){
