@@ -116,7 +116,7 @@ plot_splines_data(moanin, subset_data=genes,
 # You can provide different data on same subjects,
 # instead of data in moanin object
 # (in which case moanin just provides grouping information)
-plot_splines_data(moanin, data=1/(assay(moanin)), subset_data=genes,
+plot_splines_data(moanin, data=1/data.frame(assay(moanin)), subset_data=genes,
    smooth=TRUE, mfrow=c(2, 2))
    
 # You can also provide data for fitting splines, 

@@ -142,6 +142,7 @@ setMethod("rescale_values","Moanin",
     function(object, data=NULL, use_group=FALSE){
     if(is.null(data)) data=get_log_data(object)
     if(use_group){
+        if(inherits(data,"DataFrame")) data<-data.frame(data)
         factors_to_consider = levels(group_variable(object))
         for(factor in factors_to_consider){
             mask = group_variable(object) == factor
@@ -161,6 +162,7 @@ setMethod("rescale_values","Moanin",
 #' @rdname rescale_values
 setMethod("rescale_values","NULL",
     function(object, data){
+        if(inherits(data,"DataFrame")) data<-data.frame(data)
         ymin = row_min(data) 
         data = data - ymin
         ymax = row_max(data)

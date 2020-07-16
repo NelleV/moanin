@@ -220,10 +220,10 @@ setMethod("log_transform","Moanin",function(object){
 })
 
 #' return log data if appropriate
-#' @keywords internal
-#' @rdname internal
+#' @rdname Moanin-methods
+#' @export
 setMethod("get_log_data","Moanin",function(object){
     if(log_transform(object)) y<-log(assay(object)+1)
     else y<-assay(object)
-    return(y)
+    return(data.frame(y))
 })

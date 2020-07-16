@@ -15,7 +15,7 @@
 #' moanin = create_moanin_model(data=testData,meta=testMeta)
 #' #small function to run splines_kmeans on subsample of 50 genes
 #' subsampleCluster<-function(){
-#'    ind<-sample(1:nrow(moanin),size=50)
+#'    ind<-sample(1:nrow(moanin),size=50,replace=FALSE)
 #'    km<-splines_kmeans(moanin[ind,],n_clusters=3)
 #'    assign<-splines_kmeans_predict(moanin,km, 
 #'       method="distance")
