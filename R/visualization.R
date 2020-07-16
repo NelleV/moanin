@@ -211,13 +211,22 @@ setMethod("plot_splines_data",c("Moanin","data.frame"),
               plot_splines_data(object,data=data.matrix(data),...)
           }
 )
+
+#' @aliases plot_splines_data,Moanin,DataFrame-method
+#' @rdname plot_splines_data
+#' @export
+setMethod("plot_splines_data",c("Moanin","DataFrame"),
+          function(object, data, ...){
+              plot_splines_data(object,data=data.matrix(data),...)
+          }
+)
 #' @aliases plot_splines_data,Moanin,missing-method
 #' @rdname plot_splines_data
 #' @export
 setMethod("plot_splines_data",c("Moanin","missing"),
         function(object, data, ...){
-            data<-get_log_transform(object)
-              plot_splines_data(object,data=data,data_smooth_only=FALSE,...)
+            data<-get_log_data(object)
+            plot_splines_data(object,data=data,data_smooth_only=FALSE,...)
         }
 )
 

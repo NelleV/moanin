@@ -1,3 +1,6 @@
+
+setGeneric("get_log_data", 
+           function(object) { standardGeneric("get_log_data")})
 setGeneric("degrees_of_freedom", 
     function(object) { standardGeneric("degrees_of_freedom")})
 setGeneric("basis_matrix", 

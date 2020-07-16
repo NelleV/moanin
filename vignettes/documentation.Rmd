@@ -141,7 +141,8 @@ We can also cluster the data based on their spline fits. Here we would like to w
 ```{r clustering}
 # First fit the kmeans clusters
 kmeans_clusters = splines_kmeans(moaninObject[1:500,], n_clusters=3,
-    random_seed=42,  n_init=20)
+    random_seed=42, 
+    n_init=20)
 ```
 
 

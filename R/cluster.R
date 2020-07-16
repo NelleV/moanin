@@ -109,8 +109,7 @@ setMethod("splines_kmeans_predict", "Moanin",
         rescale = kmeans_clusters$rescale
         check_data_meta(kmeans_clusters$centroids, object)
         basis = basis_matrix(object)
-        if(is.null(data)){data<-get_log_data(object)
-        }
+        if(is.null(data)){data<-get_log_data(object)}
         else{
             check_data_meta(data,object)
         }
