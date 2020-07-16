@@ -117,6 +117,15 @@ setGeneric(
 #'  0}
 #'@details Note that the meta data will have levels dropped (via 
 #'\code{droplevels}). 
+#'@details Input to \code{data} that is given as a class \code{matrix} or
+#'  \code{data.frame} will be converted to class \code{DataFrame}. The reason
+#'  for this is that \code{DataFrame} allows replicate row names, while
+#'  \code{data.frame} does not. Therefore use of a \code{data.frame} becomes a
+#'  problem if bootstrapping the genes, as you will get replicate rows and hence
+#'  replicate row names. Users who absolutely want the object to hold a
+#'  non-DataFrame object can construct a \code{SummarizedExperiment} object
+#'  (which will not convert the matrix-like object into a \code{DataFrame}), and
+#'  use this as input to \code{create_moanin_model}.
 #'@return An object of class \code{Moanin}
 #' @examples
 #' # Load some data
@@ -138,18 +147,30 @@ setGeneric(
 #' @export
 setMethod(
     f = "create_moanin_model",
-    signature = signature("matrix"),
+    signature = signature("DataFrame"),
     definition = function(data, meta, ...){
+        if(missing(meta)) stop("Must provide argument meta if input is matrix",
+            "/ data.frame")
         create_moanin_model(SummarizedExperiment(data, colData=meta),...)
     })
 #' @rdname Moanin-class
+#' @export
 setMethod(
     f = "create_moanin_model",
     signature = signature("data.frame"),
-    definition = function(data, meta, ...){
-        create_moanin_model(SummarizedExperiment(data, colData=meta),...)
+    definition = function(data, ...){
+        create_moanin_model(DataFrame(data), ...)
     })
 #' @rdname Moanin-class
+#' @export
+setMethod(
+    f = "create_moanin_model",
+    signature = signature("matrix"),
+    definition = function(data,  ...){
+        create_moanin_model(DataFrame(data),...)
+    })
+#' @rdname Moanin-class
+#' @export
 setMethod(
     f = "create_moanin_model",
     signature = signature("SummarizedExperiment"),

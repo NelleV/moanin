@@ -1,4 +1,3 @@
-library(moanin)
 data(exampleData)
 context("moanin::validation")
 

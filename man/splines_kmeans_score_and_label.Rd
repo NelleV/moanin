@@ -19,7 +19,7 @@
   object,
   kmeans_clusters,
   data = NULL,
-  percentage_genes_to_label = 0.5,
+  proportion_genes_to_label = 0.5,
   max_score = NULL,
   previous_scores = NULL,
   rescale_separately = FALSE
@@ -42,19 +42,20 @@ of fit, including any filtering.}
 
 \item{...}{arguments passed to \code{splines_kmeans_score_and_label}}
 
-\item{percentage_genes_to_label}{float, optional, default: 0.5
+\item{proportion_genes_to_label}{float, optional, default: 0.5
 Percentage of genes to label. If max_score is provided, will label
-genes that are either in the top `percentage_genes_to_label` or with a
+genes that are either in the top `proportion_genes_to_label` or with a
 score below `max_score`.}
 
 \item{max_score}{optional, default: Null
 When provided, will only label genes below that score. If NULL, ignore
 this option.}
 
-\item{previous_scores}{an option to give the scores results from a previous
-run of \code{splines_kmeans_score_and_label}, and only redo the filtering
-(i.e. if want to change \code{percentage_genes_to_label} without rerunning
-the calculation of scores)}
+\item{previous_scores}{matrix of scores, optional. Allows user to give the
+matrix scores results from a previous run of
+\code{splines_kmeans_score_and_label}, and only redo the filtering (i.e. if
+want to change \code{proportion_genes_to_label} without rerunning the
+calculation of scores)}
 
 \item{rescale_separately}{logical, whether to score separately within
 grouping variable}

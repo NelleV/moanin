@@ -52,8 +52,7 @@ setMethod("splines_kmeans", "Moanin",
                         fit_splines=TRUE,
                         rescale=TRUE){
     basis = basis_matrix(object)
-    if(object@log_transform) data<-log(assay(object)+1)
-    else data<-assay(object)
+    data<-get_log_data(object)
     if(fit_splines){
         fitted_data = fit_predict_splines(data=data,object)
     }else{
@@ -102,7 +101,7 @@ setMethod("splines_kmeans_predict", "Moanin",
     method=match.arg(method)
     if(method=="goodnessOfFit"){
         out<-splines_kmeans_score_and_label(object=object, 
-            kmeans_clusters=kmeans_clusters,...)
+            kmeans_clusters=kmeans_clusters,data=data,...)
         return(out$labels)
     }
     if(method=="distance"){
@@ -110,7 +109,7 @@ setMethod("splines_kmeans_predict", "Moanin",
         rescale = kmeans_clusters$rescale
         check_data_meta(kmeans_clusters$centroids, object)
         basis = basis_matrix(object)
-        if(is.null(data)) data<-assay(object)
+        if(is.null(data)){data<-get_log_data(object)}
         else{
             check_data_meta(data,object)
         }
@@ -150,17 +149,18 @@ setMethod("splines_kmeans_predict", "Moanin",
 #'   If given, the number of columns of \code{data} must match that of
 #'   \code{object}
 #' @param kmeans_clusters  List returned by \code{\link{splines_kmeans}}
-#' @param percentage_genes_to_label float, optional, default: 0.5
+#' @param proportion_genes_to_label float, optional, default: 0.5
 #'  Percentage of genes to label. If max_score is provided, will label
-#'  genes that are either in the top `percentage_genes_to_label` or with a
+#'  genes that are either in the top `proportion_genes_to_label` or with a
 #'  score below `max_score`.
 #' @param max_score optional, default: Null
 #'  When provided, will only label genes below that score. If NULL, ignore
 #'  this option.
-#' @param previous_scores an option to give the scores results from a previous
-#'   run of \code{splines_kmeans_score_and_label}, and only redo the filtering
-#'   (i.e. if want to change \code{percentage_genes_to_label} without rerunning
-#'   the calculation of scores)
+#' @param previous_scores matrix of scores, optional. Allows user to give the
+#'   matrix scores results from a previous run of
+#'   \code{splines_kmeans_score_and_label}, and only redo the filtering (i.e. if
+#'   want to change \code{proportion_genes_to_label} without rerunning the
+#'   calculation of scores)
 #' @param rescale_separately logical, whether to score separately within
 #'   grouping variable
 #' @return A list consisting of
@@ -193,11 +193,11 @@ setMethod("splines_kmeans_predict", "Moanin",
 #' @export
 setMethod("splines_kmeans_score_and_label", "Moanin",
           function(object, kmeans_clusters, data=NULL,
-                   percentage_genes_to_label=0.5,
+                   proportion_genes_to_label=0.5,
                    max_score=NULL, previous_scores=NULL,
                    rescale_separately=FALSE){
     if(is.null(data)){
-        data<-assay(object)
+        data<-get_log_data(object)
     }
     else{
         if(ncol(data)!=ncol(kmeans_clusters$centroids)) stop(
@@ -249,8 +249,8 @@ setMethod("splines_kmeans_score_and_label", "Moanin",
     labels = apply(all_scores, 1, which.min)
     names(labels) = row.names(data)
 
-    if(percentage_genes_to_label<1 | !is.null(max_score)){
-        max_score_data = stats::quantile(scores, c(percentage_genes_to_label))
+    if(proportion_genes_to_label<1 | !is.null(max_score)){
+        max_score_data = stats::quantile(scores, c(proportion_genes_to_label))
         if(!is.null(max_score)){
             max_score = min(max_score_data, max_score)
         }else{

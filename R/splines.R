@@ -3,19 +3,18 @@ setGeneric("rescale_values",function(object,...) {
 
 #' Fit splines to each gene of data matrix
 #' @param moanin_model object of class Moanin
-#' @param data a matrix of data to fix splines to. If NULL, uses
-#'   \code{assay(moanin_model)}
+#' @param data a matrix of data to fix splines to
 #' @param weights A matrix of weights, of the same dimension as \code{data}.
 #'   
 #' @return matrix of the coefficients for each basis function, each row of the
 #'   matrix containing the coefficients for the corresponding gene in
 #'   \code{data}.
 #' @keywords internal
-fit_splines = function(moanin_model, data=NULL, weights=NULL){
-    if(is.null(data)) data = assay(moanin_model)
+fit_splines = function(moanin_model, data, weights=NULL){
     basis = basis_matrix(moanin_model)
     n = ncol(basis)
     nr = nrow(data)
+    if(inherits(data,"DataFrame")) data<-data.frame(data)
     
     if(!is.null(weights)){
         beta = matrix(nrow=nr, ncol=n)
@@ -33,7 +32,7 @@ fit_splines = function(moanin_model, data=NULL, weights=NULL){
 #'
 #' @inheritParams DE_timecourse
 #' @param meta_prediction 
-#'
+#' @param data a matrix with data (required doesn't pull from moanin_model)
 #' @return a matrix of the fitted y values, with dimensions the same as
 #'   \code{data}
 #'
@@ -46,6 +45,7 @@ fit_predict_splines = function(data, moanin_model,
     # if(!is.null(weights)){
     #     stop("moanin::fit_predict_splines: not implemented")
     # }
+    if(inherits(data,"DataFrame")) data<-data.frame(data)
     if(is.null(meta_prediction)){
         y_fitted = t(stats::lm.fit(basis, t(data))$fitted.values)
     }else{
@@ -140,8 +140,9 @@ create_meta_prediction = function(moanin_model, num_timepoints=100){
 #' @aliases rescale_values,Moanin-method
 setMethod("rescale_values","Moanin",
     function(object, data=NULL, use_group=FALSE){
-    if(is.null(data)) data=assay(object)
+    if(is.null(data)) data=get_log_data(object)
     if(use_group){
+        if(inherits(data,"DataFrame")) data<-data.frame(data)
         factors_to_consider = levels(group_variable(object))
         for(factor in factors_to_consider){
             mask = group_variable(object) == factor
@@ -161,6 +162,7 @@ setMethod("rescale_values","Moanin",
 #' @rdname rescale_values
 setMethod("rescale_values","NULL",
     function(object, data){
+        if(inherits(data,"DataFrame")) data<-data.frame(data)
         ymin = row_min(data) 
         data = data - ymin
         ymax = row_max(data)
@@ -170,7 +172,13 @@ setMethod("rescale_values","NULL",
         }
         return(data)
 })
-
+#' @aliases rescale_values,missing-method
+#' @export
+#' @rdname rescale_values
+setMethod("rescale_values","missing",
+          function(object, ...){
+              rescale_values(object=NULL, ... )
+          })
 
 
 # XXX It's wierd that this does not exists in R…

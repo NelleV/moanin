@@ -187,9 +187,10 @@ average_replicates = function(object){
             return(rowMeans(data))
         }
     }
-    
+    y<-get_log_data(object)
+    if(inherits(y,"DataFrame")) y<-data.frame(y)
     replicate_averaged = sapply(all_levels,
-                   function(m){.row_means(assay(object)[, timepoint_group==m])})
+                   function(m){.row_means(y[, timepoint_group==m])})
     return(replicate_averaged)
 }
 

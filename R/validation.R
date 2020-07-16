@@ -8,18 +8,16 @@
 #' @return Does not return anything. Only hits errors if there are problems.
 check_data_meta = function(data, object){
     if(!inherits(object,"Moanin")) stop("Internal coding error: passed object",
-    "is not of class Moanin")
+        "is not of class Moanin")
+    if(is.null(dim(data))){
+       data<-matrix(data,nrow=1) 
+    }
     dim_data = dim(data)
     dim_meta = dim(object)
-    data = as.matrix(data)
     if(dim_meta[2] != dim_data[2]){
         stop(
             "User-given data and Moanin object are inconsistent. Data is has ", 
             ncol(data),"columns; Moanin object has", ncol(object))
-    }
-
-    if(!is.numeric(data)){
-        stop("Data should be of type numeric")
     }
 
 }

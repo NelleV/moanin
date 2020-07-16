@@ -18,6 +18,11 @@ setGeneric("create_timepoints_contrasts",
 #' @name DE_timepoints
 #' @importFrom edgeR DGEList calcNormFactors
 #' @importFrom limma voom lmFit contrasts.fit eBayes
+#' @details If \code{use_voom_weights=TRUE}, then the voom weights will be fit
+#'   and the limma
+#' @details If \code{use_voom_weights=TRUE}, the data is given directly to limma
+#'   via \code{assay(object)}, unless log_transform(object)=TRUE, in which case
+#'   it will be applied to \code{log(assay(object)+1)}.
 #' @examples 
 #' data(exampleData)
 #' moanin = create_moanin_model(data=testData, meta=testMeta)
@@ -47,7 +52,8 @@ setMethod("DE_timepoints","Moanin",
         v = limma::voom(y, design, plot=FALSE)
         v = limma::lmFit(v)
     }else{
-        v = limma::lmFit(assay(object), design)
+        y<-get_log_data(object)
+        v = limma::lmFit(y, design)
     }
     
     fit = limma::contrasts.fit(v, allcontrasts)

@@ -4,13 +4,12 @@
 \alias{fit_splines}
 \title{Fit splines to each gene of data matrix}
 \usage{
-fit_splines(moanin_model, data = NULL, weights = NULL)
+fit_splines(moanin_model, data, weights = NULL)
 }
 \arguments{
 \item{moanin_model}{object of class Moanin}
 
-\item{data}{a matrix of data to fix splines to. If NULL, uses
-\code{assay(moanin_model)}}
+\item{data}{a matrix of data to fix splines to}
 
 \item{weights}{A matrix of weights, of the same dimension as \code{data}.}
 }

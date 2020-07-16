@@ -93,6 +93,7 @@ compute_pvalue = function(basis, y, beta, beta_null, ng_labels,
                           degrees_of_freedom=NULL,
                           statistics="lrt",
                           df2=NULL, weights=NULL){
+    if(inherits(y,"DataFrame")) y<-data.frame(y)
     
     fitFull = beta %*% t(basis)
     
@@ -206,7 +207,7 @@ setMethod("DE_timecourse","Moanin",
         weights = NULL
     }
     
-    y = assay(object)
+    y<-get_log_data(object)
     
     if(center){
         y = center_data(y)
