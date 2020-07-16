@@ -38,7 +38,7 @@ names(varoquaux2019leaf)
 The `data` element contains the gene expression data, while the `meta` data consists of information regarding the samples.
 
 
-For simplicitly, we are going to focus on comparing the three different watering conditions within the "BT642" variety (the variety known for comparative tolerance of pre-flowering drought). We are also going to drop Week 2, which is only measured in the control samples.
+For simplicity, we are going to focus on comparing the three different watering conditions within the "BT642" variety (the variety known for comparative tolerance of pre-flowering drought). We are also going to drop Week 2, which is only measured in the control samples.
 
 ```{r}
 whSamples<-with(varoquaux2019leaf$meta,which(Genotype=="BT642" & Week >2))
