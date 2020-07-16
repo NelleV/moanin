@@ -33,6 +33,7 @@
 \alias{[,Moanin,ANY,logical,ANY-method}
 \alias{[,Moanin,ANY,numeric,ANY-method}
 \alias{log_transform,Moanin-method}
+\alias{get_log_data,Moanin-method}
 \title{Helper methods for the Moanin class}
 \usage{
 \S4method{group_variable_name}{Moanin}(object)
@@ -68,6 +69,8 @@
 \S4method{[}{Moanin,ANY,numeric,ANY}(x, i, j, ..., drop = TRUE)
 
 \S4method{log_transform}{Moanin}(object)
+
+\S4method{get_log_data}{Moanin}(object)
 }
 \arguments{
 \item{object}{An object of class \code{\link[Moanin-methods]{Moanin}}, an object containing
