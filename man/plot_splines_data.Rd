@@ -5,6 +5,7 @@
 \alias{plot_splines_data,Moanin,matrix-method}
 \alias{plot_splines_data,Moanin,numeric-method}
 \alias{plot_splines_data,Moanin,data.frame-method}
+\alias{plot_splines_data,Moanin,DataFrame-method}
 \alias{plot_splines_data,Moanin,missing-method}
 \title{Plotting splines}
 \usage{
@@ -18,7 +19,7 @@
   subset_conditions = NULL,
   subset_data = NULL,
   simpleY = TRUE,
-  data_smooth_only = FALSE,
+  centroid = NULL,
   mar = c(2.5, 2.5, 3, 1),
   mfrow = NULL,
   addToPlot = NULL,
@@ -29,6 +30,8 @@
 
 \S4method{plot_splines_data}{Moanin,data.frame}(object, data, ...)
 
+\S4method{plot_splines_data}{Moanin,DataFrame}(object, data, ...)
+
 \S4method{plot_splines_data}{Moanin,missing}(object, data, ...)
 }
 \arguments{
@@ -37,9 +40,9 @@ all related information for time course data and the splines model that
 will be used (if applicable). See \code{\link[Moanin-class]{create_moanin_model}} for
 more details.}
 
-\item{data}{matrix containing the data to be plotted (such as centroids or
-data), where each row of the data provided will be plotted as a separate
-plot. If missing, will rely on data in \code{assay(object)}}
+\item{data}{matrix containing the data to be plotted, where each row of the
+data provided will be plotted as a separate plot. If missing, will rely on
+data in \code{assay(object)}}
 
 \item{colors}{vector, optional, default NULL. Vector of colors}
 
@@ -61,9 +64,8 @@ rows) provided. Can be any valid vector for subsetting a matrix. See details.}
 only label the axis in the exterior plots (the x-axis is always assumed to
 be the same across all plots and will always be simplified)}
 
-\item{data_smooth_only}{logical. If TRUE, then the data given in \code{data}
-will only be used to plot the functional form, and the data from the
-\code{Moanin} object will be used for the points. See details.}
+\item{centroid}{numeric vector (or matrix of 1 row) with data to use to fit
+the splines. If \code{NULL}, the splines plotted will be from the data.}
 
 \item{mar}{vector of margins to set the space around each plot (see
 \code{\link{par}})}
@@ -84,12 +86,15 @@ This function creates a plot and does not return anything to the user.
 Plotting splines
 }
 \details{
-If \code{data_smooth_only=TRUE}, then the data plotted will be from
-  \code{assay(object)} and the matrix of \code{data} will only be used to fit
-  functional forms. This is useful, for example, in plotting cluster
-  centroids over the data in \code{object}. Note that in this case,
-  \code{subset_data} will be applied to \code{object} and NOT to \code{data}.
-  This allows you to plot the same centroids over a series of genes.
+If \code{data} is NULL, the data plotted will be from
+  \code{assay(object)}, after log-transformation if \code{log_transform(object)=TRUE}.
+
+If \code{centroid} is missing, then splines will be estimated (per
+  group) for the the data in \code{data} -- separately for each row of
+  \code{data}. If \code{centroid} is provided, this data will be used to plot
+  a spline function, and this same spline will be plotted for each row of
+  \code{data}. This is useful, for example, in plotting cluster centroids
+  over a series of genes.
 }
 \examples{
 # First, load some data and create a moanin model
@@ -114,12 +119,12 @@ plot_splines_data(moanin, subset_data=genes,
 plot_splines_data(moanin, data=1/(assay(moanin)), subset_data=genes,
    smooth=TRUE, mfrow=c(2, 2))
    
-# You can also provide different data for fitting splines, 
-# but plot data in Moanin object
+# You can also provide data for fitting splines, 
+# but plot the data in Moanin object
 # This is helpful for overlaying centroids or predicted data
 # Here we do a silly example, just to demonstrate syntax, 
-# where we use the data from the first gene to fit a
+# where we use the data from the first gene as our centroid to fit a
 # spline estimate, but plot data from genes 3-4
-plot_splines_data(moanin, data=assay(moanin[1,]), subset_data=3:4,
-   smooth=TRUE, mfrow=c(2,2), data_smooth_only=TRUE)
+plot_splines_data(moanin, centroid=assay(moanin[1,]), subset_data=3:4,
+   smooth=TRUE, mfrow=c(2,2))
 }

@@ -1,4 +1,7 @@
 
+
+setGeneric("log_transform", 
+           function(object) { standardGeneric("log_transform")})
 setGeneric("get_log_data", 
            function(object) { standardGeneric("get_log_data")})
 setGeneric("degrees_of_freedom", 
@@ -208,9 +211,19 @@ setMethod(
         return(out)
     }
 )
-# return log data if appropriate
+
+#' return log data if appropriate
+#' @rdname Moanin-methods
+#' @export
+setMethod("log_transform","Moanin",function(object){
+    object@log_transform
+})
+
+#' return log data if appropriate
+#' @keywords internal
+#' @rdname internal
 setMethod("get_log_data","Moanin",function(object){
-    if(object@log_transform) y<-log(assay(object)+1)
+    if(log_transform(object)) y<-log(assay(object)+1)
     else y<-assay(object)
     return(y)
 })
