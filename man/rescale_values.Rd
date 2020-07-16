@@ -25,6 +25,8 @@ correspond to a gene or a centroid, and columns to samples.}
 \item{use_group}{If true, then the data will be rescaled such that, for each
 row, all values associated to each group (defined by grouping variable of
 \code{object}) is between 0 and 1. For example, if column}
+
+\item{...}{arguments passed to the matrix or Moanin method.}
 }
 \value{
 rescaled y, such that for each row, the values are comprised between

@@ -179,7 +179,7 @@ perWeek_barplot = function(de_results, type=c("qval","pval"),
     }
     number_de_genes_per_time = colSums(de_results[, qval_colnames] < threshold)
     
-    barplot(number_de_genes_per_time, 
+    graphics::barplot(number_de_genes_per_time, 
             names.arg=labels, xlab=xlab,ylab=ylab,
             main=main, ...)  
 }

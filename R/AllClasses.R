@@ -144,6 +144,8 @@ setGeneric(
 #' @importFrom stats as.formula
 #' @rdname Moanin-class
 #' @aliases create_moanin_model
+#' @aliases Moanin
+#' @importClassesFrom S4Vectors DataFrame
 #' @export
 setMethod(
     f = "create_moanin_model",

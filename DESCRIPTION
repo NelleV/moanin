@@ -8,7 +8,9 @@ Depends: R (>= 4.0),
     SummarizedExperiment,
     topGO,
     stats
-Imports: MASS (>= 1.0.0),
+Imports: 
+    S4Vectors,
+    MASS (>= 1.0.0),
 	 limma,
 	 viridis,
 	 edgeR,

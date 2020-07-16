@@ -214,6 +214,7 @@ setMethod(
 
 #' return log data if appropriate
 #' @rdname Moanin-methods
+#' @aliases log_transform log_transform,Moanin-method
 #' @export
 setMethod("log_transform","Moanin",function(object){
     object@log_transform
@@ -221,6 +222,7 @@ setMethod("log_transform","Moanin",function(object){
 
 #' return log data if appropriate
 #' @rdname Moanin-methods
+#' @aliases get_log_data get_log_data,Moanin-method
 #' @export
 setMethod("get_log_data","Moanin",function(object){
     if(log_transform(object)) y<-log(assay(object)+1)

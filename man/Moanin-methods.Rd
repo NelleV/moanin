@@ -33,7 +33,9 @@
 \alias{[,Moanin,ANY,logical,ANY-method}
 \alias{[,Moanin,ANY,numeric,ANY-method}
 \alias{log_transform,Moanin-method}
+\alias{log_transform}
 \alias{get_log_data,Moanin-method}
+\alias{get_log_data}
 \title{Helper methods for the Moanin class}
 \usage{
 \S4method{group_variable_name}{Moanin}(object)
@@ -73,9 +75,9 @@
 \S4method{get_log_data}{Moanin}(object)
 }
 \arguments{
-\item{object}{An object of class \code{\link[Moanin-methods]{Moanin}}, an object containing
+\item{object}{An object of class \code{\link{Moanin}}, an object containing
 all related information for time course data and the splines model that
-will be used (if applicable). See \code{\link[Moanin-class]{create_moanin_model}} for
+will be used (if applicable). See \code{\link{create_moanin_model}} for
 more details.}
 
 \item{value}{replacement value}
