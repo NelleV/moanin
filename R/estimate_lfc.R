@@ -21,6 +21,9 @@ setGeneric("estimate_log_fold_change",
 #' fold change, over all timepoint}
 #' \item{\code{min}}{Min of per-week log fold change, over all timepoints}
 #' }
+#' @details If the user set \code{log_transform=TRUE} in the creation of the
+#'   \code{Moanin} object, the data will be log transformed before calculating
+#'   the fold-change.
 #' @return A data.frame giving the estimated log-fold change for each gene
 #'   (row). For all methods except for "timely", the data frame will consist of
 #'   one column for each value of the argument \code{contrasts}. For "timely"
@@ -188,7 +191,7 @@ average_replicates = function(object){
         }
     }
     y<-get_log_data(object)
-    if(inherits(y,"DataFrame")) y<-data.frame(y)
+    if(inherits(y,"DataFrame")) y<-data.matrix(y)
     replicate_averaged = sapply(all_levels,
                    function(m){.row_means(y[, timepoint_group==m])})
     return(replicate_averaged)

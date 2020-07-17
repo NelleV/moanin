@@ -227,5 +227,5 @@ setMethod("log_transform","Moanin",function(object){
 setMethod("get_log_data","Moanin",function(object){
     if(log_transform(object)) y<-log(assay(object)+1)
     else y<-assay(object)
-    return(data.frame(y))
+    return(data.matrix(y))
 })

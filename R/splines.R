@@ -14,7 +14,7 @@ fit_splines = function(moanin_model, data, weights=NULL){
     basis = basis_matrix(moanin_model)
     n = ncol(basis)
     nr = nrow(data)
-    if(inherits(data,"DataFrame")) data<-data.frame(data)
+    if(inherits(data,"DataFrame")) data<-data.matrix(data)
     
     if(!is.null(weights)){
         beta = matrix(nrow=nr, ncol=n)
@@ -45,7 +45,7 @@ fit_predict_splines = function(data, moanin_model,
     # if(!is.null(weights)){
     #     stop("moanin::fit_predict_splines: not implemented")
     # }
-    if(inherits(data,"DataFrame")) data<-data.frame(data)
+    if(inherits(data,"DataFrame")) data<-data.matrix(data)
     if(is.null(meta_prediction)){
         y_fitted = t(stats::lm.fit(basis, t(data))$fitted.values)
     }else{
@@ -125,6 +125,8 @@ create_meta_prediction = function(moanin_model, num_timepoints=100){
 #'   row, all values associated to each group (defined by grouping variable of
 #'   \code{object}) is between 0 and 1. For example, if column
 #' @param ... arguments passed to the matrix or Moanin method.
+#' @details If the user set \code{log_transform=TRUE} in the creation of the
+#'   \code{Moanin} object, the data will be log transformed before rescaling
 #' @return rescaled y, such that for each row, the values are comprised between
 #'   0 and 1. Note that if \code{use_group=TRUE} and \code{object} is not NULL,
 #'   the values associated to the columns of unique values of the grouping
@@ -143,7 +145,7 @@ setMethod("rescale_values","Moanin",
     function(object, data=NULL, use_group=FALSE){
     if(is.null(data)) data=get_log_data(object)
     if(use_group){
-        if(inherits(data,"DataFrame")) data<-data.frame(data)
+        if(inherits(data,"DataFrame")) data<-data.matrix(data)
         factors_to_consider = levels(group_variable(object))
         for(factor in factors_to_consider){
             mask = group_variable(object) == factor
@@ -163,7 +165,7 @@ setMethod("rescale_values","Moanin",
 #' @rdname rescale_values
 setMethod("rescale_values","NULL",
     function(object, data){
-        if(inherits(data,"DataFrame")) data<-data.frame(data)
+        if(inherits(data,"DataFrame")) data<-data.matrix(data)
         ymin = row_min(data) 
         data = data - ymin
         ymax = row_max(data)

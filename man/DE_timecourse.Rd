@@ -22,7 +22,7 @@ to be converted into such a matrix.}
 \item{center}{boolean, whether to center the data matrix}
 
 \item{use_voom_weights}{boolean, optional, default: TRUE. 
-Whether to use voom weights.}
+Whether to use voom weights. See details.}
 }
 \value{
 A \code{data.frame} with two columns for each of the contrasts given
@@ -41,6 +41,22 @@ The implementation of the spline fit and the calculation of p-values
   handling of comparisons of groups via contrasts.#' @seealso
   \code{\link[limma]{makeContrasts}}, \code{\link{create_moanin_model}},
   \code{\link{DE_timepoints}}, \code{\link[edge]{edge}}
+
+If \code{use_voom_weights=TRUE}, then before fitting splines to each gene,
+voom weights are calculated from \code{assay(object)}:
+\preformatted{
+  y = edgeR::DGEList(counts=assay(object))
+  y = edgeR::calcNormFactors(y, method="upperquartile")
+  v = limma::voom(y, contrasts, plot=FALSE)
+  weights = limma::lmFit(v)
+}
+These weights are given to the \code{lm.fit} which fits the spline coefficients.
+This workflow assumes that the input to the \code{Moanin} object were counts.
+
+If the user set \code{log_transform=TRUE} in the creation of the
+  \code{Moanin} object, the splines will be fit to the log of the input data,
+  and not directly to the input data. This is independent of whether the user
+  chooses \code{use_voom_weights}.
 }
 \examples{
 data(exampleData)

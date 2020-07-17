@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 The package moanin was developed to provide a simple and efficient workflow
 for long time-course gene expression data. It makes it simple to do differential expression between conditions based on either individual condition comparisons per time point, or by fitting spline functions per gene. There are also functions to help with clustering and visualization.
 
-We do not detail all of the features of the package here, but some of the main functions. See our more indepth workflow paper at https://github.com/NelleV/2019timecourse-rnaseq-pipeline. 
+We do not detail all of the features of the package here, but some of the main functions. See our more in-depth workflow paper at https://github.com/NelleV/2019timecourse-rnaseq-pipeline. 
 
 # Setup
 
@@ -61,6 +61,24 @@ moaninObject<-create_moanin_model(data=preData,meta=preMeta,
 moaninObject
 ```
 
+## Moanin and SummarizedExperiment
+
+`Moanin` extends the `SummarizedExperiment` class, and as such the data as well as the meta data are saved in one object. This means you can index the `Moanin` object like a regular matrix, and safely be indexing the related meta data:
+
+```{r}
+moaninObject[,1:2]
+```
+
+## Log-tranformation
+
+Because we have count data from mRNA-Seq, we set the argument to `log_transform=TRUE`. This means that many of the functions will internally use the transformation `log(x+1)` on the `assay(moaninObject)` for computations and visualizations. However, for some steps of the DE process the counts will be used (see below). The user can also just transform the data herself,
+
+```{r}
+logMoaninObject<-moaninObject
+assay(logMoaninObject)<-log(assay(moaninObject)+1)
+```
+
+
 # Weekly differential expression analysis
 
 One type of DE analysis we can do is to compare our watering conditions to each other, for every time point. We do this via a call to `limma` for the DE analysis, but before we can do this, we need to set up the appropriate contrasts. For example, "Preflowering - Control" (see `?makeContrasts` in the limma package). We provide a function to do this for every week, so as to avoid this step.
@@ -85,6 +103,8 @@ weeklyPre<-DE_timepoints(moaninObject[1:500,],
      use_voom_weights=TRUE)
 ```
 
+By setting `use_voom_weights=TRUE`, the DE step is done after an `upperquartile` normalization via `limma` using voom weights (see `?DE_timepoints` for details). Therefore this should only be done if the input data to the `Moanin` class are counts (or on a count scale, such as expected counts from TopHat); in this case the user should set `log_transform=TRUE` in the construction of the `Moanin` object, so that other functions will take the log appropriately.    
+
 The results give the raw p-value (`_pval`), the FDR adjusted p-values (`_qval`), and the estimate of log-fold-change (`_lfc`) for each week (3 columns for each of the `r ncol(weeklyPre)/3` contrasts):
 
 ```{r}
@@ -103,6 +123,8 @@ timecourseContrasts<-c("Preflowering-Control","Postflowering-Control","Postflowe
 splinePre<-DE_timecourse(moaninObject[1:500,], contrasts=timecourseContrasts,
      use_voom_weights=FALSE)
 ```
+
+Again, because our input data are counts, we set `use_voom_weights=TRUE` to weight our observations based on their variability. Because we set `log_transform=TRUE` in our creation of `moaninObject`, the function will internally take the log of the data for fitting the splines, but use the counts for creating the voom weights (see `?DE_timecourse`).
 
 Each contrast has a `pval` and a `qval` column:
 

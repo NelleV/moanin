@@ -24,7 +24,7 @@ as a character string, will be passed to \code{\link[limma]{makeContrasts}}
 to be converted into such a matrix.}
 
 \item{use_voom_weights}{boolean, optional, default: TRUE. 
-Whether to use voom weights.}
+Whether to use voom weights. See details.}
 
 \item{group1}{First group to consider in making contrasts, character value
 that must match a value contained in \code{moanin_model$meta}.}
@@ -50,12 +50,25 @@ Fit weekly differential expression analysis
 Creates pairwise contrasts for all timepoints
 }
 \details{
-If \code{use_voom_weights=TRUE}, then the voom weights will be fit
-  and the limma
-
 If \code{use_voom_weights=TRUE}, the data is given directly to limma
-  via \code{assay(object)}, unless log_transform(object)=TRUE, in which case
-  it will be applied to \code{log(assay(object)+1)}.
+  via \code{assay(object)}. The specific series of
+  calls is:
+\preformatted{   
+   y = edgeR::DGEList(counts=assay(object))
+   y = edgeR::calcNormFactors(y, method="upperquartile")
+   v = limma::voom(y, design, plot=FALSE)
+   v = limma::lmFit(v) 
+   }
+
+If the user set \code{log_transform=TRUE} in the creation of the
+  \code{Moanin} object, this will not have an impact in the analysis if
+  \code{use_voom_weights=TRUE}. Only if \code{use_voom_weights=FALSE} will
+  this matter, in which case the log of the input data will be given to a
+  regular call to \code{limma}:
+\preformatted{
+   y<-get_log_data(object)
+   v = limma::lmFit(y, design)
+}
 
 \code{create_timepoints_contrasts} creates the needed contrasts for
   comparing two groups for every timepoint in the format needed for
