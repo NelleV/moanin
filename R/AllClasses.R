@@ -184,6 +184,11 @@ setMethod(
                     "the other", sep="")
         stop(msg)
     }
+    if(!("WeeklyGroup" %in% colnames(colData(data)))){
+        colData(data)$WeeklyGroup = as.factor(
+            make.names(colData(data)[,group_variable_name]:as.factor(
+                colData(data)[,time_variable_name])))
+    }
     # Must be done *before* build basis
     if(drop_levels){
         colData(data)[,group_variable_name]<-
@@ -214,13 +219,7 @@ setMethod(
                         log_transform=log_transform
                         )
     # Just create this one.
-    if(!("WeeklyGroup" %in% colnames(colData(splines_model)))){
-        colData(splines_model)$WeeklyGroup = as.factor(
-            make.names(group_variable(splines_model):as.factor(
-                time_variable(splines_model))))
-    }
-    #somewhat wasteful here, because doing checks twice!
-    validObject(splines_model)
+    
     return(splines_model)
     }
 )
