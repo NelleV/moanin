@@ -37,6 +37,10 @@ rescaled y, such that for each row, the values are comprised between
 \description{
 Rescales rows of data to be between 0 and 1
 }
+\details{
+If the user set \code{log_transform=TRUE} in the creation of the
+  \code{Moanin} object, the data will be log transformed before rescaling
+}
 \examples{
 data(exampleData)
 moanin=create_moanin_model(data=testData, meta=testMeta)

@@ -206,7 +206,8 @@ setMethod(
                 spline_formula=spline_formula(x),
                 degrees_of_freedom=degrees_of_freedom(x),
                 group_variable_name=group_variable_name(x),
-                time_variable_name=time_variable_name(x)
+                time_variable_name=time_variable_name(x),
+                log_transform=log_transform(x)
         )
         return(out)
     }
@@ -227,5 +228,5 @@ setMethod("log_transform","Moanin",function(object){
 setMethod("get_log_data","Moanin",function(object){
     if(log_transform(object)) y<-log(assay(object)+1)
     else y<-assay(object)
-    return(data.frame(y))
+    return(data.matrix(y))
 })

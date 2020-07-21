@@ -15,7 +15,7 @@
 
 \S4method{create_moanin_model}{data.frame}(data, ...)
 
-\S4method{create_moanin_model}{matrix}(data, ...)
+\S4method{create_moanin_model}{matrix}(data, meta, ...)
 
 \S4method{create_moanin_model}{SummarizedExperiment}(
   data,
@@ -94,14 +94,12 @@ If neither \code{spline_formula} nor \code{basis_matrix} is given,
 Note that the meta data will have levels dropped (via 
 \code{droplevels}).
 
-Input to \code{data} that is given as a class \code{matrix} or
- \code{data.frame} will be converted to class \code{DataFrame}. The reason
- for this is that \code{DataFrame} allows replicate row names, while
- \code{data.frame} does not. Therefore use of a \code{data.frame} becomes a
- problem if bootstrapping the genes, as you will get replicate rows and hence
- replicate row names. Users who absolutely want the object to hold a
- non-DataFrame object can construct a \code{SummarizedExperiment} object
- (which will not convert the matrix-like object into a \code{DataFrame}), and
+Input to \code{data} that is given as a class \code{DataFrame} or
+ \code{data.frame} will be converted to class \code{matrix}. The reason
+ for this is that use of a \code{data.frame} creates errors in taking duplicate rows/columns of \code{SummarizedExperiment}, as in bootstrapping. 
+ Users who absolutely want the object to hold a
+ object that is not a matrix can construct a \code{SummarizedExperiment} object
+ (which will not convert the input into a \code{matrix}), and
  use this as input to \code{create_moanin_model}.
 }
 \section{Slots}{

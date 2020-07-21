@@ -46,6 +46,10 @@ change, over all timepoints}
 fold change, over all timepoint}
 \item{\code{min}}{Min of per-week log fold change, over all timepoints}
 }
+
+If the user set \code{log_transform=TRUE} in the creation of the
+  \code{Moanin} object, the data will be log transformed before calculating
+  the fold-change.
 }
 \examples{
 data(exampleData)

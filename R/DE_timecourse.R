@@ -93,7 +93,7 @@ compute_pvalue = function(basis, y, beta, beta_null, ng_labels,
                           degrees_of_freedom=NULL,
                           statistics="lrt",
                           df2=NULL, weights=NULL){
-    if(inherits(y,"DataFrame")) y<-data.frame(y)
+    if(inherits(y,"DataFrame")) y<-data.matrix(y)
     
     fitFull = beta %*% t(basis)
     
@@ -165,12 +165,26 @@ summarise = function(basis, ng_levels) {
 #'  to be converted into such a matrix.
 #' @param center boolean, whether to center the data matrix
 #' @param use_voom_weights boolean, optional, default: TRUE. 
-#'  Whether to use voom weights.
+#'  Whether to use voom weights. See details.
 #' @details The implementation of the spline fit and the calculation of p-values
 #'   was based on code from \code{\link[edge]{edge}}, and expanded to enable
 #'   handling of comparisons of groups via contrasts.#' @seealso
 #'   \code{\link[limma]{makeContrasts}}, \code{\link{create_moanin_model}},
 #'   \code{\link{DE_timepoints}}, \code{\link[edge]{edge}}
+#' @details If \code{use_voom_weights=TRUE}, then before fitting splines to each gene,
+#' voom weights are calculated from \code{assay(object)}:
+#' \preformatted{
+#'   y = edgeR::DGEList(counts=assay(object))
+#'   y = edgeR::calcNormFactors(y, method="upperquartile")
+#'   v = limma::voom(y, contrasts, plot=FALSE)
+#'   weights = limma::lmFit(v)
+#' }
+#' These weights are given to the \code{lm.fit} which fits the spline coefficients.
+#' This workflow assumes that the input to the \code{Moanin} object were counts.
+#' @details If the user set \code{log_transform=TRUE} in the creation of the
+#'   \code{Moanin} object, the splines will be fit to the log of the input data,
+#'   and not directly to the input data. This is independent of whether the user
+#'   chooses \code{use_voom_weights}.
 #' @return A \code{data.frame} with two columns for each of the contrasts given
 #'   in \code{contrasts}, corresponding to the raw p-value of the contrast for
 #'   that gene (\code{_pval}) and the adjusted p-value (\code{_qval}). The

@@ -95,6 +95,10 @@ If \code{centroid} is missing, then splines will be estimated (per
   a spline function, and this same spline will be plotted for each row of
   \code{data}. This is useful, for example, in plotting cluster centroids
   over a series of genes.
+
+If the user set \code{log_transform=TRUE} in the creation of the
+  \code{Moanin} object, the data will be log transformed before plotting and
+  calculating the spline fits.
 }
 \examples{
 # First, load some data and create a moanin model
@@ -116,7 +120,7 @@ plot_splines_data(moanin, subset_data=genes,
 # You can provide different data on same subjects,
 # instead of data in moanin object
 # (in which case moanin just provides grouping information)
-plot_splines_data(moanin, data=1/data.frame(assay(moanin)), subset_data=genes,
+plot_splines_data(moanin, data=1/assay(moanin), subset_data=genes,
    smooth=TRUE, mfrow=c(2, 2))
    
 # You can also provide data for fitting splines, 
