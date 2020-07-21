@@ -244,6 +244,9 @@ sent to all plot commands)</p></td>
   a spline function, and this same spline will be plotted for each row of
   <code>data</code>. This is useful, for example, in plotting cluster centroids
   over a series of genes.</p>
+<p>If the user set <code>log_transform=TRUE</code> in the creation of the
+  <code>Moanin</code> object, the data will be log transformed before plotting and
+  calculating the spline fits.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># First, load some data and create a moanin model</span>
@@ -264,7 +267,7 @@ sent to all plot commands)</p></td>
 <span class='co'># You can provide different data on same subjects,</span>
 <span class='co'># instead of data in moanin object</span>
 <span class='co'># (in which case moanin just provides grouping information)</span>
-<span class='fu'>plot_splines_data</span>(<span class='no'>moanin</span>, <span class='kw'>data</span><span class='kw'>=</span><span class='fl'>1</span>/<span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='fu'>assay</span>(<span class='no'>moanin</span>)), <span class='kw'>subset_data</span><span class='kw'>=</span><span class='no'>genes</span>,
+<span class='fu'>plot_splines_data</span>(<span class='no'>moanin</span>, <span class='kw'>data</span><span class='kw'>=</span><span class='fl'>1</span>/<span class='fu'>assay</span>(<span class='no'>moanin</span>), <span class='kw'>subset_data</span><span class='kw'>=</span><span class='no'>genes</span>,
    <span class='kw'>smooth</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>mfrow</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>, <span class='fl'>2</span>))</div><div class='img'><img src='plot_splines_data-2.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'># You can also provide data for fitting splines, </span>
 <span class='co'># but plot the data in Moanin object</span>

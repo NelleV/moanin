@@ -153,7 +153,7 @@ to be converted into such a matrix.</p></td>
     <tr>
       <th>use_voom_weights</th>
       <td><p>boolean, optional, default: TRUE. 
-Whether to use voom weights.</p></td>
+Whether to use voom weights. See details.</p></td>
     </tr>
     <tr>
       <th>group1</th>
@@ -180,11 +180,22 @@ that must match a value contained in <code>moanin_model$meta</code>.</p></td>
   element of the vector corresponding to a contrast to be compared.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>If <code>use_voom_weights=TRUE</code>, then the voom weights will be fit
-  and the limma</p>
-<p>If <code>use_voom_weights=TRUE</code>, the data is given directly to limma
-  via <code>assay(object)</code>, unless log_transform(object)=TRUE, in which case
-  it will be applied to <code><a href='https://rdrr.io/r/base/Log.html'>log(assay(object)+1)</a></code>.</p>
+    <p>If <code>use_voom_weights=TRUE</code>, the data is given directly to limma
+  via <code>assay(object)</code>. The specific series of
+  calls is:</p><pre>
+   <span class='no'>y</span> <span class='kw'>=</span> <span class='kw pkg'>edgeR</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/edgeR/man/DGEList.html'>DGEList</a></span>(<span class='kw'>counts</span><span class='kw'>=</span><span class='fu'>assay</span>(<span class='no'>object</span>))
+   <span class='no'>y</span> <span class='kw'>=</span> <span class='kw pkg'>edgeR</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/edgeR/man/calcNormFactors.html'>calcNormFactors</a></span>(<span class='no'>y</span>, <span class='kw'>method</span><span class='kw'>=</span><span class='st'>"upperquartile"</span>)
+   <span class='no'>v</span> <span class='kw'>=</span> <span class='kw pkg'>limma</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/limma/man/voom.html'>voom</a></span>(<span class='no'>y</span>, <span class='no'>design</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>FALSE</span>)
+   <span class='no'>v</span> <span class='kw'>=</span> <span class='kw pkg'>limma</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/limma/man/lmFit.html'>lmFit</a></span>(<span class='no'>v</span>)</pre>
+
+<p>If the user set <code>log_transform=TRUE</code> in the creation of the
+  <code>Moanin</code> object, this will not have an impact in the analysis if
+  <code>use_voom_weights=TRUE</code>. Only if <code>use_voom_weights=FALSE</code> will
+  this matter, in which case the log of the input data will be given to a
+  regular call to <code>limma</code>:</p><pre>
+   <span class='no'>y</span><span class='kw'>&amp;</span><span class='no'>lt</span>;-<span class='fu'><a href='Moanin-methods.html'>get_log_data</a></span>(<span class='no'>object</span>)
+   <span class='no'>v</span> <span class='kw'>=</span> <span class='kw pkg'>limma</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/limma/man/lmFit.html'>lmFit</a></span>(<span class='no'>y</span>, <span class='no'>design</span>)</pre>
+
 <p><code>create_timepoints_contrasts</code> creates the needed contrasts for
   comparing two groups for every timepoint in the format needed for
   <code>DE_timepoints</code> (i.e. <code><a href='https://rdrr.io/pkg/limma/man/makeContrasts.html'>makeContrasts</a></code>, to which the

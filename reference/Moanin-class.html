@@ -153,7 +153,7 @@ in the Slots section.</p>
 <span class='fu'>create_moanin_model</span>(<span class='no'>data</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for matrix</span>
-<span class='fu'>create_moanin_model</span>(<span class='no'>data</span>, <span class='no'>...</span>)
+<span class='fu'>create_moanin_model</span>(<span class='no'>data</span>, <span class='no'>meta</span>, <span class='no'>...</span>)
 
 <span class='co'># S4 method for SummarizedExperiment</span>
 <span class='fu'>create_moanin_model</span>(
@@ -240,14 +240,12 @@ grouping variable (i.e. remove empty levels)</p></td>
 
 <p>Note that the meta data will have levels dropped (via 
 <code>droplevels</code>).</p>
-<p>Input to <code>data</code> that is given as a class <code>matrix</code> or
- <code>data.frame</code> will be converted to class <code>DataFrame</code>. The reason
- for this is that <code>DataFrame</code> allows replicate row names, while
- <code>data.frame</code> does not. Therefore use of a <code>data.frame</code> becomes a
- problem if bootstrapping the genes, as you will get replicate rows and hence
- replicate row names. Users who absolutely want the object to hold a
- non-DataFrame object can construct a <code>SummarizedExperiment</code> object
- (which will not convert the matrix-like object into a <code>DataFrame</code>), and
+<p>Input to <code>data</code> that is given as a class <code>DataFrame</code> or
+ <code>data.frame</code> will be converted to class <code>matrix</code>. The reason
+ for this is that use of a <code>data.frame</code> creates errors in taking duplicate rows/columns of <code>SummarizedExperiment</code>, as in bootstrapping. 
+ Users who absolutely want the object to hold a
+ object that is not a matrix can construct a <code>SummarizedExperiment</code> object
+ (which will not convert the input into a <code>matrix</code>), and
  use this as input to <code>create_moanin_model</code>.</p>
     <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
 

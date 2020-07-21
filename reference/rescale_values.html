@@ -166,6 +166,10 @@ row, all values associated to each group (defined by grouping variable of
   0 and 1. Note that if <code>use_group=TRUE</code> and <code>object</code> is not NULL,
   the values associated to the columns of unique values of the grouping
   variable of <code>object</code> will be rescaled separately.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>If the user set <code>log_transform=TRUE</code> in the creation of the
+  <code>Moanin</code> object, the data will be log transformed before rescaling</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>exampleData</span>)

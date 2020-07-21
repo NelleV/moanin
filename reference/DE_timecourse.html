@@ -152,7 +152,7 @@ to be converted into such a matrix.</p></td>
     <tr>
       <th>use_voom_weights</th>
       <td><p>boolean, optional, default: TRUE. 
-Whether to use voom weights.</p></td>
+Whether to use voom weights. See details.</p></td>
     </tr>
     </table>
 
@@ -171,6 +171,17 @@ Whether to use voom weights.</p></td>
   handling of comparisons of groups via contrasts.#' @seealso
   <code><a href='https://rdrr.io/pkg/limma/man/makeContrasts.html'>makeContrasts</a></code>, <code><a href='Moanin-class.html'>create_moanin_model</a></code>,
   <code><a href='DE_timepoints.html'>DE_timepoints</a></code>, <code><a href='https://rdrr.io/pkg/edge/man/edge.html'>edge</a></code></p>
+<p>If <code>use_voom_weights=TRUE</code>, then before fitting splines to each gene,
+voom weights are calculated from <code>assay(object)</code>:</p><pre>
+  <span class='no'>y</span> <span class='kw'>=</span> <span class='kw pkg'>edgeR</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/edgeR/man/DGEList.html'>DGEList</a></span>(<span class='kw'>counts</span><span class='kw'>=</span><span class='fu'>assay</span>(<span class='no'>object</span>))
+  <span class='no'>y</span> <span class='kw'>=</span> <span class='kw pkg'>edgeR</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/edgeR/man/calcNormFactors.html'>calcNormFactors</a></span>(<span class='no'>y</span>, <span class='kw'>method</span><span class='kw'>=</span><span class='st'>"upperquartile"</span>)
+  <span class='no'>v</span> <span class='kw'>=</span> <span class='kw pkg'>limma</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/limma/man/voom.html'>voom</a></span>(<span class='no'>y</span>, <span class='no'>contrasts</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>FALSE</span>)
+  <span class='no'>weights</span> <span class='kw'>=</span> <span class='kw pkg'>limma</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/limma/man/lmFit.html'>lmFit</a></span>(<span class='no'>v</span>)</pre><p>These weights are given to the <code>lm.fit</code> which fits the spline coefficients.
+This workflow assumes that the input to the <code>Moanin</code> object were counts.</p>
+<p>If the user set <code>log_transform=TRUE</code> in the creation of the
+  <code>Moanin</code> object, the splines will be fit to the log of the input data,
+  and not directly to the input data. This is independent of whether the user
+  chooses <code>use_voom_weights</code>.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>exampleData</span>)
