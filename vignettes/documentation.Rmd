@@ -184,7 +184,7 @@ timecourseContrasts <- c("Preflowering-Control",
 			 "Postflowering-Control",
 			 "Postflowering-Preflowering")
 splinePre<-DE_timecourse(moaninObject[1:500,], contrasts=timecourseContrasts,
-     use_voom_weights=FALSE)
+     use_voom_weights=TRUE)
 ```
 
 Again, because our input data are counts, we set `use_voom_weights=TRUE` to
