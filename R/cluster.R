@@ -69,8 +69,14 @@ setMethod("splines_kmeans", "Moanin",
     kmeans_clusters = ClusterR::KMeans_rcpp(
         fitted_data, n_clusters, num_init=n_init, max_iters=max_iter,
         seed=random_seed, initializer=init)
+    if(any(kmeans_clusters$obs_per_cluster == 0)){
+        warning(
+            paste(
+                "splines_kmeans: Empty cluster found. Consider increasing ",
+                "the number of initialization or using a better ",
+                "initialization strategy"))}
     kmeans_clusters$centroids = rescale_values(
-        data=kmeans_clusters$centroids, object=object,use_group=FALSE )
+        data=kmeans_clusters$centroids, object=object, use_group=FALSE)
     names(kmeans_clusters$clusters) = row.names(object)
     
     # Give names to clusters
@@ -198,12 +204,18 @@ setMethod("splines_kmeans_score_and_label", "Moanin",
                    rescale_separately=FALSE){
     if(is.null(data)){
         data<-get_log_data(object)
+    }else{
+        if(ncol(data) != ncol(kmeans_clusters$centroids)){
+            stop(
+                "User-given data and kmeans resultsare inconsistent. Data is has ", 
+                ncol(data),"columns; kmeans result was run on", 
+                ncol(kmeans_clusters$centroids), "samples")        
+        }
     }
-    else{
-        if(ncol(data)!=ncol(kmeans_clusters$centroids)) stop(
-            "User-given data and kmeans resultsare inconsistent. Data is has ", 
-            ncol(data),"columns; kmeans result was run on", 
-            ncol(kmeans_clusters$centroids), "samples")
+
+    if(!is.null(max_score) && is.na(max_score)){
+        stop(
+            "User-given max_score is NA. Expecting float.")
     }
 
     if(is.null(previous_scores)){
@@ -243,9 +255,12 @@ setMethod("splines_kmeans_score_and_label", "Moanin",
         all_scores = as.matrix(all_scores)
         row.names(all_scores) = row.names(data) 
     }
-    else all_scores=previous_scores
+    else{
+        all_scores = previous_scores
+    }
     
-    scores = apply(all_scores, 1, min)
+    # If a centroid is NA, ignore it. 
+    scores = apply(all_scores, 1, function(x){min(x, na.rm=TRUE)})
     labels = apply(all_scores, 1, which.min)
     names(labels) = row.names(data)
 
@@ -273,5 +288,5 @@ setMethod("splines_kmeans_score_and_label", "Moanin",
     return(list("labels"=labels,
                 "scores"=all_scores,
                 "score_cutoff"=max_score))
-          }
+}
 )
