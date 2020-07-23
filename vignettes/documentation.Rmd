@@ -14,19 +14,32 @@ knitr::opts_chunk$set(
 ```
 
 The package moanin was developed to provide a simple and efficient workflow
-for long time-course gene expression data. It makes it simple to do differential expression between conditions based on either individual condition comparisons per time point, or by fitting spline functions per gene. There are also functions to help with clustering and visualization.
+for long time-course gene expression data. It makes it simple to do
+differential expression between conditions based on either individual
+condition comparisons per time point, or by fitting spline functions per gene.
+There are also functions to help with clustering and visualization.
 
-We do not detail all of the features of the package here, but some of the main functions. See our more in-depth workflow paper at https://github.com/NelleV/2019timecourse-rnaseq-pipeline. 
+We do not detail all of the features of the package here, but some of the main
+functions. See our more in-depth workflow paper at
+https://github.com/NelleV/2019timecourse-rnaseq-pipeline. 
 
 # Setup
 
-We will work with time course data available in the accompanying `timecoursedata` package. This is mRNA-Seq timecourse data on a plant, sorghum. The plants were sampled every week for 17 weeks. The plants were of two different varieties (i.e. different genotypes), and under three different watering conditions:
+We will work with time course data available in the accompanying
+`timecoursedata` package. This is mRNA-Seq timecourse data on a plant,
+sorghum. The plants were sampled every week for 17 weeks. The plants were of
+two different varieties (i.e. different genotypes), and under three different
+watering conditions:
 
 * Control: regular weekly watering
-* Preflowering drought: plants under drought under pre-flowering (weeks before week 9), and watered like control for week 9 and afterward.
-* Postflowering drought: plants were regularly watered pre-flowering (weeks through week 9), and then watering withheld weeks 10 onward.
+* Preflowering drought: plants under drought under pre-flowering (weeks before
+  week 9), and watered like control for week 9 and afterward.
+* Postflowering drought: plants were regularly watered pre-flowering (weeks
+  through week 9), and then watering withheld weeks 10 onward.
 
-This data is available on both the leaf and the root sampled from the same plant. We will concentrate on the leaf samples, available as a dataset `varoquaux2019leaf`.  
+This data is available on both the leaf and the root sampled from the same
+plant. We will concentrate on the leaf samples, available as a dataset
+`varoquaux2019leaf`.  
 
 ```{r}
 library(moanin)
@@ -35,10 +48,14 @@ data(varoquaux2019leaf)
 names(varoquaux2019leaf)
 ```
 
-The `data` element contains the gene expression data, while the `meta` data consists of information regarding the samples.
+The `data` element contains the gene expression data, while the `meta` data
+consists of information regarding the samples.
 
 
-For simplicity, we are going to focus on comparing the three different watering conditions within the "BT642" variety (the variety known for comparative tolerance of pre-flowering drought). We are also going to drop Week 2, which is only measured in the control samples.
+For simplicity, we are going to focus on comparing the three different
+watering conditions within the "BT642" variety (the variety known for
+comparative tolerance of pre-flowering drought). We are also going to drop
+Week 2, which is only measured in the control samples.
 
 ```{r}
 whSamples<-with(varoquaux2019leaf$meta,which(Genotype=="BT642" & Week >2))
@@ -50,7 +67,12 @@ dim(preMeta)
 
 # Set up `moanin` class
 
-The first step is to create a moanin class, which uses our meta data to create the needed information for future analysis. Specifically, in addition to storing the meta information, the function `create_moanin_model` will define a splines basis for future calculations. By default the model is given as a separate spline basis for each level of a factor `Group`, plus a group intercept with the following R formula 
+The first step is to create a moanin class, which uses our meta data to create
+the needed information for future analysis. Specifically, in addition to
+storing the meta information, the function `create_moanin_model` will define a
+splines basis for future calculations. By default the model is given as a
+separate spline basis for each level of a factor `Group`, plus a group
+intercept with the following R formula 
 
 `~Group:ns(Timepoint, df=4) + Group + 0`
 
@@ -63,7 +85,10 @@ moaninObject
 
 ## Moanin and SummarizedExperiment
 
-`Moanin` extends the `SummarizedExperiment` class, and as such the data as well as the meta data are saved in one object. This means you can index the `Moanin` object like a regular matrix, and safely be indexing the related meta data:
+`Moanin` extends the `SummarizedExperiment` class, and as such the data as
+well as the meta data are saved in one object. This means you can index the
+`Moanin` object like a regular matrix, and safely be indexing the related meta
+data:
 
 ```{r}
 moaninObject[,1:2]
@@ -71,7 +96,12 @@ moaninObject[,1:2]
 
 ## Log-tranformation
 
-Because we have count data from mRNA-Seq, we set the argument to `log_transform=TRUE`. This means that many of the functions will internally use the transformation `log(x+1)` on the `assay(moaninObject)` for computations and visualizations. However, for some steps of the DE process the counts will be used (see below). The user can also just transform the data herself,
+Because we have count data from mRNA-Seq, we set the argument to
+`log_transform=TRUE`. This means that many of the functions will internally
+use the transformation `log(x+1)` on the `assay(moaninObject)` for
+computations and visualizations. However, for some steps of the DE process the
+counts will be used (see below). The user can also just transform the data
+herself,
 
 ```{r}
 logMoaninObject<-moaninObject
@@ -81,21 +111,37 @@ assay(logMoaninObject)<-log(assay(moaninObject)+1)
 
 # Weekly differential expression analysis
 
-One type of DE analysis we can do is to compare our watering conditions to each other, for every time point. We do this via a call to `limma` for the DE analysis, but before we can do this, we need to set up the appropriate contrasts. For example, "Preflowering - Control" (see `?makeContrasts` in the limma package). We provide a function to do this for every week, so as to avoid this step.
+One type of DE analysis we can do is to compare our watering conditions to
+each other, for every time point. We do this via a call to `limma` for the DE
+analysis, but before we can do this, we need to set up the appropriate
+contrasts. For example, "Preflowering - Control" (see `?makeContrasts` in the
+limma package). We provide a function to do this for every week, so as to
+avoid this step.
 
 ```{r}
 preContrasts = create_timepoints_contrasts(moaninObject,"Preflowering", "Control")
 ```
-Notice we also get a warning that timepoint 16 is missing in our Control Samples (in fact, some of these time points only have a single observations per time point, which is not particularly appropriate for DE analysis per week). 
 
-We can also create contrasts to compare Postflowering and Control, and Preflowering and Postflowering. We get many warnings here, because Post-flowering only has samples after week 9. 
+Notice we also get a warning that timepoint 16 is missing in our Control
+Samples (in fact, some of these time points only have a single observations
+per time point, which is not particularly appropriate for DE analysis per
+week). 
+
+We can also create contrasts to compare Postflowering and Control, and
+Preflowering and Postflowering. We get many warnings here, because
+Post-flowering only has samples after week 9. 
 
 ```{r}
-postContrasts = create_timepoints_contrasts(moaninObject,"Postflowering", "Control" )
-prepostContrasts = create_timepoints_contrasts(moaninObject,"Postflowering", "Preflowering")
+postContrasts = create_timepoints_contrasts(
+    moaninObject, "Postflowering", "Control" )
+prepostContrasts = create_timepoints_contrasts(
+    moaninObject, "Postflowering", "Preflowering")
 ```
 
-We can run the DE analysis, setting `use_voom_weights=TRUE` to make use of `limma` correction for low-counts. We will subset to just the first 500 genes for illustration purposes, though the full set of genes does not take very long
+We can run the DE analysis, setting `use_voom_weights=TRUE` to make use of
+`limma` correction for low-counts. We will subset to just the first 500 genes
+for illustration purposes, though the full set of genes does not take very
+long
 
 ```{r}
 weeklyPre<-DE_timepoints(moaninObject[1:500,], 
@@ -103,9 +149,17 @@ weeklyPre<-DE_timepoints(moaninObject[1:500,],
      use_voom_weights=TRUE)
 ```
 
-By setting `use_voom_weights=TRUE`, the DE step is done after an `upperquartile` normalization via `limma` using voom weights (see `?DE_timepoints` for details). Therefore this should only be done if the input data to the `Moanin` class are counts (or on a count scale, such as expected counts from TopHat); in this case the user should set `log_transform=TRUE` in the construction of the `Moanin` object, so that other functions will take the log appropriately.    
+By setting `use_voom_weights=TRUE`, the DE step is done after an
+`upperquartile` normalization via `limma` using voom weights (see
+`?DE_timepoints` for details). Therefore this should only be done if the input
+data to the `Moanin` class are counts (or on a count scale, such as expected
+counts from TopHat); in this case the user should set `log_transform=TRUE` in
+the construction of the `Moanin` object, so that other functions will take the
+log appropriately.    
 
-The results give the raw p-value (`_pval`), the FDR adjusted p-values (`_qval`), and the estimate of log-fold-change (`_lfc`) for each week (3 columns for each of the `r ncol(weeklyPre)/3` contrasts):
+The results give the raw p-value (`_pval`), the FDR adjusted p-values
+(`_qval`), and the estimate of log-fold-change (`_lfc`) for each week (3
+columns for each of the `r ncol(weeklyPre)/3` contrasts):
 
 ```{r}
 dim(weeklyPre)
@@ -114,17 +168,30 @@ head(weeklyPre[,1:10])
 
 # Time-course differential expression analysis between two groups
 
-The results of such a weekly analysis can be quite difficult to interpret, the number of replicates per week can be quite low, and different numbers of replicates in different weeks can make it difficult to compare the analysis across weeks.
+The results of such a weekly analysis can be quite difficult to interpret, the
+number of replicates per week can be quite low, and different numbers of
+replicates in different weeks can make it difficult to compare the analysis
+across weeks.
 
-An alternative approach is to fit a smooth spline to each gene per group, and perform differential tests as to whether there are differences between the spline functions between two groups. We provide this function in `DE_timecourse`, where the user provides a string of comparisons that they wish to make:
+An alternative approach is to fit a smooth spline to each gene per group, and
+perform differential tests as to whether there are differences between the
+spline functions between two groups. We provide this function in
+`DE_timecourse`, where the user provides a string of comparisons that they
+wish to make:
 
 ```{r}
-timecourseContrasts<-c("Preflowering-Control","Postflowering-Control","Postflowering-Preflowering")
+timecourseContrasts <- c("Preflowering-Control",
+			 "Postflowering-Control",
+			 "Postflowering-Preflowering")
 splinePre<-DE_timecourse(moaninObject[1:500,], contrasts=timecourseContrasts,
-     use_voom_weights=FALSE)
+     use_voom_weights=TRUE)
 ```
 
-Again, because our input data are counts, we set `use_voom_weights=TRUE` to weight our observations based on their variability. Because we set `log_transform=TRUE` in our creation of `moaninObject`, the function will internally take the log of the data for fitting the splines, but use the counts for creating the voom weights (see `?DE_timecourse`).
+Again, because our input data are counts, we set `use_voom_weights=TRUE` to
+weight our observations based on their variability. Because we set
+`log_transform=TRUE` in our creation of `moaninObject`, the function will
+internally take the log of the data for fitting the splines, but use the
+counts for creating the voom weights (see `?DE_timecourse`).
 
 Each contrast has a `pval` and a `qval` column:
 
@@ -132,10 +199,17 @@ Each contrast has a `pval` and a `qval` column:
 head(splinePre)
 ```
 
-There is not a log-fold change column, because it is more complicated to define the log-fold change over a series of timepoints, where potentially the means may even switch from being over-expressed to under-expressed. We provide a function `estimate_log_fold_change` which gives the option of estimating several kinds of log-fold-change. We demonstrate with the method `abs_sum`, which gives the sum of the absolute difference in the means across time points:
+There is not a log-fold change column, because it is more complicated to
+define the log-fold change over a series of timepoints, where potentially the
+means may even switch from being over-expressed to under-expressed. We provide
+a function `estimate_log_fold_change` which gives the option of estimating
+several kinds of log-fold-change. We demonstrate with the method `abs_sum`,
+which gives the sum of the absolute difference in the means across time
+points:
 
 ```{r}
-log_fold_change_timepoints = estimate_log_fold_change(moaninObject[1:500,], contrasts=timecourseContrasts,  method="sum")
+log_fold_change_timepoints = estimate_log_fold_change(
+    moaninObject[1:500,], contrasts=timecourseContrasts, method="sum")
 head(log_fold_change_timepoints)
 ```
 
@@ -143,13 +217,18 @@ See `?estimate_log_fold_change` to see the full set of methods.
 
 # Visualizing Genes of Interest
 
-The package `moanin` also provides a simple utility function (`plot_splines_data`) to
-visualize gene time-course data from different conditions. We use this to plot the 10
-genes with the largest log-fold-change in `Preflowering-Control` contrast (since we only looked at the first top 500, these aren't representative of the overall signal in the data set, which is much stronger).
+The package `moanin` also provides a simple utility function
+(`plot_splines_data`) to visualize gene time-course data from different
+conditions. We use this to plot the 10 genes with the largest log-fold-change
+in `Preflowering-Control` contrast (since we only looked at the first top 500,
+these aren't representative of the overall signal in the data set, which is
+much stronger).
 
 ```{r}
 whSig = which(splinePre[,"Preflowering-Control_qval"]<0.05)
-deGenes = order(abs(log_fold_change_timepoints)[whSig,"Preflowering-Control"],decreasing=TRUE)[1:10]
+deGenes = order(abs(
+    log_fold_change_timepoints)[whSig,"Preflowering-Control"],
+    decreasing=TRUE)[1:10]
 
 plot_splines_data(moaninObject[whSig, ][deGenes,],
     smooth=TRUE, mar=c(1.5,2.5,2,0.1))
@@ -158,7 +237,9 @@ plot_splines_data(moaninObject[whSig, ][deGenes,],
 
 # Clustering of time-course data
 
-We can also cluster the data based on their spline fits. Here we would like to work with the log transform of the counts which are stored in `moaninObject`, so we set `log_transform=TRUE`. 
+We can also cluster the data based on their spline fits. Here we would like to
+work with the log transform of the counts which are stored in `moaninObject`,
+so we set `log_transform=TRUE`. 
 
 ```{r clustering}
 # First fit the kmeans clusters
@@ -168,8 +249,9 @@ kmeans_clusters = splines_kmeans(moaninObject[1:500,], n_clusters=3,
 ```
 
 
-We then use the `plot_splines_data`  function, only now applied to the centroids of the kmeans clustering, to visualize the centroids of
-each cluster obtained with the splines k-means model. 
+We then use the `plot_splines_data`  function, only now applied to the
+centroids of the kmeans clustering, to visualize the centroids of each cluster
+obtained with the splines k-means model. 
 
 ```{r}
 plot_splines_data(
@@ -179,24 +261,35 @@ plot_splines_data(
 
 ## Assigning genes to clusters
 
-Because there is variability in how well the genes fit a cluster, we would like to be able to score how well a gene fits a cluster. Furthermore, we often chose a subset of genes based on a filtering process, and we would
-like to have a mechanism to assign all genes to a cluster. 
+Because there is variability in how well the genes fit a cluster, we would
+like to be able to score how well a gene fits a cluster. Furthermore, we often
+chose a subset of genes based on a filtering process, and we would like to
+have a mechanism to assign all genes to a cluster. 
 
-The function `splines_kmeans_score_and_label` gives a goodness-of-fit score between each gene and each cluster. 
+The function `splines_kmeans_score_and_label` gives a goodness-of-fit score
+between each gene and each cluster. 
 
 ```{r}
-scores_and_labels = splines_kmeans_score_and_label(object=moaninObject,data=preData[1:2000,], kmeans_clusters=kmeans_clusters)
+scores_and_labels = splines_kmeans_score_and_label(
+    object=moaninObject,data=preData[1:2000,], kmeans_clusters=kmeans_clusters)
 ```
 
-Notice that we used more genes here (first 2000), even though previously we only used first 500 to make the clusters. These choices were unrealistic, since in practice we would probably pick high variable genes or differentially expressed genes, rather than the first 500, but at least give a sense of how this works.
+Notice that we used more genes here (first 2000), even though previously we
+only used first 500 to make the clusters. These choices were unrealistic,
+since in practice we would probably pick high variable genes or differentially
+expressed genes, rather than the first 500, but at least give a sense of how
+this works.
 
-The result is a list with elements `scores` and `labels`. `scores` gives the goodness-of-fit score between each gene and each cluster
+The result is a list with elements `scores` and `labels`. `scores` gives the
+goodness-of-fit score between each gene and each cluster
 
 ```{r}
 head(scores_and_labels$scores)
 ```
 
-`labels` gives the best cluster assignment for each gene, but only if its score in its best cluster is above a certain threshold (see `?splines_kmeans_score_and_label`)
+`labels` gives the best cluster assignment for each gene, but only if its
+score in its best cluster is above a certain threshold (see
+`?splines_kmeans_score_and_label`)
 
 ```{r}
 head(scores_and_labels$labels)
