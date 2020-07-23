@@ -47,8 +47,8 @@ setGeneric("create_timepoints_contrasts",
 #' @export
 setMethod("DE_timepoints","Moanin",
            function(object,
-                         contrasts,
-                         use_voom_weights=TRUE){
+                    contrasts,
+                    use_voom_weights=TRUE){
     
     design = stats::model.matrix(~WeeklyGroup + 0, data=colData(object))
     

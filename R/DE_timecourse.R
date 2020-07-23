@@ -202,21 +202,25 @@ summarise = function(basis, ng_levels) {
 #' @export
 setMethod("DE_timecourse","Moanin",
          function(object,
-                         contrasts,
-                         center=FALSE,
-                         use_voom_weights=TRUE){
+                  contrasts,
+                  center=FALSE,
+                  use_voom_weights=TRUE){
     basis = basis_matrix(object)
     
     ng_labels = group_variable(object)
-    ng=nlevels(ng_labels)
+    ng = nlevels(ng_labels)
 
     contrasts = is_contrasts(contrasts, object)
     
     if(use_voom_weights){
+        design = stats::model.matrix(
+            ~Group*Timepoint + 0,
+            data=colData(object))
+        
         y = edgeR::DGEList(counts=assay(object))
         y = edgeR::calcNormFactors(y, method="upperquartile")
-        v = limma::voom(y, contrasts, plot=FALSE)
-        weights = limma::lmFit(v)
+        v = limma::voom(y, design, plot=FALSE)
+        weights = v$weights
     }else{
         weights = NULL
     }
