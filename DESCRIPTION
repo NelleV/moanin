@@ -2,10 +2,18 @@ Package: moanin
 Title: An R Package for Time Course RNASeq Data Analysis
 Version: 0.99.0-901
 Authors@R: c(person("Elizabeth", "Purdom", email="epurdom@stat.berkeley.edu",
-		    role = c("aut")),
-	     person("Nelle", "Varoquaux", role=c("aut", "cre"),
-		    email="nelle.varoquaux@gmail.com"))
-Description: Simple and efficient workflow for time-course gene expression data.
+                    role=c("aut"),
+                    comment=c("orcid"="https://orcid.org/0000-0001-9455-7990")),
+             person("Nelle", "Varoquaux", role=c("aut", "cre"),
+                    email="nelle.varoquaux@gmail.com",
+                    comment=c(orcid="https://orcid.org/0000-0002-8748-6546")))
+Description: Simple and efficient workflow for time-course gene expression
+	     data, built on publictly available open-source projects hosted on
+	     CRAN and bioconductor. moanin provides helper functions for all
+	     the steps required for analysing time-course data using
+	     functional data analysis: (1) functional modeling of the
+	     timecourse data; (2) differential expression analysis; (3)
+	     clustering; (4) downstream analysis.
 Depends: R (>= 4.0),
     SummarizedExperiment,
     topGO,
@@ -13,24 +21,25 @@ Depends: R (>= 4.0),
 Imports: 
     S4Vectors,
     MASS (>= 1.0.0),
-	 limma,
-	 viridis,
-	 edgeR,
-	 graphics,
-     methods,
-	 grDevices,
-	 reshape2,
-	 NMI,
-	 zoo,
-	 ClusterR,
-     splines
+    limma,
+    viridis,
+    edgeR,
+    graphics,
+    methods,
+    grDevices,
+    reshape2,
+    NMI,
+    zoo,
+    ClusterR,
+    splines
 Suggests: testthat (>= 1.0.0),
 	  timecoursedata,
 	  knitr,
-	  rmarkdown
+	  rmarkdown,
+	  cover
 VignetteBuilder: knitr
 License: BSD 3-clause License + file LICENSE
 Encoding: UTF-8
 LazyData: false
 RoxygenNote: 7.1.1
-biocViews: TimeCourse, GeneExpression, RNASeq
+biocViews: TimeCourse, GeneExpression, RNASeq, microarray
