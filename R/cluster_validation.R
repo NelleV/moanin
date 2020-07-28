@@ -197,8 +197,8 @@ get_nmi_scores = function(labels){
         columns_to_consider = (trial+1):n_trials
         label = labels[,trial]
         scores = c(scores, as.vector(
-            unlist(apply(labels[,columns_to_consider,drop=FALSE], 2, 
-                        FUN=function(x){nmi(x, label)}))))
+            unlist(lapply(labels[, columns_to_consider, drop=FALSE], 
+                          function(x){nmi(x, label)}))))
     }
     return(scores)
 }
@@ -212,13 +212,15 @@ get_nmi_scores = function(labels){
 #' @rdname get_auc_similarity_scores
 #' @export
 #' @importFrom grDevices rainbow
-plot_model_explorer = function(labels,colors = rainbow(length(labels))){
+plot_model_explorer = function(labels, colors=rainbow(length(labels))){
     all_labels = labels
-    if(is.null(names(all_labels))) 
+    if(is.null(names(all_labels))){ 
         names(all_labels)<-paste("Set",seq_along(all_labels))
+    }
     n_clusters = names(all_labels)
-    if(length(colors)!=length(labels)) 
+    if(length(colors)!=length(labels)) {
         stop("colors argument should be same length as labels")
+    }
     nmi_scores = list()
     
     max_trial = 0
