@@ -8,6 +8,16 @@
 
 set -e
 
+install_github_dependencies() {
+    # install_github keeps failing because of the Github API rate limit. So
+    # we're just going to do this by hand…
+    pushd /tmp
+    wget -P . https://github.com/NelleV/timecoursedata/archive/master.zip
+    unzip /tmp/master.zip
+    cd timecoursedata-master
+    make install-extra
+    make install
+}
 
 run_tests() {
     # This runs simple "normal" + bioconductor checks on the package
@@ -17,6 +27,7 @@ run_tests() {
 }
 
 # Start by installing
+install_github_dependencies
 make install-extra
 make install
 
