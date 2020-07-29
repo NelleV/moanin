@@ -9,7 +9,10 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
 
 BiocManager::install("BiocCheck")
 
-devtools::install_github("NelleV/timecoursedata")
+if(!(require(timecoursedata)){
+    devtools::install_github("NelleV/timecoursedata")
+}
+
 
 if(!requireNamespace("BiocStyle", quietly=TRUE)){
     BiocManager::install("BiocStyle")
