@@ -17,6 +17,7 @@ install_github_dependencies() {
     cd timecoursedata-master
     make install-extra
     make install
+    popd
 }
 
 run_tests() {
