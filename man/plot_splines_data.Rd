@@ -72,6 +72,11 @@ always be simplified)}
 \item{centroid}{numeric vector (or matrix of 1 row) with data to use to fit
 the splines. If \code{NULL}, the splines plotted will be from the data.}
 
+\item{scale_centroid}{determines whether the centroid data given in
+\code{centroid} should be rescaled to match that of the data
+(\code{"toData"}), or the data scaled to match that of centroid
+(\code{"toCentroid"}), or simply plotted as is (\code{"none"}).}
+
 \item{mar}{vector of margins to set the space around each plot (see
 \code{\link{par}})}
 

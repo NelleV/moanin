@@ -19,6 +19,10 @@ setGeneric("plot_splines_data",
 #'  minimize the annotation of the y axis to only label the axis in the exterior
 #'  plots (the x-axis is always assumed to be the same across all plots and will
 #'  always be simplified)
+#'@param scale_centroid determines whether the centroid data given in
+#'  \code{centroid} should be rescaled to match that of the data
+#'  (\code{"toData"}), or the data scaled to match that of centroid
+#'  (\code{"toCentroid"}), or simply plotted as is (\code{"none"}).
 #'@param subset_conditions list if provided, only plots the subset of conditions
 #'  provided. Else, plots all conditions
 #'@param centroid numeric vector (or matrix of 1 row) with data to use to fit
