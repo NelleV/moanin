@@ -18,23 +18,29 @@ test_that("splines:align_data_onto_centroid", {
     n_genes = 5
     centroid = runif(n_samples)
 
-    shift = runif(n_genes)
-    scale = 1 + runif(n_genes)
-
+    ## don't do anything, just make data equal to centroid.
+    ## (Shouldn't do anything)
     data = rep(centroid, each=n_genes)
     dim(data) = c(n_genes, n_samples)
     expect_equal(data, align_data_onto_centroid(data, centroid))
-
+    expect_equal(data, align_data_onto_centroid(data, centroid, returnType="centroid"))
+    
     # Ok, now let's make this a bit more complicated.
-    scale = rep(scale, times=n_samples)
-    dim(scale) = dim(data)
-    shift = rep(shift, times=n_samples)
-    dim(shift) = dim(data)
+    shift_param = runif(n_genes)
+    scale_param = 1 + runif(n_genes)
+    scale_param = rep(scale_param, times=n_samples)
+    dim(scale_param) = dim(data)
+    shift_param = rep(shift_param, times=n_samples)
+    dim(shift_param) = dim(data)
 
-    shifted_scaled_data = scale * data + shift
-    shifted_scaled_centroid = scale * centroid + shift
+    shifted_scaled_data = scale_param * data + shift_param
+    shifted_scaled_centroid = scale_param * centroid + shift_param
     expect_equal(data,
 		 align_data_onto_centroid(shifted_scaled_data, centroid))
+    expect_equal(shifted_scaled_data,
+                 align_data_onto_centroid(shifted_scaled_data, centroid,returnType="centroid"))
+
+    # Check error checking works
     expect_error(align_data_onto_centroid(data[, 1:10], centroid))
 })
 

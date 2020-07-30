@@ -20,9 +20,12 @@
   subset_data = NULL,
   simpleY = TRUE,
   centroid = NULL,
+  scale_centroid = c("toData", "toCentroid", "none"),
   mar = c(2.5, 2.5, 3, 1),
   mfrow = NULL,
   addToPlot = NULL,
+  ylab = "",
+  xlab = "Time",
   ...
 )
 
@@ -58,11 +61,13 @@ centroids or not.}
 provided. Else, plots all conditions}
 
 \item{subset_data}{list if provided, only plots the subset of data (ie, the
-rows) provided. Can be any valid vector for subsetting a matrix. See details.}
+rows) provided. Can be any valid vector for subsetting a matrix. See
+details.}
 
-\item{simpleY}{boolean, if true, will minimize the annotation of the y axis to
-only label the axis in the exterior plots (the x-axis is always assumed to
-be the same across all plots and will always be simplified)}
+\item{simpleY}{boolean, if true, will plot all genes on same y-axis and
+minimize the annotation of the y axis to only label the axis in the exterior
+plots (the x-axis is always assumed to be the same across all plots and will
+always be simplified)}
 
 \item{centroid}{numeric vector (or matrix of 1 row) with data to use to fit
 the splines. If \code{NULL}, the splines plotted will be from the data.}
@@ -87,7 +92,8 @@ Plotting splines
 }
 \details{
 If \code{data} is NULL, the data plotted will be from
-  \code{assay(object)}, after log-transformation if \code{log_transform(object)=TRUE}.
+  \code{assay(object)}, after log-transformation if
+  \code{log_transform(object)=TRUE}.
 
 If \code{centroid} is missing, then splines will be estimated (per
   group) for the the data in \code{data} -- separately for each row of
@@ -107,25 +113,26 @@ moanin = create_moanin_model(data=testData,meta=testMeta,
    degrees_of_freedom=6)
 
 # The moanin model contains all the information for plotting purposes. The
-# plot_splines_function will automatically fit the splines from the
+# plot_splines_data will automatically fit the splines from the
 # information contained in the moanin model
 genes = c("NM_001042489", "NM_008725")
 plot_splines_data(moanin, subset_data=genes,
 mfrow=c(2, 2))
+# By default, same axis for all genes. Can change with 'simpleY=FALSE'
+plot_splines_data(moanin, subset_data=genes,
+   smooth=TRUE, mfrow=c(2,2), simpleY=FALSE)   
 
 # The splines can also be smoothed
 plot_splines_data(moanin, subset_data=genes,
    smooth=TRUE, mfrow=c(2, 2))
-   
-# You can provide different data on same subjects,
+# You can provide different data (on same subjects),
 # instead of data in moanin object
 # (in which case moanin just provides grouping information)
 plot_splines_data(moanin, data=1/assay(moanin), subset_data=genes,
    smooth=TRUE, mfrow=c(2, 2))
    
-# You can also provide data for fitting splines, 
-# but plot the data in Moanin object
-# This is helpful for overlaying centroids or predicted data
+# You can also provide data to use for fitting splines to argument  
+# "centroid". This is helpful for overlaying centroids or predicted data
 # Here we do a silly example, just to demonstrate syntax, 
 # where we use the data from the first gene as our centroid to fit a
 # spline estimate, but plot data from genes 3-4

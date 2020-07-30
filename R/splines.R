@@ -208,7 +208,11 @@ row_argmin = function(X){
 
 
 # Worst name ever
-align_data_onto_centroid = function(data, centroid, positive_scaling=TRUE){
+# Note that if would estimate a negative scaling factor, sets it to zero 
+# instead, so that your centroid estimate for the data is a flat line at the mean
+align_data_onto_centroid = function(data, centroid, positive_scaling=TRUE, 
+            returnType=c("data","centroid")){
+    returnType = match.arg(returnType)
     n_samples = dim(data)[2]
     n_genes = dim(data)[1]
     if(n_samples != length(centroid)){
@@ -226,7 +230,8 @@ align_data_onto_centroid = function(data, centroid, positive_scaling=TRUE){
         data, 1,
         function(x){sum(centered_centroid * x)/sum((x - mean(x))*x)}) 
     if(positive_scaling){
-        scaling_factors[scaling_factors < 0] = 0
+        if(returnType=="data") scaling_factors[scaling_factors < 0] = 0
+        else scaling_factors = abs(scaling_factors)
     }
     
     # Now replace the scaling factors of only 0 genes by 0
@@ -237,8 +242,28 @@ align_data_onto_centroid = function(data, centroid, positive_scaling=TRUE){
         scaling_factors * data,
         1,
         function(x) mean(centroid - x)) 
-    
-    data_fitted = (scaling_factors * data + shift_factors)
+    if(returnType=="data"){
+        data_fitted = (scaling_factors * data + shift_factors)        
+    }
+    else{
+        data_fitted = matrix(centroid, nrow=nrow(data),ncol=length(centroid),
+                             byrow=TRUE)
+        data_fitted = sweep(data_fitted,1,shift_factors,"-")
+        whZero<-which(scaling_factors==0)
+        if(length(whZero)>0){
+            # If scaling factor is zero, then centroid estimate is just a flat 
+            # line equal to the mean of the centroid - shift factor. 
+            data_fitted[-whZero,] = sweep(data_fitted[-whZero,,drop=FALSE],1,
+                                          scaling_factors[-whZero],"/")
+            data_fitted[whZero,] = matrix(
+                                    rowMeans(data[whZero,,drop=FALSE]),
+                                    nrow=length(whZero),
+                                    ncol=ncol(data_fitted),byrow=FALSE)         
+        }
+        else 
+            data_fitted= sweep(data_fitted,1,scaling_factors,"/")
+        
+    }
     return(data_fitted)
 }
 
