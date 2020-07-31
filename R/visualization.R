@@ -15,15 +15,21 @@ setGeneric("plot_splines_data",
 #'@param legend boolean whether to include a legend (default:TRUE)
 #'@param legendArgs list of arguments to be passed to legend command (if
 #'  \code{legend=TRUE})
-#'@param simpleY boolean, if true, will minimize the annotation of the y axis to
-#'  only label the axis in the exterior plots (the x-axis is always assumed to
-#'  be the same across all plots and will always be simplified)
+#'@param simpleY boolean, if true, will plot all genes on same y-axis and
+#'  minimize the annotation of the y axis to only label the axis in the exterior
+#'  plots (the x-axis is always assumed to be the same across all plots and will
+#'  always be simplified)
+#'@param scale_centroid determines whether the centroid data given in
+#'  \code{centroid} should be rescaled to match that of the data
+#'  (\code{"toData"}), or the data scaled to match that of centroid
+#'  (\code{"toCentroid"}), or simply plotted as is (\code{"none"}).
 #'@param subset_conditions list if provided, only plots the subset of conditions
 #'  provided. Else, plots all conditions
 #'@param centroid numeric vector (or matrix of 1 row) with data to use to fit
 #'  the splines. If \code{NULL}, the splines plotted will be from the data.
 #'@param subset_data list if provided, only plots the subset of data (ie, the
-#'  rows) provided. Can be any valid vector for subsetting a matrix. See details.
+#'  rows) provided. Can be any valid vector for subsetting a matrix. See
+#'  details.
 #'@param mfrow a vector of integers of length 2 defining the grid of plots to be
 #'  created (see \code{\link{par}}). If missing, the function will set a value.
 #'@param addToPlot A function that will be called after the plotting, allowing
@@ -31,7 +37,8 @@ setGeneric("plot_splines_data",
 #'@param ... arguments to be passed to the individual plot commands (Will be
 #'  sent to all plot commands)
 #' @details If \code{data} is NULL, the data plotted will be from
-#'   \code{assay(object)}, after log-transformation if \code{log_transform(object)=TRUE}. 
+#'   \code{assay(object)}, after log-transformation if
+#'   \code{log_transform(object)=TRUE}.
 #' @details If \code{centroid} is missing, then splines will be estimated (per
 #'   group) for the the data in \code{data} -- separately for each row of
 #'   \code{data}. If \code{centroid} is provided, this data will be used to plot
@@ -49,30 +56,33 @@ setGeneric("plot_splines_data",
 #'    degrees_of_freedom=6)
 #'
 #' # The moanin model contains all the information for plotting purposes. The
-#' # plot_splines_function will automatically fit the splines from the
+#' # plot_splines_data will automatically fit the splines from the
 #' # information contained in the moanin model
 #' genes = c("NM_001042489", "NM_008725")
 #' plot_splines_data(moanin, subset_data=genes,
 #' mfrow=c(2, 2))
+#' # By default, same axis for all genes. Can change with 'simpleY=FALSE'
+#' plot_splines_data(moanin, subset_data=genes,
+#'    smooth=TRUE, mfrow=c(2,2), simpleY=FALSE)   
 #'
 #' # The splines can also be smoothed
 #' plot_splines_data(moanin, subset_data=genes,
 #'    smooth=TRUE, mfrow=c(2, 2))
-#'    
-#' # You can provide different data on same subjects,
+#' # You can provide different data (on same subjects),
 #' # instead of data in moanin object
 #' # (in which case moanin just provides grouping information)
 #' plot_splines_data(moanin, data=1/assay(moanin), subset_data=genes,
 #'    smooth=TRUE, mfrow=c(2, 2))
 #'    
-#' # You can also provide data for fitting splines, 
-#' # but plot the data in Moanin object
-#' # This is helpful for overlaying centroids or predicted data
+#' # You can also provide data to use for fitting splines to argument  
+#' # "centroid". This is helpful for overlaying centroids or predicted data
 #' # Here we do a silly example, just to demonstrate syntax, 
 #' # where we use the data from the first gene as our centroid to fit a
 #' # spline estimate, but plot data from genes 3-4
 #' plot_splines_data(moanin, centroid=assay(moanin[1,]), subset_data=3:4,
 #'    smooth=TRUE, mfrow=c(2,2))
+
+
 #' @export
 #' @name plot_splines_data
 #' @aliases plot_splines_data,Moanin,matrix-method
@@ -85,9 +95,10 @@ setMethod("plot_splines_data",c("Moanin","matrix"),
                 subset_conditions=NULL,
                 subset_data=NULL,
                 simpleY=TRUE, centroid=NULL,
+                scale_centroid=c("toData","toCentroid","none"),
                 mar=c(2.5, 2.5, 3.0, 1.0),
-                mfrow=NULL, addToPlot=NULL, ...){
-    
+                mfrow=NULL, addToPlot=NULL, ylab="", xlab="Time",...){
+    scale_centroid = match.arg(scale_centroid)
     check_data_meta(data=data,object=object)
     if(!is.null(centroid)){
         check_data_meta(data=centroid,object=object)
@@ -145,20 +156,49 @@ setMethod("plot_splines_data",c("Moanin","matrix"),
     
     plot_names = row.names(data)
     name = NULL 
+    if(!is.null(centroid)){
+        if(scale_centroid=="toData"){
+            centroid = align_data_onto_centroid(data, centroid, 
+                                                returnType="centroid")
+        }
+        if(scale_centroid=="toCentroid"){
+            data = align_data_onto_centroid(data, centroid, returnType="data")
+        }
+        if(scale_centroid %in% c("toCentroid","none")){
+            #make it a matrix
+            centroid = matrix(centroid, nrow=nrow(data),ncol=length(centroid),
+                              byrow=TRUE)
+        }
+    }
     
+    ## Fix up the y-axis range
+    if("ylim" %in% names(list(...))){
+        ylim = list(...)$ylim
+    }
+    else ylim = NULL
+    if(simpleY & is.null(ylim)){
+        # use same y-axis range
+        yrange = range(data)
+    }
+    else{
+        if(!is.null(ylim)) yrange = ylim
+        else yrange = NULL
+    }
+
     # Now plot the different data
     for(i in seq_len(n_observations)){
         if(!is.null(plot_names)){
             name = plot_names[i]
         }
         plot_centroid_individual(
-            data=data[i, ], centroid=centroid,
+            data=data[i, ], centroid=if(is.null(centroid)) centroid else centroid[i,],
             object[i,], colors=colors,
             smooth=smooth,
             subset_conditions=subset_conditions,
-            main=name, 
+            main=name, yrange=yrange,
             xaxt=if(!i %in% bottomPlots) "n" else "s",
-            yaxt=if(!i %in% sidePlots & simpleY) "n" else "s", ...)
+            yaxt=if(!i %in% sidePlots & simpleY) "n" else "s", 
+            xlab=xlab,ylab=ylab,...)
         
         if(is.function(addToPlot)){
             addToPlot()
@@ -235,7 +275,7 @@ setMethod("plot_splines_data",c("Moanin","missing"),
 # moanin_model will separate them into groups...
 plot_centroid_individual = function(data, centroid, moanin_model,
                                     colors, smooth=FALSE, 
-                                    subset_conditions=NULL,...){
+                                    subset_conditions=NULL,yrange=NULL,...){
     if(is.null(data)){
         data=as.vector(get_log_data(moanin_model))
     }
@@ -260,9 +300,11 @@ plot_centroid_individual = function(data, centroid, moanin_model,
     xrange = range(time_variable(moanin_model))
     if(inherits(centroid,"DataFrame")) centroid<-as.matrix(centroid)
     if(is.null(dim(centroid))) centroid = t(as.matrix(centroid))
-    yrangeCentroid = range(centroid[, group_variable(moanin_model) %in% groups])
-    yrangeData = range(data[group_variable(moanin_model) %in% groups])
-    yrange = range(c(yrangeCentroid,yrangeData))
+    if(is.null(yrange)){
+        yrangeCentroid = range(centroid[, group_variable(moanin_model) %in% groups])
+        yrangeData = range(data[group_variable(moanin_model) %in% groups])
+        yrange = range(c(yrangeCentroid,yrangeData))
+    }
     graphics::plot(xrange, yrange, type="n", ...)
     if(smooth){
         # FIXME this is supposed to be on the fitted lines, but I'm not able
