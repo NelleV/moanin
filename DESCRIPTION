@@ -36,7 +36,8 @@ Suggests: testthat (>= 1.0.0),
 	  timecoursedata,
 	  knitr,
 	  rmarkdown,
-	  cover
+	  cover,
+	  BiocStyles
 VignetteBuilder: knitr
 License: BSD 3-clause License + file LICENSE
 Encoding: UTF-8
