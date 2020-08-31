@@ -12,3 +12,4 @@
 ^pkgdown
 ^.*[.]md
 ^vignettes/documentation_cache/*.
+docs
