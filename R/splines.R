@@ -72,6 +72,7 @@ fit_predict_splines = function(data, moanin_model,
 #' @param num_timepoints integer, optional, default: 100.
 #'  Number of timepoints to use for the prediction metadata
 #'
+#' @return moanin_model
 #' @keywords internal
 create_meta_prediction = function(moanin_model, num_timepoints=100){
     # Create moanin_model for prediction

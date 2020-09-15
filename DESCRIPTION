@@ -43,4 +43,5 @@ License: BSD 3-clause License + file LICENSE
 Encoding: UTF-8
 LazyData: false
 RoxygenNote: 7.1.1
-biocViews: TimeCourse, GeneExpression, RNASeq, Microarray
+biocViews: TimeCourse, GeneExpression, RNASeq, Microarray,
+	   DifferentialExpression, Clustering
