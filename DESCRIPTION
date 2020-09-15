@@ -1,6 +1,6 @@
 Package: moanin
 Title: An R Package for Time Course RNASeq Data Analysis
-Version: 0.99.3
+Version: 0.99.4
 Authors@R: c(person("Elizabeth", "Purdom", email="epurdom@stat.berkeley.edu",
                     role=c("aut"),
                     comment=c("orcid"="https://orcid.org/0000-0001-9455-7990")),
@@ -37,7 +37,7 @@ Suggests: testthat (>= 1.0.0),
 	  knitr,
 	  rmarkdown,
 	  covr,
-	  BiocStyles
+	  BiocStyle
 VignetteBuilder: knitr
 License: BSD 3-clause License + file LICENSE
 Encoding: UTF-8
