@@ -10,6 +10,9 @@ create_meta_prediction(moanin_model, num_timepoints = 100)
 \item{num_timepoints}{integer, optional, default: 100.
 Number of timepoints to use for the prediction metadata}
 }
+\value{
+moanin_model
+}
 \description{
 Create prediction meta data from splines model
 }

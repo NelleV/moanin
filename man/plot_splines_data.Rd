@@ -86,6 +86,10 @@ created (see \code{\link{par}}). If missing, the function will set a value.}
 \item{addToPlot}{A function that will be called after the plotting, allowing
 the user to add more to the plot.}
 
+\item{ylab}{label for the y-axis}
+
+\item{xlab}{label for the x-axis}
+
 \item{...}{arguments to be passed to the individual plot commands (Will be
 sent to all plot commands)}
 }
