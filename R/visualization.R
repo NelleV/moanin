@@ -34,6 +34,8 @@ setGeneric("plot_splines_data",
 #'  created (see \code{\link{par}}). If missing, the function will set a value.
 #'@param addToPlot A function that will be called after the plotting, allowing
 #'  the user to add more to the plot.
+#'@param xlab label for the x-axis
+#'@param ylab label for the y-axis
 #'@param ... arguments to be passed to the individual plot commands (Will be
 #'  sent to all plot commands)
 #' @details If \code{data} is NULL, the data plotted will be from
@@ -81,8 +83,6 @@ setGeneric("plot_splines_data",
 #' # spline estimate, but plot data from genes 3-4
 #' plot_splines_data(moanin, centroid=assay(moanin[1,]), subset_data=3:4,
 #'    smooth=TRUE, mfrow=c(2,2))
-
-
 #' @export
 #' @name plot_splines_data
 #' @aliases plot_splines_data,Moanin,matrix-method
