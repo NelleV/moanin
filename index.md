@@ -10,7 +10,7 @@ hosted on [CRAN](https://cran.r-project.org/) and
 
 ```r
 library(devtools)
-install.github("NelleV/moanin")
+install_github("NelleV/moanin")
 ```
 
 More information on installation can be found
