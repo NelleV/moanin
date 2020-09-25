@@ -13,7 +13,7 @@
 #'  object). Can be 'BP', 'CC', or 'NF'. See
 #'  \code{\link[pkg:topGO]{topGOdata-class}}.
 #'@param weighted boolean, optional, default: FALSE. Whether to use the
-#'  weighted algorithm or not in \code{\link[topGO]{runTest}}.
+#'  weighted algorithm or not in \code{\link[pkg:topGO]{runTest}}.
 #'@param node_size integer, optional, default: 10. Consider only GO terms with
 #'  node_size number of genes, passed to \code{nodeSize} argument of
 #'  \code{\link[pkg:topGO]{topGOdata-class}}
