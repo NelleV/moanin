@@ -54,13 +54,13 @@ setGeneric("plot_splines_data",
 #' @examples
 #' # First, load some data and create a moanin model
 #' data(exampleData)
-#' moanin = create_moanin_model(data=testData,meta=testMeta, 
+#' moanin <- create_moanin_model(data=testData,meta=testMeta, 
 #'    degrees_of_freedom=6)
 #'
 #' # The moanin model contains all the information for plotting purposes. The
 #' # plot_splines_data will automatically fit the splines from the
 #' # information contained in the moanin model
-#' genes = c("NM_001042489", "NM_008725")
+#' genes <- c("NM_001042489", "NM_008725")
 #' plot_splines_data(moanin, subset_data=genes,
 #' mfrow=c(2, 2))
 #' # By default, same axis for all genes. Can change with 'simpleY=FALSE'
@@ -98,7 +98,7 @@ setMethod("plot_splines_data",c("Moanin","matrix"),
                 scale_centroid=c("toData","toCentroid","none"),
                 mar=c(2.5, 2.5, 3.0, 1.0),
                 mfrow=NULL, addToPlot=NULL, ylab="", xlab="Time",...){
-    scale_centroid = match.arg(scale_centroid)
+    scale_centroid <- match.arg(scale_centroid)
     check_data_meta(data=data,object=object)
     if(!is.null(centroid)){
         check_data_meta(data=centroid,object=object)
@@ -106,14 +106,14 @@ setMethod("plot_splines_data",c("Moanin","matrix"),
             stop("Centroid must be a single vector (or matrix of 1 row) to data, for fitting the functional form")
         } 
     }
-    if(!is.null(subset_data) )  data = data[subset_data,]
+    if(!is.null(subset_data) )  data <- data[subset_data,]
     
-    n_observations = dim(data)[1]
+    n_observations <- dim(data)[1]
     ### Work out the mfrow/number of plots and check makes sense
-    n_plots = if(legend) n_observations+1 else n_observations
+    n_plots <- if(legend) n_observations+1 else n_observations
     if(!is.null(mfrow)){
         if(length(mfrow) != 2){
-            msg = sprintf(
+            msg <- sprintf(
                 paste0("Invalid value for argument mfrow.",
                        "Should be a vector of length 2.",
                        "A vector of length %s was provided.", length(mfrow)))
@@ -121,7 +121,7 @@ setMethod("plot_splines_data",c("Moanin","matrix"),
             
         }
         if(mfrow[1]*mfrow[2] < n_plots){
-            msg = sprintf(
+            msg <- sprintf(
                 paste0(
                     "Invalid value for argument mfrow. Should result in ",
                     "grid for at least %s plots (including a plot for the ",
@@ -131,64 +131,64 @@ setMethod("plot_splines_data",c("Moanin","matrix"),
         }
     }else{
         if(n_plots <= 3){ 
-            mfrow = c(n_plots, 1)
+            mfrow <- c(n_plots, 1)
         }else if(n_plots <= 6){
-            mfrow = c(ceiling(n_plots / 2), 2)
+            mfrow <- c(ceiling(n_plots / 2), 2)
         }else if(n_plots <= 12){
-            mfrow = c(ceiling(n_plots / 3), 3)
+            mfrow <- c(ceiling(n_plots / 3), 3)
         }else{
-            nrow = round(n_plots ** 0.5)
-            ncol = ceiling(n_plots / nrow)
+            nrow <- round(n_plots ** 0.5)
+            ncol <- ceiling(n_plots / nrow)
             mfrow=c(ncol, nrow)
         }        
     }
     graphics::par(mfrow=mfrow, mar=mar)
-    bottomPlots = seq(to=n_observations, by=1, length=mfrow[2])
-    sidePlots = seq(from=1, to=n_observations, by=mfrow[2])
+    bottomPlots <- seq(to=n_observations, by=1, length=mfrow[2])
+    sidePlots <- seq(from=1, to=n_observations, by=mfrow[2])
     
     
     ## For legend:
     if(is.null(colors)){
-        groups = levels(group_variable(object))
-        colors = viridis::viridis(length(groups))
-        names(colors) = groups
+        groups <- levels(group_variable(object))
+        colors <- viridis::viridis(length(groups))
+        names(colors) <- groups
     }
     
-    plot_names = row.names(data)
-    name = NULL 
+    plot_names <- row.names(data)
+    name <- NULL 
     if(!is.null(centroid)){
         if(scale_centroid=="toData"){
-            centroid = align_data_onto_centroid(data, centroid, 
+            centroid <- align_data_onto_centroid(data, centroid, 
                                                 returnType="centroid")
         }
         if(scale_centroid=="toCentroid"){
-            data = align_data_onto_centroid(data, centroid, returnType="data")
+            data <- align_data_onto_centroid(data, centroid, returnType="data")
         }
         if(scale_centroid %in% c("toCentroid","none")){
             #make it a matrix
-            centroid = matrix(centroid, nrow=nrow(data),ncol=length(centroid),
+            centroid <- matrix(centroid, nrow=nrow(data),ncol=length(centroid),
                               byrow=TRUE)
         }
     }
     
     ## Fix up the y-axis range
     if("ylim" %in% names(list(...))){
-        ylim = list(...)$ylim
+        ylim <- list(...)$ylim
     }
-    else ylim = NULL
+    else ylim <- NULL
     if(simpleY & is.null(ylim)){
         # use same y-axis range
-        yrange = range(data)
+        yrange <- range(data)
     }
     else{
-        if(!is.null(ylim)) yrange = ylim
-        else yrange = NULL
+        if(!is.null(ylim)) yrange <- ylim
+        else yrange <- NULL
     }
 
     # Now plot the different data
     for(i in seq_len(n_observations)){
         if(!is.null(plot_names)){
-            name = plot_names[i]
+            name <- plot_names[i]
         }
         plot_centroid_individual(
             data=data[i, ], centroid=if(is.null(centroid)) centroid else centroid[i,],
@@ -224,7 +224,7 @@ setMethod("plot_splines_data",c("Moanin","matrix"),
             yaxt="n")
         
         if(!is.null(subset_conditions)){
-            colors = colors[names(colors) %in% subset_conditions]
+            colors <- colors[names(colors) %in% subset_conditions]
         }
         do.call(
             "legend",
@@ -273,7 +273,7 @@ setMethod("plot_splines_data",c("Moanin","missing"),
 
 # centroid and data are vectors
 # moanin_model will separate them into groups...
-plot_centroid_individual = function(data, centroid, moanin_model,
+plot_centroid_individual <- function(data, centroid, moanin_model,
                                     colors, smooth=FALSE, 
                                     subset_conditions=NULL,yrange=NULL,...){
     if(is.null(data)){
@@ -282,72 +282,62 @@ plot_centroid_individual = function(data, centroid, moanin_model,
     if(is.null(centroid)) centroid<-data
     if(!inherits(moanin_model,"Moanin")) 
         stop("Internal coding error: expecting Moanin class")
-    gpVar = group_variable_name(moanin_model)
-    tpVar = time_variable_name(moanin_model)
-    groups = levels(group_variable(moanin_model))
+    gpVar <- group_variable_name(moanin_model)
+    tpVar <- time_variable_name(moanin_model)
+    groups <- levels(group_variable(moanin_model))
     
     if(!is.null(subset_conditions)){
         if(!all(subset_conditions %in% groups)){
-            msg = paste0(
+            msg <- paste0(
                 "subset_conditions argument given by user does not match names",
                 " of groups.")
             stop(msg)
         }else{
-            groups = subset_conditions
+            groups <- subset_conditions
         }
     }
     
-    xrange = range(time_variable(moanin_model))
+    xrange <- range(time_variable(moanin_model))
     if(inherits(centroid,"DataFrame")) centroid<-as.matrix(centroid)
-    if(is.null(dim(centroid))) centroid = t(as.matrix(centroid))
+    if(is.null(dim(centroid))) centroid <- t(as.matrix(centroid))
     if(is.null(yrange)){
-        yrangeCentroid = range(centroid[, group_variable(moanin_model) %in% groups])
-        yrangeData = range(data[group_variable(moanin_model) %in% groups])
-        yrange = range(c(yrangeCentroid,yrangeData))
+        yrangeCentroid <- range(centroid[, group_variable(moanin_model) %in% groups])
+        yrangeData <- range(data[group_variable(moanin_model) %in% groups])
+        yrange <- range(c(yrangeCentroid,yrangeData))
     }
     graphics::plot(xrange, yrange, type="n", ...)
     if(smooth){
         # FIXME this is supposed to be on the fitted lines, but I'm not able
         # to get this to work fine in R.
-        meta_prediction = create_meta_prediction(moanin_model)
-        centroid_fitted = fit_predict_splines(
+        meta_prediction <- create_meta_prediction(moanin_model)
+        centroid_fitted <- fit_predict_splines(
             centroid, moanin_model,
             meta_prediction=meta_prediction)
     }else{
-        centroid_fitted = fit_predict_splines(
+        centroid_fitted <- fit_predict_splines(
             centroid, moanin_model)
     }
     
     
     # scatter points for values
     for(i in seq_along(groups)){
-        group = groups[i]
-        color = colors[group]
+        group <- groups[i]
+        color <- colors[group]
         
         # Start by individual points
-        mask = group_variable(moanin_model) == group
-        time = time_variable(moanin_model)[mask]
-        indx = order(time)
+        mask <- group_variable(moanin_model) == group
+        time <- time_variable(moanin_model)[mask]
+        indx <- order(time)
         graphics::lines(time[indx], data[mask][indx], type="p",
                         col=color, pch=16,
                         lwd=0)
         if(smooth){
-            mask = meta_prediction[,gpVar] == group
-            time = meta_prediction[,tpVar][mask]
-            indx = order(time)
+            mask <- meta_prediction[,gpVar] == group
+            time <- meta_prediction[,tpVar][mask]
+            indx <- order(time)
         }
         graphics::lines(time[indx], centroid_fitted[mask][indx], type="l",
                         col=color, lwd=1)
         
     }
-} 
-
-# DELETE ME
-# plot_gene_splines = function(data, meta, gene_name, colors=NULL){
-#     # First, select the gene:
-#     if(!(gene_name %in% row.names(data))){
-#         msg = paste("moanin::plot_gene_splines: The gene_name provided '",
-#                     gene_name, "' is not in the data", sep="")
-#     }
-#     gene_data = data[gene_name, ]
-# }
+}

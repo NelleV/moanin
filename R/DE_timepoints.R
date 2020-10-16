@@ -22,10 +22,10 @@ setGeneric("create_timepoints_contrasts",
 #'   via \code{assay(object)}. The specific series of
 #'   calls is:
 #' \preformatted{   
-#'    y = edgeR::DGEList(counts=assay(object))
-#'    y = edgeR::calcNormFactors(y, method="upperquartile")
-#'    v = limma::voom(y, design, plot=FALSE)
-#'    v = limma::lmFit(v) 
+#'    y <- edgeR::DGEList(counts=assay(object))
+#'    y <- edgeR::calcNormFactors(y, method="upperquartile")
+#'    v <- limma::voom(y, design, plot=FALSE)
+#'    v <- limma::lmFit(v) 
 #'    }
 #' @details If the user set \code{log_transform=TRUE} in the creation of the
 #'   \code{Moanin} object, this will not have an impact in the analysis if
@@ -34,12 +34,12 @@ setGeneric("create_timepoints_contrasts",
 #'   regular call to \code{limma}:
 #' \preformatted{
 #'    y<-get_log_data(object)
-#'    v = limma::lmFit(y, design)
+#'    v <- limma::lmFit(y, design)
 #' }
 #' @examples 
 #' data(exampleData)
-#' moanin = create_moanin_model(data=testData, meta=testMeta)
-#' contrasts = create_timepoints_contrasts(moanin,"C", "K")
+#' moanin <- create_moanin_model(data=testData, meta=testMeta)
+#' contrasts <- create_timepoints_contrasts(moanin,"C", "K")
 #' head(contrasts)
 #' deTimepoints=DE_timepoints(moanin, 
 #'     contrasts=contrasts, use_voom_weights=FALSE)
@@ -50,52 +50,52 @@ setMethod("DE_timepoints","Moanin",
                     contrasts,
                     use_voom_weights=TRUE){
     
-    design = stats::model.matrix(~WeeklyGroup + 0, data=colData(object))
+    design <- stats::model.matrix(~WeeklyGroup + 0, data=colData(object))
     
-    cleaned_colnames = gsub("WeeklyGroup", "", colnames(design))
-    colnames(design) = cleaned_colnames
+    cleaned_colnames <- gsub("WeeklyGroup", "", colnames(design))
+    colnames(design) <- cleaned_colnames
     
-    allcontrasts = limma::makeContrasts(
+    allcontrasts <- limma::makeContrasts(
         contrasts=contrasts,
         levels=design)
     
     if(use_voom_weights){
-        y = edgeR::DGEList(counts=assay(object))
-        y = edgeR::calcNormFactors(y, method="upperquartile")
-        v = limma::voom(y, design, plot=FALSE)
-        v = limma::lmFit(v)
+        y <- edgeR::DGEList(counts=assay(object))
+        y <- edgeR::calcNormFactors(y, method="upperquartile")
+        v <- limma::voom(y, design, plot=FALSE)
+        v <- limma::lmFit(v)
     }else{
         y<-get_log_data(object)
-        v = limma::lmFit(y, design)
+        v <- limma::lmFit(y, design)
     }
     
-    fit = limma::contrasts.fit(v, allcontrasts)
-    fit = limma::eBayes(fit)
-    contrast_names = colnames(fit$p.value)
-    fit$adj.p.value = stats::p.adjust(fit$p.value, method="BH")
-    dim(fit$adj.p.value) = dim(fit$p.value)
-    colnames(fit$adj.p.value) = contrast_names
+    fit <- limma::contrasts.fit(v, allcontrasts)
+    fit <- limma::eBayes(fit)
+    contrast_names <- colnames(fit$p.value)
+    fit$adj.p.value <- stats::p.adjust(fit$p.value, method="BH")
+    dim(fit$adj.p.value) <- dim(fit$p.value)
+    colnames(fit$adj.p.value) <- contrast_names
     
-    combine_results = function(ii, fit2){
-        contrast_formula = contrasts[ii]
-        de_analysis = data.frame(row.names=row.names(object))
+    combine_results <- function(ii, fit2){
+        contrast_formula <- contrasts[ii]
+        de_analysis <- data.frame(row.names=row.names(object))
         
-        base_colname = gsub(" ", "", contrast_formula, fixed=TRUE)
-        colname_pval = paste(base_colname, "_pval", sep="")
-        colname_qval = paste(base_colname, "_qval", sep="")
-        colname_lfc = paste(base_colname, "_lfc", sep="")
+        base_colname <- gsub(" ", "", contrast_formula, fixed=TRUE)
+        colname_pval <- paste(base_colname, "_pval", sep="")
+        colname_qval <- paste(base_colname, "_qval", sep="")
+        colname_lfc <- paste(base_colname, "_lfc", sep="")
         
-        tt = limma::topTable(
+        tt <- limma::topTable(
             fit2, coef=ii, number=length(rownames(fit2$coef)),
             p.value=1, adjust.method="none",
             genelist=rownames(fit2$coef))
-        de_analysis[colname_pval] = fit2$p.value[, contrast_formula]
-        de_analysis[colname_qval] = fit2$adj.p.value[,  contrast_formula]
-        de_analysis[colname_lfc] = tt$logFC
+        de_analysis[colname_pval] <- fit2$p.value[, contrast_formula]
+        de_analysis[colname_qval] <- fit2$adj.p.value[,  contrast_formula]
+        de_analysis[colname_lfc] <- tt$logFC
         return(de_analysis)
     }
     
-    all_results = do.call("cbind",
+    all_results <- do.call("cbind",
                           lapply(seq_along(contrast_names),
                                  combine_results, fit2=fit))
     return(all_results)
@@ -120,27 +120,27 @@ setMethod("DE_timepoints","Moanin",
 #' @export
 setMethod("create_timepoints_contrasts","Moanin",
  function(object, group1, group2){
-    object = object[,group_variable(object) %in% c(group1, group2)]
-    all_timepoints = sort(unique(time_variable(object)))
-    contrasts = rep(NA, length(all_timepoints))
+    object <- object[,group_variable(object) %in% c(group1, group2)]
+    all_timepoints <- sort(unique(time_variable(object)))
+    contrasts <- rep(NA, length(all_timepoints))
     msg<-""
     foundMissing<-FALSE
     for(i in seq_along(all_timepoints)){
         # First, check that the two conditions have been sampled for this
         # timepoint
-        timepoint = all_timepoints[i]
-        submeta = object[,time_variable(object) == timepoint]
+        timepoint <- all_timepoints[i]
+        submeta <- object[,time_variable(object) == timepoint]
         if(length(unique(time_by_group_variable(submeta))) == 2){
-            groups = as.character(unique(time_by_group_variable(submeta)))
-            contrasts[i] = paste0(group1, ".", timepoint, "-", group2, ".", 
+            groups <- as.character(unique(time_by_group_variable(submeta)))
+            contrasts[i] <- paste0(group1, ".", timepoint, "-", group2, ".", 
                                   timepoint)
         }else if(length(unique(time_by_group_variable(submeta))) == 1){
             if(unique(group_variable(submeta))[1] ==  group1){
-                missing_condition = group2
+                missing_condition <- group2
             }else{
-                missing_condition = group1
+                missing_condition <- group1
             }
-            msg = paste0(msg,paste("timepoint",
+            msg <- paste0(msg,paste("timepoint",
                                    timepoint, "is missing in condition", 
                                    missing_condition,"\n"))
             foundMissing<-TRUE
@@ -171,26 +171,26 @@ setMethod("create_timepoints_contrasts","Moanin",
 #' @aliases perWeek_barplot
 #' @examples 
 #' data(exampleData)
-#' moanin = create_moanin_model(data=testData, meta=testMeta)
-#' contrasts = create_timepoints_contrasts(moanin,"C", "K")
+#' moanin <- create_moanin_model(data=testData, meta=testMeta)
+#' contrasts <- create_timepoints_contrasts(moanin,"C", "K")
 #' deTimepoints=DE_timepoints(moanin, 
 #'     contrasts=contrasts, use_voom_weights=FALSE)
 #' perWeek_barplot(deTimepoints)
 #' @export
-perWeek_barplot = function(de_results, type=c("qval","pval"),
+perWeek_barplot <- function(de_results, type=c("qval","pval"),
                           labels=NULL, threshold=0.05,
                           xlab="Timepoint", ylab="Number of DE genes", main="", 
                            ...){
     
     type<-match.arg(type)
-    qval_colnames = colnames(de_results)[
+    qval_colnames <- colnames(de_results)[
         grepl(type, colnames(de_results))]
     if(is.null(labels)){
-        stringReplace<-paste0("_",type)
-        labels = sapply(
+        stringReplace <- paste0("_",type)
+        labels <- sapply(
             strsplit(gsub(stringReplace, "", qval_colnames), "\\."), .subset2, 3)
     }
-    number_de_genes_per_time = colSums(de_results[, qval_colnames] < threshold)
+    number_de_genes_per_time <- colSums(de_results[, qval_colnames] < threshold)
     
     graphics::barplot(number_de_genes_per_time, 
             names.arg=labels, xlab=xlab,ylab=ylab,

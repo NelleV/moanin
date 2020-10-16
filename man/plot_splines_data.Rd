@@ -118,13 +118,13 @@ If the user set \code{log_transform=TRUE} in the creation of the
 \examples{
 # First, load some data and create a moanin model
 data(exampleData)
-moanin = create_moanin_model(data=testData,meta=testMeta, 
+moanin <- create_moanin_model(data=testData,meta=testMeta, 
    degrees_of_freedom=6)
 
 # The moanin model contains all the information for plotting purposes. The
 # plot_splines_data will automatically fit the splines from the
 # information contained in the moanin model
-genes = c("NM_001042489", "NM_008725")
+genes <- c("NM_001042489", "NM_008725")
 plot_splines_data(moanin, subset_data=genes,
 mfrow=c(2, 2))
 # By default, same axis for all genes. Can change with 'simpleY=FALSE'

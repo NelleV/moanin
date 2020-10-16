@@ -66,7 +66,7 @@ For method "nmi", the pairwise value is the NMI value between each
 }
 \examples{
 data(exampleData)
-moanin = create_moanin_model(data=testData,meta=testMeta)
+moanin <- create_moanin_model(data=testData,meta=testMeta)
 #small function to run splines_kmeans on subsample of 50 genes
 subsampleCluster<-function(){
    ind<-sample(1:nrow(moanin),size=50)

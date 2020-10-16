@@ -48,8 +48,8 @@ Creates pairwise contrasts for all timepoints
 }
 \examples{
 data(exampleData)
-moanin = create_moanin_model(data=testData, meta=testMeta)
-contrasts = create_timepoints_contrasts(moanin,"C", "K")
+moanin <- create_moanin_model(data=testData, meta=testMeta)
+contrasts <- create_timepoints_contrasts(moanin,"C", "K")
 deTimepoints=DE_timepoints(moanin, 
     contrasts=contrasts, use_voom_weights=FALSE)
 perWeek_barplot(deTimepoints)

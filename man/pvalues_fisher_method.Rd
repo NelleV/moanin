@@ -21,8 +21,8 @@ Combines all p-values per rows.
 }
 \examples{
 data(exampleData)
-moanin = create_moanin_model(data=testData,meta=testMeta)
-contrasts = create_timepoints_contrasts(moanin,"C", "K")
+moanin <- create_moanin_model(data=testData,meta=testMeta)
+contrasts <- create_timepoints_contrasts(moanin,"C", "K")
 deTimepoints=DE_timepoints(moanin, 
   contrasts=contrasts, use_voom_weights=FALSE)
 fisherPval=pvalues_fisher_method(

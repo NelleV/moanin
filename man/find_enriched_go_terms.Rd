@@ -75,7 +75,7 @@ Create the Gene to GO Term mapping
 \examples{
 data(exampleData)
 head(testGenesGO) #gives the mapping of genes to GO
-geneId2Go = create_go_term_mapping(testGenesGO)
+geneId2Go <- create_go_term_mapping(testGenesGO)
 #create fake assignment of genes to group based on TRUE/FALSE values
 inGroup=rep(FALSE,nrow(testData))
 inGroup[1:10]=TRUE

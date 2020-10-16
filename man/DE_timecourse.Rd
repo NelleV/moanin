@@ -45,10 +45,10 @@ The implementation of the spline fit and the calculation of p-values
 If \code{use_voom_weights=TRUE}, then before fitting splines to each gene,
 voom weights are calculated from \code{assay(object)}:
 \preformatted{
-  y = edgeR::DGEList(counts=assay(object))
-  y = edgeR::calcNormFactors(y, method="upperquartile")
-  v = limma::voom(y, contrasts, plot=FALSE)
-  weights = limma::lmFit(v)
+  y <- edgeR::DGEList(counts=assay(object))
+  y <- edgeR::calcNormFactors(y, method="upperquartile")
+  v <- limma::voom(y, contrasts, plot=FALSE)
+  weights <- limma::lmFit(v)
 }
 These weights are given to the \code{lm.fit} which fits the spline coefficients.
 This workflow assumes that the input to the \code{Moanin} object were counts.
@@ -60,7 +60,7 @@ If the user set \code{log_transform=TRUE} in the creation of the
 }
 \examples{
 data(exampleData)
-moanin = create_moanin_model(data=testData, meta=testMeta)
+moanin <- create_moanin_model(data=testData, meta=testMeta)
 deTimecourse=DE_timecourse(moanin, 
    contrasts="K-C", use_voom_weights=FALSE)
 head(deTimecourse)

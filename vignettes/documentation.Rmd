@@ -10,7 +10,7 @@ vignette: >
 knitr::opts_chunk$set(
   cache=TRUE, autodep=TRUE, warning=FALSE, error=FALSE, message=FALSE,
   echo=TRUE, out.width=".5\\textwidth",
-  duplicate.label="allow", fig.pos = "H", out.extra = "")
+  duplicate.label="allow", fig.pos <- "H", out.extra = "")
 ```
 
 The package moanin was developed to provide a simple and efficient workflow
@@ -78,8 +78,8 @@ intercept with the following R formula
 
 
 ```{r}
-moaninObject<-create_moanin_model(data=preData,meta=preMeta, 
-                            group_variable="Condition", time_variable = "Week")
+moaninObject <- create_moanin_model(data=preData, meta=preMeta, 
+                            group_variable="Condition", time_variable="Week")
 moaninObject
 ```
 
@@ -119,7 +119,7 @@ limma package). We provide a function to do this for every week, so as to
 avoid this step.
 
 ```{r}
-preContrasts = create_timepoints_contrasts(moaninObject,"Preflowering", "Control")
+preContrasts <- create_timepoints_contrasts(moaninObject,"Preflowering", "Control")
 ```
 
 Notice we also get a warning that timepoint 16 is missing in our Control
@@ -132,9 +132,9 @@ Preflowering and Postflowering. We get many warnings here, because
 Post-flowering only has samples after week 9. 
 
 ```{r}
-postContrasts = create_timepoints_contrasts(
+postContrasts <- create_timepoints_contrasts(
     moaninObject, "Postflowering", "Control" )
-prepostContrasts = create_timepoints_contrasts(
+prepostContrasts <- create_timepoints_contrasts(
     moaninObject, "Postflowering", "Preflowering")
 ```
 
@@ -144,7 +144,7 @@ for illustration purposes, though the full set of genes does not take very
 long
 
 ```{r}
-weeklyPre<-DE_timepoints(moaninObject[1:500,], 
+weeklyPre <- DE_timepoints(moaninObject[1:500,], 
     contrasts=c(preContrasts,postContrasts,prepostContrasts),
      use_voom_weights=TRUE)
 ```
@@ -183,7 +183,7 @@ wish to make:
 timecourseContrasts <- c("Preflowering-Control",
 			 "Postflowering-Control",
 			 "Postflowering-Preflowering")
-splinePre<-DE_timecourse(moaninObject[1:500,], contrasts=timecourseContrasts,
+splinePre <- DE_timecourse(moaninObject[1:500,], contrasts=timecourseContrasts,
      use_voom_weights=TRUE)
 ```
 
@@ -208,7 +208,7 @@ which gives the sum of the absolute difference in the means across time
 points:
 
 ```{r}
-log_fold_change_timepoints = estimate_log_fold_change(
+log_fold_change_timepoints <- estimate_log_fold_change(
     moaninObject[1:500,], contrasts=timecourseContrasts, method="sum")
 head(log_fold_change_timepoints)
 ```
@@ -225,8 +225,8 @@ these aren't representative of the overall signal in the data set, which is
 much stronger).
 
 ```{r}
-whSig = which(splinePre[,"Preflowering-Control_qval"]<0.05)
-deGenes = order(abs(
+whSig <- which(splinePre[,"Preflowering-Control_qval"]<0.05)
+deGenes <- order(abs(
     log_fold_change_timepoints)[whSig,"Preflowering-Control"],
     decreasing=TRUE)[1:10]
 
@@ -243,7 +243,7 @@ so we set `log_transform=TRUE`.
 
 ```{r clustering}
 # First fit the kmeans clusters
-kmeans_clusters = splines_kmeans(moaninObject[1:500,], n_clusters=3,
+kmeans_clusters <- splines_kmeans(moaninObject[1:500,], n_clusters=3,
     random_seed=42, 
     n_init=20)
 ```
@@ -270,7 +270,7 @@ The function `splines_kmeans_score_and_label` gives a goodness-of-fit score
 between each gene and each cluster. 
 
 ```{r}
-scores_and_labels = splines_kmeans_score_and_label(
+scores_and_labels <- splines_kmeans_score_and_label(
     object=moaninObject,data=preData[1:2000,], kmeans_clusters=kmeans_clusters)
 ```
 

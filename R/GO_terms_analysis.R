@@ -35,7 +35,7 @@
 #' @examples 
 #' data(exampleData)
 #' head(testGenesGO) #gives the mapping of genes to GO
-#' geneId2Go = create_go_term_mapping(testGenesGO)
+#' geneId2Go <- create_go_term_mapping(testGenesGO)
 #' #create fake assignment of genes to group based on TRUE/FALSE values
 #' inGroup=rep(FALSE,nrow(testData))
 #' inGroup[1:10]=TRUE
@@ -44,17 +44,17 @@
 #' @seealso \code{\link{create_go_term_mapping}}, \code{\link[KEGGprofile]{find_enriched_pathway}}, \code{\link[pkg:topGO]{GenTable}}, \code{\link[pkg:topGO]{runTest}}, \code{\link[pkg:topGO]{topGOdata-class}}, \code{\link[stats]{p.adjust}} 
 #' @export
 #' @importFrom topGO annFUN.gene2GO runTest GenTable
-find_enriched_go_terms = function(assignments, gene_id_to_go,
+find_enriched_go_terms <- function(assignments, gene_id_to_go,
                                   ontology="BP", 
                                   weighted=FALSE,
                                   node_size=10){
     if(is.null(names(assignments))) stop("assignments must be a named vector,",
     "where names match names of gene_id_to_go ")
-    gene_names = names(assignments)
-    assignments = as.numeric(assignments)
-    names(assignments) = gene_names
+    gene_names <- names(assignments)
+    assignments <- as.numeric(assignments)
+    names(assignments) <- gene_names
     if(!(ontology %in% c("BP", "CC", "NF"))){
-        error_message = paste(
+        error_message <- paste(
             "moanin::find_enriched_go_terms: Ontology should be 'BP', 'CC',",
             "or 'NF'. Ontology provided is",
             ontology)
@@ -63,39 +63,39 @@ find_enriched_go_terms = function(assignments, gene_id_to_go,
     
     # function to specify which genes are interesting based on the gene scores.
     # It should be present iff the allGenes object is of type numeric.
-    getTopDiffGenes = function(data, cutOff=NULL){
+    getTopDiffGenes <- function(data, cutOff=NULL){
         return(data < 0.5)
     }
     
-    GOdata = new("topGOdata", ontology=ontology, allGenes=assignments,
+    GOdata <- new("topGOdata", ontology=ontology, allGenes=assignments,
                  nodeSize=node_size,
                  geneSel=getTopDiffGenes,
                  annot=topGO::annFUN.gene2GO, gene2GO=gene_id_to_go)
     
     if(weighted){
-        resultFisher = topGO::runTest(GOdata, algorithm="classic", 
+        resultFisher <- topGO::runTest(GOdata, algorithm="classic", 
                                       statistic="fisher")
     }else{
-        resultFisher = topGO::runTest(GOdata, algorithm="weight", 
+        resultFisher <- topGO::runTest(GOdata, algorithm="weight", 
                                       statistic="fisher")
     }
-    n_nodes = length(resultFisher@score)
+    n_nodes <- length(resultFisher@score)
     
-    allRes = topGO::GenTable(
+    allRes <- topGO::GenTable(
         GOdata, 
         resultFisher=resultFisher,
         orderBy="resultFisher", ranksOf="resultFisher",
         topNodes=n_nodes)
     
     # P-value correct
-    allRes[, "resultFisher_padj"] = stats::p.adjust(allRes$resultFisher, 
+    allRes[, "resultFisher_padj"] <- stats::p.adjust(allRes$resultFisher, 
                                                     method="BH")
-    wh = which(allRes[, "resultFisher"] <= 0.05)
+    wh <- which(allRes[, "resultFisher"] <= 0.05)
     
-    allRes = allRes[wh,]
-    wh = which(apply(allRes[, c("Significant", "Expected")],
+    allRes <- allRes[wh,]
+    wh <- which(apply(allRes[, c("Significant", "Expected")],
                      1, function(x){x["Significant"] > x["Expected"]}))
-    allRes = allRes[wh,]
+    allRes <- allRes[wh,]
     
     return(allRes)
 }
@@ -114,17 +114,17 @@ find_enriched_go_terms = function(assignments, gene_id_to_go,
 #'   in the format required by \code{\link[pkg:topGO]{topGOdata-class}}.
 #' @rdname find_enriched_go_terms
 #' @export
-create_go_term_mapping = function(genes, gene_col="refseq_mrna"){
-    gene_id_go_mapping = NULL
-    gene_names = unique(genes[, "refseq_mrna"])
+create_go_term_mapping <- function(genes, gene_col="refseq_mrna"){
+    gene_id_go_mapping <- NULL
+    gene_names <- unique(genes[, "refseq_mrna"])
     
-    i = 1
+    i <- 1
     for(gene in gene_names){
-        go_terms = genes[genes[, gene_col] == gene, "go_id"]
+        go_terms <- genes[genes[, gene_col] == gene, "go_id"]
         if(length(go_terms) != 0){
-            gene_id_go_mapping$gene = go_terms
-            names(gene_id_go_mapping)[i] = gene
-            i = i + 1
+            gene_id_go_mapping$gene <- go_terms
+            names(gene_id_go_mapping)[i] <- gene
+            i <- i + 1
         }
     }
     return(gene_id_go_mapping)

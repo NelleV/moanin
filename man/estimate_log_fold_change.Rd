@@ -53,11 +53,11 @@ If the user set \code{log_transform=TRUE} in the creation of the
 }
 \examples{
 data(exampleData)
-moanin = create_moanin_model(data=testData,meta=testMeta)
-estsTimely = estimate_log_fold_change(moanin, 
+moanin <- create_moanin_model(data=testData,meta=testMeta)
+estsTimely <- estimate_log_fold_change(moanin, 
    contrasts=c("K-C"), method="timely")
 head(estsTimely)
-estsTimecourse = estimate_log_fold_change(moanin, 
+estsTimecourse <- estimate_log_fold_change(moanin, 
    contrasts=c("K-C"),method="timecourse")
 head(estsTimecourse)
 }

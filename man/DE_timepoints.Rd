@@ -54,10 +54,10 @@ If \code{use_voom_weights=TRUE}, the data is given directly to limma
   via \code{assay(object)}. The specific series of
   calls is:
 \preformatted{   
-   y = edgeR::DGEList(counts=assay(object))
-   y = edgeR::calcNormFactors(y, method="upperquartile")
-   v = limma::voom(y, design, plot=FALSE)
-   v = limma::lmFit(v) 
+   y <- edgeR::DGEList(counts=assay(object))
+   y <- edgeR::calcNormFactors(y, method="upperquartile")
+   v <- limma::voom(y, design, plot=FALSE)
+   v <- limma::lmFit(v) 
    }
 
 If the user set \code{log_transform=TRUE} in the creation of the
@@ -67,7 +67,7 @@ If the user set \code{log_transform=TRUE} in the creation of the
   regular call to \code{limma}:
 \preformatted{
    y<-get_log_data(object)
-   v = limma::lmFit(y, design)
+   v <- limma::lmFit(y, design)
 }
 
 \code{create_timepoints_contrasts} creates the needed contrasts for
@@ -78,8 +78,8 @@ If the user set \code{log_transform=TRUE} in the creation of the
 }
 \examples{
 data(exampleData)
-moanin = create_moanin_model(data=testData, meta=testMeta)
-contrasts = create_timepoints_contrasts(moanin,"C", "K")
+moanin <- create_moanin_model(data=testData, meta=testMeta)
+contrasts <- create_timepoints_contrasts(moanin,"C", "K")
 head(contrasts)
 deTimepoints=DE_timepoints(moanin, 
     contrasts=contrasts, use_voom_weights=FALSE)

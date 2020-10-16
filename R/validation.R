@@ -6,14 +6,14 @@
 #' @keywords internal
 #' @name internal
 #' @return Does not return anything. Only hits errors if there are problems.
-check_data_meta = function(data, object){
+check_data_meta <- function(data, object){
     if(!inherits(object,"Moanin")) stop("Internal coding error: passed object",
         "is not of class Moanin")
     if(is.null(dim(data))){
        data<-matrix(data,nrow=1) 
     }
-    dim_data = dim(data)
-    dim_meta = dim(object)
+    dim_data <- dim(data)
+    dim_meta <- dim(object)
     if(dim_meta[2] != dim_data[2]){
         stop(
             "User-given data and Moanin object are inconsistent. Data is has ", 
@@ -27,8 +27,8 @@ check_data_meta = function(data, object){
 #'
 #' @keywords internal
 #' @rdname internal
-check_is_2d = function(X){
-    dim_data = dim(X)
+check_is_2d <- function(X){
+    dim_data <- dim(X)
     if(is.null(dim_data)){
         stop("Data is expected to be 2D. No dimension found.")
     }
@@ -50,27 +50,27 @@ check_is_2d = function(X){
 #' @returns \code{is_contrasts} returns the contrasts, with any corrections.
 #' @keywords internal
 #' @rdname internal
-is_contrasts = function(contrasts, moanin_model){
+is_contrasts <- function(contrasts, moanin_model){
     if(!inherits(moanin_model, "Moanin") ) 
         stop("Coding error: internal function is_contrasts expect class",
             "Moanin object")
     if(is.vector(contrasts)){
         # XXX Should we add more tests here in order to provide meaningful
         # error messages?
-        contrasts = limma::makeContrasts(
+        contrasts <- limma::makeContrasts(
             contrasts=contrasts,
             levels=levels(group_variable(moanin_model)))
     }else{
         # Basic checks to make sure we have contrasts
-        dim_contrasts = dim(contrasts)
+        dim_contrasts <- dim(contrasts)
         if(is.null(dim_contrasts)){
-            msg = "Contrasts need to be either a vector of string or a 2D matrix"
+            msg <- "Contrasts need to be either a vector of string or a 2D matrix"
             stop(msg)
         }
         
-        n_groups = length(levels(group_variable(moanin_model)))
+        n_groups <- length(levels(group_variable(moanin_model)))
         if(dim(contrasts)[1] != n_groups){
-            msg = paste(
+            msg <- paste(
                 "When contrasts provided is a matrix, it should contain the",
                 "same number of rows as the number of groups. Provided:",
                 dim(contrasts[1]), "expected:", n_groups)
@@ -78,7 +78,7 @@ is_contrasts = function(contrasts, moanin_model){
         }
         
         if(any(colSums(contrasts) != 0)){
-            msg = paste("When contrasts provided is",
+            msg <- paste("When contrasts provided is",
                 "matrix, all columns should sum to 0.")
             stop(msg)
         }

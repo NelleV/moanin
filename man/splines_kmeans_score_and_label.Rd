@@ -80,17 +80,17 @@ Assign score and labels from raw data
 }
 \examples{
 data(exampleData)
-moanin = create_moanin_model(data=testData, meta=testMeta)
+moanin <- create_moanin_model(data=testData, meta=testMeta)
 # Cluster on a subset of genes
 kmClusters=splines_kmeans(moanin[1:50,],n_clusters=3)
 # get scores on all genes
-scores_and_labels = splines_kmeans_score_and_label(object=moanin, kmClusters)
+scores_and_labels <- splines_kmeans_score_and_label(object=moanin, kmClusters)
 head(scores_and_labels$scores)
 head(scores_and_labels$labels)
 # should be same as above, only just the assignments
-predictLabels1 = splines_kmeans_predict(object=moanin, kmClusters, 
+predictLabels1 <- splines_kmeans_predict(object=moanin, kmClusters, 
      method="goodnessOfFit")
 # Instead use distance to centroid:
-predictLabels2 = splines_kmeans_predict(object=moanin, kmClusters, 
+predictLabels2 <- splines_kmeans_predict(object=moanin, kmClusters, 
      method="distance")
 }

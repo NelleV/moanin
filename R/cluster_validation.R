@@ -12,7 +12,7 @@
 #'  in the same cluster (\code{scale=TRUE}).
 #' @examples 
 #' data(exampleData)
-#' moanin = create_moanin_model(data=testData,meta=testMeta)
+#' moanin <- create_moanin_model(data=testData,meta=testMeta)
 #' #small function to run splines_kmeans on subsample of 50 genes
 #' subsampleCluster<-function(){
 #'    ind<-sample(1:nrow(moanin),size=50,replace=FALSE)
@@ -24,24 +24,24 @@
 #' cm<-consensus_matrix(kmClusters)
 #' heatmap(cm)
 #' @export
-consensus_matrix = function(labels, scale=TRUE){
-    melted_labels = reshape2::melt(as.matrix(labels))
-    colnames(melted_labels) = c("Gene", "Clustering", "Label")
-    melted_labels$Clustering_lab = 
+consensus_matrix <- function(labels, scale=TRUE){
+    melted_labels <- reshape2::melt(as.matrix(labels))
+    colnames(melted_labels) <- c("Gene", "Clustering", "Label")
+    melted_labels$Clustering_lab <- 
         as.factor(melted_labels$Clustering):as.factor(melted_labels$Label)
-    w = reshape2::dcast(melted_labels, Gene~Clustering_lab, 
+    w <- reshape2::dcast(melted_labels, Gene~Clustering_lab, 
                         value.var="Clustering_lab", fun.aggregate=length)
-    x = as.matrix(w[,-1])
-    x[is.na(x)] = 0
-    x = apply(x, 2,  function(x) as.numeric(x > 0))
-    consensus = tcrossprod(x) 
+    x <- as.matrix(w[,-1])
+    x[is.na(x)] <- 0
+    x <- apply(x, 2,  function(x) as.numeric(x > 0))
+    consensus <- tcrossprod(x) 
     if(scale){
         # EAP: Slightly faster:
-        diag_elements = matrix(diag(consensus),
+        diag_elements <- matrix(diag(consensus),
                         nrow=nrow(consensus),ncol=ncol(consensus))
-        consensus = consensus/diag_elements
-        consensus = consensus/t(diag_elements)
-        diag(consensus) = 0
+        consensus <- consensus/diag_elements
+        consensus <- consensus/t(diag_elements)
+        diag(consensus) <- 0
     }
     return(consensus)
 }
@@ -57,28 +57,28 @@ consensus_matrix = function(labels, scale=TRUE){
 #'   triangle values, with the list of same length as that of \code{labels}.
 #' @rdname get_auc_similarity_scores
 #' @export
-plot_cdf_consensus = function(labels){
-    all_labels = labels
+plot_cdf_consensus <- function(labels){
+    all_labels <- labels
     if(is.null(names(all_labels))) 
         names(all_labels)<-paste("Set",seq_along(all_labels))
-    n_clusters = names(all_labels)
+    n_clusters <- names(all_labels)
     
-    colors = grDevices::rainbow(length(n_clusters))
-    xrange = c(0, 1)
-    yrange = c(0, 1)
+    colors <- grDevices::rainbow(length(n_clusters))
+    xrange <- c(0, 1)
+    yrange <- c(0, 1)
     
     graphics::plot(xrange, yrange, type="n")
     
     cdfList<-list()
     for(i in seq_along(n_clusters)){
-        cluster = n_clusters[i]
-        color = colors[i]
+        cluster <- n_clusters[i]
+        color <- colors[i]
         
-        labels = all_labels[[cluster]]
-        consensus = consensus_matrix(labels, scale=FALSE)
-        consensus = consensus / max(consensus)
-        consensus = sort(consensus[upper.tri(consensus)])
-        x_axis = seq_along(consensus) / length(consensus)
+        labels <- all_labels[[cluster]]
+        consensus <- consensus_matrix(labels, scale=FALSE)
+        consensus <- consensus / max(consensus)
+        consensus <- sort(consensus[upper.tri(consensus)])
+        x_axis <- seq_along(consensus) / length(consensus)
         cdfList<-c(cdfList,list(consensus))
         graphics::lines(consensus, x_axis, type="b",
             pch=16,
@@ -126,7 +126,7 @@ plot_cdf_consensus = function(labels){
 #' @aliases plot_cdf_consensus plot_model_explorer
 #' @examples 
 #' data(exampleData)
-#' moanin = create_moanin_model(data=testData,meta=testMeta)
+#' moanin <- create_moanin_model(data=testData,meta=testMeta)
 #' #small function to run splines_kmeans on subsample of 50 genes
 #' subsampleCluster<-function(){
 #'    ind<-sample(1:nrow(moanin),size=50)
@@ -142,61 +142,61 @@ plot_cdf_consensus = function(labels){
 #' get_auc_similarity_scores(list(kmClusters1,kmClusters2))
 #' plot_model_explorer(list(kmClusters1,kmClusters2))
 #' @export
-get_auc_similarity_scores = function(labels, method=c("consensus", "nmi")){
+get_auc_similarity_scores <- function(labels, method=c("consensus", "nmi")){
     method<-match.arg(method)
     
-    all_labels = labels
+    all_labels <- labels
     if(is.null(names(all_labels))) 
         names(all_labels)<-paste("Set",seq_along(all_labels))
-    n_clusters = names(all_labels)
+    n_clusters <- names(all_labels)
     
-    auc_scores = rep(0, length(n_clusters))
+    auc_scores <- rep(0, length(n_clusters))
     for(i in seq_along(n_clusters)){
-        cluster = n_clusters[i]
-        labels = all_labels[[cluster]]
+        cluster <- n_clusters[i]
+        labels <- all_labels[[cluster]]
         if(method == "consensus"){
-            consensus = consensus_matrix(labels, scale=FALSE)
-            consensus = consensus / max(consensus)
-            scores = consensus[upper.tri(consensus)]
+            consensus <- consensus_matrix(labels, scale=FALSE)
+            consensus <- consensus / max(consensus)
+            scores <- consensus[upper.tri(consensus)]
         }else if(method == "nmi"){
-            scores = get_nmi_scores(labels) 
+            scores <- get_nmi_scores(labels) 
         }
-        scores = sort(scores)
-        y_axis = seq_along(scores) / length(scores)
-        auc_score = sum(diff(scores) * zoo::rollmean(y_axis, 2))
+        scores <- sort(scores)
+        y_axis <- seq_along(scores) / length(scores)
+        auc_score <- sum(diff(scores) * zoo::rollmean(y_axis, 2))
         
-        auc_scores[i] = auc_score
+        auc_scores[i] <- auc_score
     }
     return(auc_scores)
 }
 
 
-get_nmi_scores = function(labels){
+get_nmi_scores <- function(labels){
     
-    nmi = function(x, y){
-        x_dataframe = as.data.frame(x)
-        colnames(x_dataframe) = c("Label")
-        x_dataframe$Gene = row.names(x_dataframe)
-        x_dataframe = x_dataframe[c("Gene", "Label")]
+    nmi <- function(x, y){
+        x_dataframe <- as.data.frame(x)
+        colnames(x_dataframe) <- c("Label")
+        x_dataframe$Gene <- row.names(x_dataframe)
+        x_dataframe <- x_dataframe[c("Gene", "Label")]
         
-        y_dataframe = as.data.frame(y)
-        colnames(y_dataframe) = c("Label")
-        y_dataframe$Gene = row.names(y_dataframe)
-        y_dataframe = y_dataframe[c("Gene", "Label")]
+        y_dataframe <- as.data.frame(y)
+        colnames(y_dataframe) <- c("Label")
+        y_dataframe$Gene <- row.names(y_dataframe)
+        y_dataframe <- y_dataframe[c("Gene", "Label")]
         
         return(NMI::NMI(x_dataframe, y_dataframe))
     }
     
-    n_trials = dim(labels)[2]
-    scores = NULL
+    n_trials <- dim(labels)[2]
+    scores <- NULL
     for(trial in seq_len(n_trials)){
         if(trial == n_trials){
             break
         }
-        column = colnames(labels)[trial]
-        columns_to_consider = (trial+1):n_trials
-        label = labels[,trial]
-        scores = c(scores, as.vector(
+        column <- colnames(labels)[trial]
+        columns_to_consider <- (trial+1):n_trials
+        label <- labels[,trial]
+        scores <- c(scores, as.vector(
             unlist(lapply(labels[, columns_to_consider, drop=FALSE], 
                           function(x){nmi(x, label)}))))
     }
@@ -212,40 +212,40 @@ get_nmi_scores = function(labels){
 #' @rdname get_auc_similarity_scores
 #' @export
 #' @importFrom grDevices rainbow
-plot_model_explorer = function(labels, colors=rainbow(length(labels))){
-    all_labels = labels
+plot_model_explorer <- function(labels, colors=rainbow(length(labels))){
+    all_labels <- labels
     if(is.null(names(all_labels))){ 
-        names(all_labels)<-paste("Set",seq_along(all_labels))
+        names(all_labels) <- paste("Set",seq_along(all_labels))
     }
-    n_clusters = names(all_labels)
-    if(length(colors)!=length(labels)) {
+    n_clusters <- names(all_labels)
+    if(length(colors) != length(labels)) {
         stop("colors argument should be same length as labels")
     }
-    nmi_scores = list()
+    nmi_scores <- list()
     
-    max_trial = 0
-    min_score = 1
-    max_score = 0
+    max_trial <- 0
+    min_score <- 1
+    max_score <- 0
     for(i in seq_along(n_clusters)){
-        n_cluster = n_clusters[i]
-        color = colors[i]
+        n_cluster <- n_clusters[i]
+        color <- colors[i]
         
-        labels = all_labels[[n_cluster]]
-        scores = get_nmi_scores(labels)
+        labels <- all_labels[[n_cluster]]
+        scores <- get_nmi_scores(labels)
         
-        nmi_scores[[n_cluster]] = sort(scores)
-        max_trial = max(max_trial, length(scores))
-        min_score = min(min_score, min(scores))
-        max_score = max(max_score, max(scores))
+        nmi_scores[[n_cluster]] <- sort(scores)
+        max_trial <- max(max_trial, length(scores))
+        min_score <- min(min_score, min(scores))
+        max_score <- max(max_score, max(scores))
     }
-    xrange = c(min_score, max_score)
-    yrange = c(1, max_trial)
+    xrange <- c(min_score, max_score)
+    yrange <- c(1, max_trial)
     
     graphics::plot(xrange, yrange, type="n", xlab="NMI", ylab="")
     
     for(i in seq_along(n_clusters)){
-        color = colors[i]
-        scores = nmi_scores[[i]]
+        color <- colors[i]
+        scores <- nmi_scores[[i]]
         graphics::lines(sort(scores), seq_along(scores), type="b",
                         pch=16,
                         col=color,

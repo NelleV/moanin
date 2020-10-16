@@ -3,91 +3,91 @@ setGeneric("DE_timecourse",
 
 # This file contains EDGE code adapted to work with limma contrasts
 
-center_data = function(y, ng_labels){
+center_data <- function(y, ng_labels){
     for(g in levels(ng_labels)){
-        whKeep = which(ng_labels == g)
-        sub_mean = rowMeans(y[, whKeep])
-        y[, whKeep] = y[, whKeep] - sub_mean
+        whKeep <- which(ng_labels == g)
+        sub_mean <- rowMeans(y[, whKeep])
+        y[, whKeep] <- y[, whKeep] - sub_mean
     }
     return(y)
 }
 
-compute_beta_null = function(basis, beta, contrasts_coef){
-    ng = length(contrasts_coef)
-    df = ncol(basis) / ng
-    contrasts_coef_ = rep(contrasts_coef, times=df)
+compute_beta_null <- function(basis, beta, contrasts_coef){
+    ng <- length(contrasts_coef)
+    df <- ncol(basis) / ng
+    contrasts_coef_ <- rep(contrasts_coef, times=df)
     
     # Reshape b so that each row corresponds to a group and drop the intercept
-    b_ = array(beta, dim=c(dim(beta)[1], ng, df))
+    b_ <- array(beta, dim=c(dim(beta)[1], ng, df))
     # First start by constructing the matrix T
-    t_ = apply(b_, 1, function(x){colSums(x*contrasts_coef)})
+    t_ <- apply(b_, 1, function(x){colSums(x*contrasts_coef)})
     
     # The observations can not be assumed to be balanced...
     # We need to get rid of the intercept for this part
     # FIbasisME don't invert this matrix…
-    part_K = MASS::ginv(t(basis) %*% basis)
-    K = part_K * contrasts_coef_**2
+    part_K <- MASS::ginv(t(basis) %*% basis)
+    K <- part_K * contrasts_coef_**2
     
     # We now need to sum all elements associated to the same pairs of splines.
     # Which is, in a particular case every four elements in both directions.
     
-    K = sapply(seq_len(df), function(jg) rowSums(K[, (jg-1)*ng + seq_len(ng)]))
-    K = sapply(seq_len(df), function(jg) colSums(K[(jg-1)*ng + seq_len(ng),]))
+    K <- sapply(seq_len(df), function(jg) rowSums(K[, (jg-1)*ng + seq_len(ng)]))
+    K <- sapply(seq_len(df), function(jg) colSums(K[(jg-1)*ng + seq_len(ng),]))
     
-    T_ = MASS::ginv(K) %*% t_
+    T_ <- MASS::ginv(K) %*% t_
     
     # We got T. Now, let's move on to the rest
-    tmp = as.array(rep(as.vector(T_), each=ng), dim=c(1, 1, 1))
-    dim(tmp) = c(ng * df, dim(beta)[1])
-    C_ = contrasts_coef * part_K %*% tmp
+    tmp <- as.array(rep(as.vector(T_), each=ng), dim=c(1, 1, 1))
+    dim(tmp) <- c(ng * df, dim(beta)[1])
+    C_ <- contrasts_coef * part_K %*% tmp
     
-    C_ = t(C_)
-    dim(C_) = c(dim(beta)[1], ng, df)
-    beta_null = b_ - C_
+    C_ <- t(C_)
+    dim(C_) <- c(dim(beta)[1], ng, df)
+    beta_null <- b_ - C_
     
     # Last step: reshape beta null so that it is of the same shape as beta
-    dim(beta_null) = dim(beta)
+    dim(beta_null) <- dim(beta)
     return(beta_null)
 }
 
 
-lrtStat = function(resNull, resFull, ng_labels=NULL) {
+lrtStat <- function(resNull, resFull, ng_labels=NULL) {
     # FIbasisME I'm pretty sure that in the case of contrasts, the degrees of
     # freedom computed here are wrong as they include part of the data that is
     # not used for the test. This needs to be fixed
-    stat = 0
+    stat <- 0
     if(is.null(ng_labels)){
-        ss0 = rowSums(resNull^2)
-        ss1 = rowSums(resFull^2)
-        n = ncol(resNull)
-        stat = stat + n * (ss0 - ss1)/(ss1)
+        ss0 <- rowSums(resNull^2)
+        ss1 <- rowSums(resFull^2)
+        n <- ncol(resNull)
+        stat <- stat + n * (ss0 - ss1)/(ss1)
         
     }else{
         for(g in levels(ng_labels)){
-            whKeep = which(ng_labels == g)
-            sub_resNull = resNull[,whKeep]
-            sub_resFull = resFull[,whKeep]
+            whKeep <- which(ng_labels == g)
+            sub_resNull <- resNull[,whKeep]
+            sub_resFull <- resFull[,whKeep]
             
             # Somehow the two lines above don't return the same object depending on
             # the dimension of resNull and resFull, so need to distinguish the case
             # where there is only one observation in data.
             if(is.null(dim(sub_resNull))){
-                ss0 = sum(sub_resNull^2)
-                ss1 = sum(sub_resFull^2)
-                n = length(sub_resNull)
+                ss0 <- sum(sub_resNull^2)
+                ss1 <- sum(sub_resFull^2)
+                n <- length(sub_resNull)
             }else{
-                ss0 = rowSums(sub_resNull^2)
-                ss1 = rowSums(sub_resFull^2)
-                n = ncol(sub_resNull)
+                ss0 <- rowSums(sub_resNull^2)
+                ss1 <- rowSums(sub_resFull^2)
+                n <- ncol(sub_resNull)
             }
-            stat = stat + n * (ss0 - ss1)/(ss1)
+            stat <- stat + n * (ss0 - ss1)/(ss1)
         }
     }
     
     return(stat)
 }
 
-compute_pvalue = function(basis, y, beta, beta_null, ng_labels,
+compute_pvalue <- function(basis, y, beta, beta_null, ng_labels,
                           n_groups=NULL,
                           n_samples=NULL,
                           degrees_of_freedom=NULL,
@@ -95,57 +95,57 @@ compute_pvalue = function(basis, y, beta, beta_null, ng_labels,
                           df2=NULL, weights=NULL){
     if(inherits(y,"DataFrame")) y<-data.matrix(y)
     
-    fitFull = beta %*% t(basis)
+    fitFull <- beta %*% t(basis)
     
-    fitNull = beta_null %*% t(basis)
+    fitNull <- beta_null %*% t(basis)
     
     if(!is.null(weights)){
-        resNull = weights^(1/2) * (y - fitNull)
-        resFull = weights^(1/2) * (y - fitFull)
+        resNull <- weights^(1/2) * (y - fitNull)
+        resFull <- weights^(1/2) * (y - fitFull)
     }else{
-        resNull = y - fitNull
-        resFull = y - fitFull
+        resNull <- y - fitNull
+        resFull <- y - fitFull
     }
     
     # estimate degrees of freedom.
     if(is.null(n_groups)){
-        n_groups = nlevels(ng_labels)
+        n_groups <- nlevels(ng_labels)
         # FIbasisME Raise warning
     }
     
     if(is.null(n_samples)){
-        n_samples = ncol(basis)
+        n_samples <- ncol(basis)
         # FIbasisME raise warning
     }
     
-    df = degrees_of_freedom
+    df <- degrees_of_freedom
     
     if(statistics == "ftest"){
-        stat = lrtStat(resNull, resFull)
+        stat <- lrtStat(resNull, resFull)
         if(is.null(df2)){
             # FIbasisME Check this.
-            df2 = n_samples - degrees_of_freedom * n_groups
+            df2 <- n_samples - degrees_of_freedom * n_groups
         }
-        df1 = df
-        pval = stats::pf(stat * df2 / df1, df1=df1, df2=df2, lower.tail=FALSE)
+        df1 <- df
+        pval <- stats::pf(stat * df2 / df1, df1=df1, df2=df2, lower.tail=FALSE)
     }else{
-        lstat = lrtStat(resNull, resFull, ng_labels=ng_labels)
-        pval = stats::pchisq(lstat, df=degrees_of_freedom, lower.tail=FALSE)
+        lstat <- lrtStat(resNull, resFull, ng_labels=ng_labels)
+        pval <- stats::pchisq(lstat, df=degrees_of_freedom, lower.tail=FALSE)
     }
     return(pval)
 }
 
-summarise = function(basis, ng_levels) {
-    basis_mean = matrix(nrow=nrow(basis), ncol=nlevels(ng_levels))
-    colnames(basis_mean) = levels(ng_levels)
-    rownames(basis_mean) = rownames(basis)
+summarise <- function(basis, ng_levels) {
+    basis_mean <- matrix(nrow=nrow(basis), ncol=nlevels(ng_levels))
+    colnames(basis_mean) <- levels(ng_levels)
+    rownames(basis_mean) <- rownames(basis)
     
     for(g in levels(ng_levels)){
-        whKeep = which(ng_levels == g)
+        whKeep <- which(ng_levels == g)
         if(length(whKeep) > 1){
-            basis_mean[, g] = rowMeans(basis[, whKeep])
+            basis_mean[, g] <- rowMeans(basis[, whKeep])
         }else if(length(whKeep) != 0){
-            basis_mean[, g] = basis[, whKeep]
+            basis_mean[, g] <- basis[, whKeep]
         }
     }
     return(basis_mean)
@@ -174,10 +174,10 @@ summarise = function(basis, ng_levels) {
 #' @details If \code{use_voom_weights=TRUE}, then before fitting splines to each gene,
 #' voom weights are calculated from \code{assay(object)}:
 #' \preformatted{
-#'   y = edgeR::DGEList(counts=assay(object))
-#'   y = edgeR::calcNormFactors(y, method="upperquartile")
-#'   v = limma::voom(y, contrasts, plot=FALSE)
-#'   weights = limma::lmFit(v)
+#'   y <- edgeR::DGEList(counts=assay(object))
+#'   y <- edgeR::calcNormFactors(y, method="upperquartile")
+#'   v <- limma::voom(y, contrasts, plot=FALSE)
+#'   weights <- limma::lmFit(v)
 #' }
 #' These weights are given to the \code{lm.fit} which fits the spline coefficients.
 #' This workflow assumes that the input to the \code{Moanin} object were counts.
@@ -193,7 +193,7 @@ summarise = function(basis, ng_levels) {
 #'   across all p-values for all contrasts calculated.
 #' @examples 
 #' data(exampleData)
-#' moanin = create_moanin_model(data=testData, meta=testMeta)
+#' moanin <- create_moanin_model(data=testData, meta=testMeta)
 #' deTimecourse=DE_timecourse(moanin, 
 #'    contrasts="K-C", use_voom_weights=FALSE)
 #' head(deTimecourse)
@@ -205,68 +205,68 @@ setMethod("DE_timecourse","Moanin",
                   contrasts,
                   center=FALSE,
                   use_voom_weights=TRUE){
-    basis = basis_matrix(object)
+    basis <- basis_matrix(object)
     
-    ng_labels = group_variable(object)
-    ng = nlevels(ng_labels)
+    ng_labels <- group_variable(object)
+    ng <- nlevels(ng_labels)
 
-    contrasts = is_contrasts(contrasts, object)
+    contrasts <- is_contrasts(contrasts, object)
     
     if(use_voom_weights){
-        design = stats::model.matrix(
+        design <- stats::model.matrix(
             ~Group*Timepoint + 0,
             data=colData(object))
         
-        y = edgeR::DGEList(counts=assay(object))
-        y = edgeR::calcNormFactors(y, method="upperquartile")
-        v = limma::voom(y, design, plot=FALSE)
-        weights = v$weights
+        y <- edgeR::DGEList(counts=assay(object))
+        y <- edgeR::calcNormFactors(y, method="upperquartile")
+        v <- limma::voom(y, design, plot=FALSE)
+        weights <- v$weights
     }else{
-        weights = NULL
+        weights <- NULL
     }
     
     y<-get_log_data(object)
     
     if(center){
-        y = center_data(y)
-        basis = t(center_data(t(basis)))
+        y <- center_data(y)
+        basis <- t(center_data(t(basis)))
     }
     
-    beta = fit_splines(data=y, moanin_model=object, weights=weights)
+    beta <- fit_splines(data=y, moanin_model=object, weights=weights)
     
     if(dim(contrasts)[1] != ng){
         stop("The contrast coef vector should be of the same size" +
                  " as the number of groups")
     }
-    results = data.frame(row.names=row.names(object))
+    results <- data.frame(row.names=row.names(object))
     for(col in seq_len(ncol(contrasts))){
-        contrast = contrasts[, col]
+        contrast <- contrasts[, col]
         
         # Create the name of the column
-        contrast_name = colnames(contrasts)[col]
-        contrast_name = gsub(" ", "", contrast_name, fixed=TRUE)
+        contrast_name <- colnames(contrasts)[col]
+        contrast_name <- gsub(" ", "", contrast_name, fixed=TRUE)
         
         # Get the number of samples used for this particular contrast:
-        groups_of_interest = names(contrast)[contrast != 0]
-        n_samples_fit = sum(group_variable(object) %in% groups_of_interest)
-        n_groups = length(groups_of_interest)
-        degrees_of_freedom = dim(basis)[2] / ng
+        groups_of_interest <- names(contrast)[contrast != 0]
+        n_samples_fit <- sum(group_variable(object) %in% groups_of_interest)
+        n_groups <- length(groups_of_interest)
+        degrees_of_freedom <- dim(basis)[2] / ng
         
-        beta_null = compute_beta_null(basis, beta, contrast)
+        beta_null <- compute_beta_null(basis, beta, contrast)
         
-        pval = compute_pvalue(basis, y, beta, beta_null, ng_labels, 
+        pval <- compute_pvalue(basis, y, beta, beta_null, ng_labels, 
                               weights=weights,
                               n_samples=n_samples_fit,
                               n_groups=n_groups,
                               degrees_of_freedom=degrees_of_freedom)
         
-        colname_qval = paste(contrast_name, "_qval", sep="")
-        colname_pval = paste(contrast_name, "_pval", sep="")
+        colname_qval <- paste(contrast_name, "_qval", sep="")
+        colname_pval <- paste(contrast_name, "_pval", sep="")
         
-        results[colname_pval] = pval
-        qval = stats::p.adjust(pval, method="BH")
-        dim(qval) = dim(pval)
-        results[colname_qval] = qval
+        results[colname_pval] <- pval
+        qval <- stats::p.adjust(pval, method="BH")
+        dim(qval) <- dim(pval)
+        results[colname_qval] <- qval
     }
     
     return(results)

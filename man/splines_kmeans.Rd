@@ -62,7 +62,7 @@ If \code{\link{Moanin}} object's slot has log_transform=TRUE, then the data will
 \examples{
 data(exampleData)
 # Use the default options
-moanin = create_moanin_model(data=testData, meta=testMeta)
-out = splines_kmeans( moanin,n_clusters=5)
+moanin <- create_moanin_model(data=testData, meta=testMeta)
+out <- splines_kmeans( moanin,n_clusters=5)
 table(out$clusters)
 }

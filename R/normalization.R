@@ -10,11 +10,11 @@
 #'  gene to be expressed to be included in downstream analyses.
 #' @return The filtered counts matrix
 #' @keywords internal
-expression_filtering = function(counts, min_counts=20, min_samples=3){
-    rows_to_keep = apply(counts, 1, function(x){
+expression_filtering <- function(counts, min_counts=20, min_samples=3){
+    rows_to_keep <- apply(counts, 1, function(x){
         sum(x > min_counts) > min_samples
     })
-    counts = counts[rows_to_keep, ]
+    counts <- counts[rows_to_keep, ]
     return(counts)
 }
 
