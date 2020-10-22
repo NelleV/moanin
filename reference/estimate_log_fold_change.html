@@ -180,8 +180,8 @@ fold change, over all timepoint</p></li>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>exampleData</span>)
-<span class='no'>moanin</span> <span class='kw'>=</span> <span class='fu'><a href='Moanin-class.html'>create_moanin_model</a></span>(<span class='kw'>data</span><span class='kw'>=</span><span class='no'>testData</span>,<span class='kw'>meta</span><span class='kw'>=</span><span class='no'>testMeta</span>)
-<span class='no'>estsTimely</span> <span class='kw'>=</span> <span class='fu'>estimate_log_fold_change</span>(<span class='no'>moanin</span>,
+<span class='no'>moanin</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='Moanin-class.html'>create_moanin_model</a></span>(<span class='kw'>data</span><span class='kw'>=</span><span class='no'>testData</span>,<span class='kw'>meta</span><span class='kw'>=</span><span class='no'>testMeta</span>)
+<span class='no'>estsTimely</span> <span class='kw'>&lt;-</span> <span class='fu'>estimate_log_fold_change</span>(<span class='no'>moanin</span>,
    <span class='kw'>contrasts</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"K-C"</span>), <span class='kw'>method</span><span class='kw'>=</span><span class='st'>"timely"</span>)
 <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>estsTimely</span>)</div><div class='output co'>#&gt;                           K-C:0       K-C:3       K-C:6       K-C:9      K-C:12
 #&gt; NM_009912           0.006142387 -0.02249478  0.05159468  0.11439732 -0.06146186
@@ -203,7 +203,7 @@ fold change, over all timepoint</p></li>
 #&gt; NM_007473          -0.9481227 -0.3388556  0.4967829  0.19739522
 #&gt; ENSMUST00000094955  0.1210526  0.3766247  0.2479095  0.50586716
 #&gt; NM_001042489        0.5895878  0.3821725  0.3287660  0.02832949
-#&gt; NM_008159          -1.1093377 -0.1279111 -0.3025480 -0.72920750</div><div class='input'><span class='no'>estsTimecourse</span> <span class='kw'>=</span> <span class='fu'>estimate_log_fold_change</span>(<span class='no'>moanin</span>,
+#&gt; NM_008159          -1.1093377 -0.1279111 -0.3025480 -0.72920750</div><div class='input'><span class='no'>estsTimecourse</span> <span class='kw'>&lt;-</span> <span class='fu'>estimate_log_fold_change</span>(<span class='no'>moanin</span>,
    <span class='kw'>contrasts</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"K-C"</span>),<span class='kw'>method</span><span class='kw'>=</span><span class='st'>"timecourse"</span>)
 <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>estsTimecourse</span>)</div><div class='output co'>#&gt;                           K-C
 #&gt; NM_009912          -0.4315497

@@ -69,7 +69,8 @@
 
       
 
-      </header><div class="row">
+      </header><link href="documentation_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
+<script src="documentation_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>moanin: An R Package for Time Course RNASeq Data Analysis</h1>
@@ -114,8 +115,8 @@
 <a href="#set-up-moanin-class" class="anchor"></a>Set up <code>moanin</code> class</h1>
 <p>The first step is to create a moanin class, which uses our meta data to create the needed information for future analysis. Specifically, in addition to storing the meta information, the function <code>create_moanin_model</code> will define a splines basis for future calculations. By default the model is given as a separate spline basis for each level of a factor <code>Group</code>, plus a group intercept with the following R formula</p>
 <p><code>~Group:ns(Timepoint, df=4) + Group + 0</code></p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">moaninObject</span><span class="kw">&lt;-</span><span class="fu"><a href="../reference/Moanin-class.html">create_moanin_model</a></span>(<span class="kw">data</span><span class="kw">=</span><span class="no">preData</span>,<span class="kw">meta</span><span class="kw">=</span><span class="no">preMeta</span>,
-                            <span class="kw">group_variable</span><span class="kw">=</span><span class="st">"Condition"</span>, <span class="kw">time_variable</span> <span class="kw">=</span> <span class="st">"Week"</span>)
+<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">moaninObject</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/Moanin-class.html">create_moanin_model</a></span>(<span class="kw">data</span><span class="kw">=</span><span class="no">preData</span>, <span class="kw">meta</span><span class="kw">=</span><span class="no">preMeta</span>,
+                            <span class="kw">group_variable</span><span class="kw">=</span><span class="st">"Condition"</span>, <span class="kw">time_variable</span><span class="kw">=</span><span class="st">"Week"</span>)
 <span class="no">moaninObject</span></pre></body></html></div>
 <pre><code>## Moanin object on 97 samples containing the following information:
 ## Group variable given by 'Condition' with the following levels:
@@ -173,15 +174,15 @@
 <h1 class="hasAnchor">
 <a href="#weekly-differential-expression-analysis" class="anchor"></a>Weekly differential expression analysis</h1>
 <p>One type of DE analysis we can do is to compare our watering conditions to each other, for every time point. We do this via a call to <code>limma</code> for the DE analysis, but before we can do this, we need to set up the appropriate contrasts. For example, “Preflowering - Control” (see <code>?makeContrasts</code> in the limma package). We provide a function to do this for every week, so as to avoid this step.</p>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">preContrasts</span> <span class="kw">=</span> <span class="fu"><a href="../reference/DE_timepoints.html">create_timepoints_contrasts</a></span>(<span class="no">moaninObject</span>,<span class="st">"Preflowering"</span>, <span class="st">"Control"</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">preContrasts</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/DE_timepoints.html">create_timepoints_contrasts</a></span>(<span class="no">moaninObject</span>,<span class="st">"Preflowering"</span>, <span class="st">"Control"</span>)</pre></body></html></div>
 <p>Notice we also get a warning that timepoint 16 is missing in our Control Samples (in fact, some of these time points only have a single observations per time point, which is not particularly appropriate for DE analysis per week).</p>
 <p>We can also create contrasts to compare Postflowering and Control, and Preflowering and Postflowering. We get many warnings here, because Post-flowering only has samples after week 9.</p>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="no">postContrasts</span> <span class="kw">=</span> <span class="fu"><a href="../reference/DE_timepoints.html">create_timepoints_contrasts</a></span>(
+<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="no">postContrasts</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/DE_timepoints.html">create_timepoints_contrasts</a></span>(
     <span class="no">moaninObject</span>, <span class="st">"Postflowering"</span>, <span class="st">"Control"</span> )
-<span class="no">prepostContrasts</span> <span class="kw">=</span> <span class="fu"><a href="../reference/DE_timepoints.html">create_timepoints_contrasts</a></span>(
+<span class="no">prepostContrasts</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/DE_timepoints.html">create_timepoints_contrasts</a></span>(
     <span class="no">moaninObject</span>, <span class="st">"Postflowering"</span>, <span class="st">"Preflowering"</span>)</pre></body></html></div>
 <p>We can run the DE analysis, setting <code>use_voom_weights=TRUE</code> to make use of <code>limma</code> correction for low-counts. We will subset to just the first 500 genes for illustration purposes, though the full set of genes does not take very long</p>
-<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="no">weeklyPre</span><span class="kw">&lt;-</span><span class="fu"><a href="../reference/DE_timepoints.html">DE_timepoints</a></span>(<span class="no">moaninObject</span>[<span class="fl">1</span>:<span class="fl">500</span>,],
+<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="no">weeklyPre</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/DE_timepoints.html">DE_timepoints</a></span>(<span class="no">moaninObject</span>[<span class="fl">1</span>:<span class="fl">500</span>,],
     <span class="kw">contrasts</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="no">preContrasts</span>,<span class="no">postContrasts</span>,<span class="no">prepostContrasts</span>),
      <span class="kw">use_voom_weights</span><span class="kw">=</span><span class="fl">TRUE</span>)</pre></body></html></div>
 <p>By setting <code>use_voom_weights=TRUE</code>, the DE step is done after an <code>upperquartile</code> normalization via <code>limma</code> using voom weights (see <code><a href="../reference/DE_timepoints.html">?DE_timepoints</a></code> for details). Therefore this should only be done if the input data to the <code>Moanin</code> class are counts (or on a count scale, such as expected counts from TopHat); in this case the user should set <code>log_transform=TRUE</code> in the construction of the <code>Moanin</code> object, so that other functions will take the log appropriately.</p>
@@ -268,7 +269,7 @@
 <div class="sourceCode" id="cb19"><html><body><pre class="r"><span class="no">timecourseContrasts</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Preflowering-Control"</span>,
              <span class="st">"Postflowering-Control"</span>,
              <span class="st">"Postflowering-Preflowering"</span>)
-<span class="no">splinePre</span><span class="kw">&lt;-</span><span class="fu"><a href="../reference/DE_timecourse.html">DE_timecourse</a></span>(<span class="no">moaninObject</span>[<span class="fl">1</span>:<span class="fl">500</span>,], <span class="kw">contrasts</span><span class="kw">=</span><span class="no">timecourseContrasts</span>,
+<span class="no">splinePre</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/DE_timecourse.html">DE_timecourse</a></span>(<span class="no">moaninObject</span>[<span class="fl">1</span>:<span class="fl">500</span>,], <span class="kw">contrasts</span><span class="kw">=</span><span class="no">timecourseContrasts</span>,
      <span class="kw">use_voom_weights</span><span class="kw">=</span><span class="fl">TRUE</span>)</pre></body></html></div>
 <pre><code>## Coefficients not estimable: GroupRT430:Control GroupRT430:Postflowering GroupRT430:Preflowering GroupRT430:Control:Timepoint GroupRT430:Postflowering:Timepoint GroupRT430:Preflowering:Timepoint</code></pre>
 <p>Again, because our input data are counts, we set <code>use_voom_weights=TRUE</code> to weight our observations based on their variability. Because we set <code>log_transform=TRUE</code> in our creation of <code>moaninObject</code>, the function will internally take the log of the data for fitting the splines, but use the counts for creating the voom weights (see <code><a href="../reference/DE_timecourse.html">?DE_timecourse</a></code>).</p>
@@ -303,7 +304,7 @@
 ## Sobic.001G000501.v3.1                             NaN
 ## Sobic.001G000700.v3.1                               0</code></pre>
 <p>There is not a log-fold change column, because it is more complicated to define the log-fold change over a series of timepoints, where potentially the means may even switch from being over-expressed to under-expressed. We provide a function <code>estimate_log_fold_change</code> which gives the option of estimating several kinds of log-fold-change. We demonstrate with the method <code>abs_sum</code>, which gives the sum of the absolute difference in the means across time points:</p>
-<div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="no">log_fold_change_timepoints</span> <span class="kw">=</span> <span class="fu"><a href="../reference/estimate_log_fold_change.html">estimate_log_fold_change</a></span>(
+<div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="no">log_fold_change_timepoints</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/estimate_log_fold_change.html">estimate_log_fold_change</a></span>(
     <span class="no">moaninObject</span>[<span class="fl">1</span>:<span class="fl">500</span>,], <span class="kw">contrasts</span><span class="kw">=</span><span class="no">timecourseContrasts</span>, <span class="kw">method</span><span class="kw">=</span><span class="st">"sum"</span>)
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">log_fold_change_timepoints</span>)</pre></body></html></div>
 <pre><code>##                       Preflowering-Control Postflowering-Control
@@ -326,8 +327,8 @@
 <h1 class="hasAnchor">
 <a href="#visualizing-genes-of-interest" class="anchor"></a>Visualizing Genes of Interest</h1>
 <p>The package <code>moanin</code> also provides a simple utility function (<code>plot_splines_data</code>) to visualize gene time-course data from different conditions. We use this to plot the 10 genes with the largest log-fold-change in <code>Preflowering-Control</code> contrast (since we only looked at the first top 500, these aren’t representative of the overall signal in the data set, which is much stronger).</p>
-<div class="sourceCode" id="cb25"><html><body><pre class="r"><span class="no">whSig</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span>(<span class="no">splinePre</span>[,<span class="st">"Preflowering-Control_qval"</span>]<span class="kw">&lt;</span><span class="fl">0.05</span>)
-<span class="no">deGenes</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/order.html">order</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span>(
+<div class="sourceCode" id="cb25"><html><body><pre class="r"><span class="no">whSig</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span>(<span class="no">splinePre</span>[,<span class="st">"Preflowering-Control_qval"</span>]<span class="kw">&lt;</span><span class="fl">0.05</span>)
+<span class="no">deGenes</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/order.html">order</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span>(
     <span class="no">log_fold_change_timepoints</span>)[<span class="no">whSig</span>,<span class="st">"Preflowering-Control"</span>],
     <span class="kw">decreasing</span><span class="kw">=</span><span class="fl">TRUE</span>)[<span class="fl">1</span>:<span class="fl">10</span>]
 
@@ -340,7 +341,7 @@
 <a href="#clustering-of-time-course-data" class="anchor"></a>Clustering of time-course data</h1>
 <p>We can also cluster the data based on their spline fits. Here we would like to work with the log transform of the counts which are stored in <code>moaninObject</code>, so we set <code>log_transform=TRUE</code>.</p>
 <div class="sourceCode" id="cb26"><html><body><pre class="r"><span class="co"># First fit the kmeans clusters</span>
-<span class="no">kmeans_clusters</span> <span class="kw">=</span> <span class="fu"><a href="../reference/splines_kmeans.html">splines_kmeans</a></span>(<span class="no">moaninObject</span>[<span class="fl">1</span>:<span class="fl">500</span>,], <span class="kw">n_clusters</span><span class="kw">=</span><span class="fl">3</span>,
+<span class="no">kmeans_clusters</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/splines_kmeans.html">splines_kmeans</a></span>(<span class="no">moaninObject</span>[<span class="fl">1</span>:<span class="fl">500</span>,], <span class="kw">n_clusters</span><span class="kw">=</span><span class="fl">3</span>,
     <span class="kw">random_seed</span><span class="kw">=</span><span class="fl">42</span>,
     <span class="kw">n_init</span><span class="kw">=</span><span class="fl">20</span>)</pre></body></html></div>
 <p>We then use the <code>plot_splines_data</code> function, only now applied to the centroids of the kmeans clustering, to visualize the centroids of each cluster obtained with the splines k-means model.</p>
@@ -353,7 +354,7 @@
 <a href="#assigning-genes-to-clusters" class="anchor"></a>Assigning genes to clusters</h2>
 <p>Because there is variability in how well the genes fit a cluster, we would like to be able to score how well a gene fits a cluster. Furthermore, we often chose a subset of genes based on a filtering process, and we would like to have a mechanism to assign all genes to a cluster.</p>
 <p>The function <code>splines_kmeans_score_and_label</code> gives a goodness-of-fit score between each gene and each cluster.</p>
-<div class="sourceCode" id="cb28"><html><body><pre class="r"><span class="no">scores_and_labels</span> <span class="kw">=</span> <span class="fu"><a href="../reference/splines_kmeans_score_and_label.html">splines_kmeans_score_and_label</a></span>(
+<div class="sourceCode" id="cb28"><html><body><pre class="r"><span class="no">scores_and_labels</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/splines_kmeans_score_and_label.html">splines_kmeans_score_and_label</a></span>(
     <span class="kw">object</span><span class="kw">=</span><span class="no">moaninObject</span>,<span class="kw">data</span><span class="kw">=</span><span class="no">preData</span>[<span class="fl">1</span>:<span class="fl">2000</span>,], <span class="kw">kmeans_clusters</span><span class="kw">=</span><span class="no">kmeans_clusters</span>)</pre></body></html></div>
 <p>Notice that we used more genes here (first 2000), even though previously we only used first 500 to make the clusters. These choices were unrealistic, since in practice we would probably pick high variable genes or differentially expressed genes, rather than the first 500, but at least give a sense of how this works.</p>
 <p>The result is a list with elements <code>scores</code> and <code>labels</code>. <code>scores</code> gives the goodness-of-fit score between each gene and each cluster</p>

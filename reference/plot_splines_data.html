@@ -272,13 +272,13 @@ sent to all plot commands)</p></td>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># First, load some data and create a moanin model</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>exampleData</span>)
-<span class='no'>moanin</span> <span class='kw'>=</span> <span class='fu'><a href='Moanin-class.html'>create_moanin_model</a></span>(<span class='kw'>data</span><span class='kw'>=</span><span class='no'>testData</span>,<span class='kw'>meta</span><span class='kw'>=</span><span class='no'>testMeta</span>,
+<span class='no'>moanin</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='Moanin-class.html'>create_moanin_model</a></span>(<span class='kw'>data</span><span class='kw'>=</span><span class='no'>testData</span>,<span class='kw'>meta</span><span class='kw'>=</span><span class='no'>testMeta</span>,
    <span class='kw'>degrees_of_freedom</span><span class='kw'>=</span><span class='fl'>6</span>)
 
 <span class='co'># The moanin model contains all the information for plotting purposes. The</span>
 <span class='co'># plot_splines_data will automatically fit the splines from the</span>
 <span class='co'># information contained in the moanin model</span>
-<span class='no'>genes</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"NM_001042489"</span>, <span class='st'>"NM_008725"</span>)
+<span class='no'>genes</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"NM_001042489"</span>, <span class='st'>"NM_008725"</span>)
 <span class='fu'>plot_splines_data</span>(<span class='no'>moanin</span>, <span class='kw'>subset_data</span><span class='kw'>=</span><span class='no'>genes</span>,
 <span class='kw'>mfrow</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>, <span class='fl'>2</span>))
 <span class='co'># By default, same axis for all genes. Can change with 'simpleY=FALSE'</span>

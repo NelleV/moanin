@@ -218,11 +218,11 @@ assignment</p></li>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>exampleData</span>)
-<span class='no'>moanin</span> <span class='kw'>=</span> <span class='fu'><a href='Moanin-class.html'>create_moanin_model</a></span>(<span class='kw'>data</span><span class='kw'>=</span><span class='no'>testData</span>, <span class='kw'>meta</span><span class='kw'>=</span><span class='no'>testMeta</span>)
+<span class='no'>moanin</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='Moanin-class.html'>create_moanin_model</a></span>(<span class='kw'>data</span><span class='kw'>=</span><span class='no'>testData</span>, <span class='kw'>meta</span><span class='kw'>=</span><span class='no'>testMeta</span>)
 <span class='co'># Cluster on a subset of genes</span>
 <span class='no'>kmClusters</span><span class='kw'>=</span><span class='fu'><a href='splines_kmeans.html'>splines_kmeans</a></span>(<span class='no'>moanin</span>[<span class='fl'>1</span>:<span class='fl'>50</span>,],<span class='kw'>n_clusters</span><span class='kw'>=</span><span class='fl'>3</span>)
 <span class='co'># get scores on all genes</span>
-<span class='no'>scores_and_labels</span> <span class='kw'>=</span> <span class='fu'>splines_kmeans_score_and_label</span>(<span class='kw'>object</span><span class='kw'>=</span><span class='no'>moanin</span>, <span class='no'>kmClusters</span>)
+<span class='no'>scores_and_labels</span> <span class='kw'>&lt;-</span> <span class='fu'>splines_kmeans_score_and_label</span>(<span class='kw'>object</span><span class='kw'>=</span><span class='no'>moanin</span>, <span class='no'>kmClusters</span>)
 <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>scores_and_labels</span>$<span class='no'>scores</span>)</div><div class='output co'>#&gt;                         [,1]      [,2]      [,3]
 #&gt; NM_009912          1.0000000 0.4310798 1.0000000
 #&gt; NM_008725          0.9005695 1.0000000 0.9954105
@@ -233,10 +233,10 @@ assignment</p></li>
 #&gt;                  2                 NA                 NA                  3 
 #&gt;       NM_001042489          NM_008159 
 #&gt;                 NA                  2 </div><div class='input'><span class='co'># should be same as above, only just the assignments</span>
-<span class='no'>predictLabels1</span> <span class='kw'>=</span> <span class='fu'>splines_kmeans_predict</span>(<span class='kw'>object</span><span class='kw'>=</span><span class='no'>moanin</span>, <span class='no'>kmClusters</span>,
+<span class='no'>predictLabels1</span> <span class='kw'>&lt;-</span> <span class='fu'>splines_kmeans_predict</span>(<span class='kw'>object</span><span class='kw'>=</span><span class='no'>moanin</span>, <span class='no'>kmClusters</span>,
      <span class='kw'>method</span><span class='kw'>=</span><span class='st'>"goodnessOfFit"</span>)
 <span class='co'># Instead use distance to centroid:</span>
-<span class='no'>predictLabels2</span> <span class='kw'>=</span> <span class='fu'>splines_kmeans_predict</span>(<span class='kw'>object</span><span class='kw'>=</span><span class='no'>moanin</span>, <span class='no'>kmClusters</span>,
+<span class='no'>predictLabels2</span> <span class='kw'>&lt;-</span> <span class='fu'>splines_kmeans_predict</span>(<span class='kw'>object</span><span class='kw'>=</span><span class='no'>moanin</span>, <span class='no'>kmClusters</span>,
      <span class='kw'>method</span><span class='kw'>=</span><span class='st'>"distance"</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

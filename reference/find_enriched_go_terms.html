@@ -217,7 +217,7 @@ contains the correct gene reference. By default, is "refseq_mrna".</p></td>
 #&gt; 3 GO:0016020 NM_001001566
 #&gt; 4 GO:0016021 NM_001001566
 #&gt; 5 GO:0016740 NM_001001566
-#&gt; 6 GO:0005794 NM_001001566</div><div class='input'><span class='no'>geneId2Go</span> <span class='kw'>=</span> <span class='fu'>create_go_term_mapping</span>(<span class='no'>testGenesGO</span>)
+#&gt; 6 GO:0005794 NM_001001566</div><div class='input'><span class='no'>geneId2Go</span> <span class='kw'>&lt;-</span> <span class='fu'>create_go_term_mapping</span>(<span class='no'>testGenesGO</span>)
 <span class='co'>#create fake assignment of genes to group based on TRUE/FALSE values</span>
 <span class='no'>inGroup</span><span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>FALSE</span>,<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='no'>testData</span>))
 <span class='no'>inGroup</span>[<span class='fl'>1</span>:<span class='fl'>10</span>]<span class='kw'>=</span><span class='fl'>TRUE</span>
