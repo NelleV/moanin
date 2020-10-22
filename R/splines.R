@@ -306,7 +306,7 @@ pvalues_fisher_method <- function(pvalues){
     keep <- (pvalues >= 0) & (pvalues <= 1)
     pvalues[pvalues == 0] <- 1e-285
     
-    lnp <- log(pvalues)
+    lnp <- log(as.matrix(pvalues))
     chisq <- (-2) * matrixStats::rowSums2(lnp)
     df <- 2 * length(lnp)
     fisher_pval <- stats::pchisq(chisq, df, lower.tail=FALSE)
