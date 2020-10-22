@@ -144,16 +144,20 @@ create_meta_prediction <- function(moanin_model, num_timepoints=100){
 #' @aliases rescale_values,Moanin-method
 setMethod("rescale_values","Moanin",
     function(object, data=NULL, use_group=FALSE){
-    if(is.null(data)) data=get_log_data(object)
+    if(is.null(data)){
+        data <- get_log_data(object)
+    }
     if(use_group){
-        if(inherits(data,"DataFrame")) data<-data.matrix(data)
+        if(inherits(data,"DataFrame")){
+            data <- data.matrix(data)
+        }
         factors_to_consider <- levels(group_variable(object))
         for(factor in factors_to_consider){
             mask <- group_variable(object) == factor
-            ymin <- row_min(data[, mask]) 
+            ymin <- matrixStats::rowMins(data[, mask]) 
             data[, mask] <- data[, mask] - ymin
-            ymax <- row_max(data[, mask])
-            whNonZero<-which(ymax>0)
+            ymax <- matrixStats::rowMaxs(data[, mask])
+            whNonZero <- which(ymax>0)
             data[whNonZero,mask] <- data[whNonZero,mask] / ymax[whNonZero]
         }
         return(data)
@@ -167,11 +171,11 @@ setMethod("rescale_values","Moanin",
 setMethod("rescale_values","NULL",
     function(object, data){
         if(inherits(data,"DataFrame")) data<-data.matrix(data)
-        ymin <- row_min(data) 
+        ymin <- matrixStats::rowMins(data) 
         data <- data - ymin
-        ymax <- row_max(data)
-        whNonZero<-which(ymax>0)
-        if(length(whNonZero)>0){
+        ymax <- matrixStats::rowMaxs(data)
+        whNonZero <- which(ymax > 0)
+        if(length(whNonZero) > 0){
             data[whNonZero,] <- data[whNonZero,] / ymax[whNonZero]
         }
         return(data)
@@ -184,31 +188,6 @@ setMethod("rescale_values","missing",
               rescale_values(object=NULL, ... )
           })
 
-
-# XXX It's wierd that this does not exists in R…
-# it probably exists but under another name?
-row_max <- function(X){
-    return(apply(X, 1, max))
-}
-
-row_min <- function(X){
-    return(apply(X, 1, min))
-}
-
-row_mean <- function(X){
-    return(apply(X, 1, mean))
-}
-
-row_sum <- function(X){
-    return(apply(X, 1, sum))
-}
-
-row_argmin <- function(X){
-    return(apply(X, 1, which.min))
-}
-
-
-# Worst name ever
 # Note that if would estimate a negative scaling factor, sets it to zero 
 # instead, so that your centroid estimate for the data is a flat line at the mean
 align_data_onto_centroid <- function(data, centroid, positive_scaling=TRUE, 
@@ -226,13 +205,16 @@ align_data_onto_centroid <- function(data, centroid, positive_scaling=TRUE,
     }
     centered_centroid <- centroid - mean(centroid)
     # Identify if some rows of the data are only zeros.
-    only_zero_genes <- rowSums(abs(data)) == 0
+    only_zero_genes <- matrixStats::rowSums2(abs(data)) == 0
     scaling_factors <- apply(
         data, 1,
         function(x){sum(centered_centroid * x)/sum((x - mean(x))*x)}) 
     if(positive_scaling){
-        if(returnType=="data") scaling_factors[scaling_factors < 0] <- 0
-        else scaling_factors <- abs(scaling_factors)
+        if(returnType=="data"){
+            scaling_factors[scaling_factors < 0] <- 0
+        }else{
+            scaling_factors <- abs(scaling_factors)
+        }
     }
     
     # Now replace the scaling factors of only 0 genes by 0
@@ -243,26 +225,28 @@ align_data_onto_centroid <- function(data, centroid, positive_scaling=TRUE,
         scaling_factors * data,
         1,
         function(x) mean(centroid - x)) 
-    if(returnType=="data"){
+    if(returnType == "data"){
         data_fitted <- (scaling_factors * data + shift_factors)        
     }
     else{
-        data_fitted <- matrix(centroid, nrow=nrow(data),ncol=length(centroid),
-                             byrow=TRUE)
+        data_fitted <- matrix(centroid,
+                              nrow=nrow(data),
+                              ncol=length(centroid),
+                              byrow=TRUE)
         data_fitted <- sweep(data_fitted,1,shift_factors,"-")
-        whZero<-which(scaling_factors==0)
-        if(length(whZero)>0){
+        whZero <- which(scaling_factors == 0)
+        if(length(whZero) > 0){
             # If scaling factor is zero, then centroid estimate is just a flat 
             # line equal to the mean of the centroid - shift factor. 
             data_fitted[-whZero,] <- sweep(data_fitted[-whZero,,drop=FALSE],1,
                                           scaling_factors[-whZero],"/")
             data_fitted[whZero,] <- matrix(
-                                    rowMeans(data[whZero,,drop=FALSE]),
-                                    nrow=length(whZero),
-                                    ncol=ncol(data_fitted),byrow=FALSE)         
+                matrixStats::rowMeans2(data[whZero,,drop=FALSE]),
+                nrow=length(whZero),
+                ncol=ncol(data_fitted), byrow=FALSE)         
         }
         else 
-            data_fitted= sweep(data_fitted,1,scaling_factors,"/")
+            data_fitted <- sweep(data_fitted, 1, scaling_factors, "/")
         
     }
     return(data_fitted)
@@ -270,7 +254,7 @@ align_data_onto_centroid <- function(data, centroid, positive_scaling=TRUE,
 
 
 score_genes_centroid <- function(data, centroid, positive_scaling=TRUE, 
-                                scale=TRUE){
+                                 scale=TRUE){
     n_genes <- dim(data)[1]
     centroid <- as.numeric(centroid)
     
@@ -323,7 +307,7 @@ pvalues_fisher_method <- function(pvalues){
     pvalues[pvalues == 0] <- 1e-285
     
     lnp <- log(pvalues)
-    chisq <- (-2) * row_sum(lnp)
+    chisq <- (-2) * matrixStats::rowSums2(lnp)
     df <- 2 * length(lnp)
     fisher_pval <- stats::pchisq(chisq, df, lower.tail=FALSE)
     return(fisher_pval)

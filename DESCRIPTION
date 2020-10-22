@@ -31,7 +31,8 @@ Imports:
     NMI,
     zoo,
     ClusterR,
-    splines
+    splines,
+    matrixStats
 Suggests: testthat (>= 1.0.0),
 	  timecoursedata,
 	  knitr,

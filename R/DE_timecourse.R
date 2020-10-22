@@ -6,7 +6,7 @@ setGeneric("DE_timecourse",
 center_data <- function(y, ng_labels){
     for(g in levels(ng_labels)){
         whKeep <- which(ng_labels == g)
-        sub_mean <- rowMeans(y[, whKeep])
+        sub_mean <- matrixStats::rowMeans2(y[, whKeep])
         y[, whKeep] <- y[, whKeep] - sub_mean
     }
     return(y)
@@ -20,7 +20,7 @@ compute_beta_null <- function(basis, beta, contrasts_coef){
     # Reshape b so that each row corresponds to a group and drop the intercept
     b_ <- array(beta, dim=c(dim(beta)[1], ng, df))
     # First start by constructing the matrix T
-    t_ <- apply(b_, 1, function(x){colSums(x*contrasts_coef)})
+    t_ <- apply(b_, 1, function(x){matrixStats::colSums2(x*contrasts_coef)})
     
     # The observations can not be assumed to be balanced...
     # We need to get rid of the intercept for this part
@@ -31,8 +31,10 @@ compute_beta_null <- function(basis, beta, contrasts_coef){
     # We now need to sum all elements associated to the same pairs of splines.
     # Which is, in a particular case every four elements in both directions.
     
-    K <- sapply(seq_len(df), function(jg) rowSums(K[, (jg-1)*ng + seq_len(ng)]))
-    K <- sapply(seq_len(df), function(jg) colSums(K[(jg-1)*ng + seq_len(ng),]))
+    K <- sapply(seq_len(df),
+                function(jg) matrixStats::rowSums2(K[, (jg-1)*ng + seq_len(ng)]))
+    K <- sapply(seq_len(df),
+                function(jg) matrixStats::colSums2(K[(jg-1)*ng + seq_len(ng),]))
     
     T_ <- MASS::ginv(K) %*% t_
     
@@ -57,8 +59,8 @@ lrtStat <- function(resNull, resFull, ng_labels=NULL) {
     # not used for the test. This needs to be fixed
     stat <- 0
     if(is.null(ng_labels)){
-        ss0 <- rowSums(resNull^2)
-        ss1 <- rowSums(resFull^2)
+        ss0 <- matrixStats::rowSums2(resNull^2)
+        ss1 <- matrixStats::rowSums2(resFull^2)
         n <- ncol(resNull)
         stat <- stat + n * (ss0 - ss1)/(ss1)
         
@@ -76,8 +78,8 @@ lrtStat <- function(resNull, resFull, ng_labels=NULL) {
                 ss1 <- sum(sub_resFull^2)
                 n <- length(sub_resNull)
             }else{
-                ss0 <- rowSums(sub_resNull^2)
-                ss1 <- rowSums(sub_resFull^2)
+                ss0 <- matrixStats::rowSums2(sub_resNull^2)
+                ss1 <- matrixStats::rowSums2(sub_resFull^2)
                 n <- ncol(sub_resNull)
             }
             stat <- stat + n * (ss0 - ss1)/(ss1)
@@ -93,7 +95,9 @@ compute_pvalue <- function(basis, y, beta, beta_null, ng_labels,
                           degrees_of_freedom=NULL,
                           statistics="lrt",
                           df2=NULL, weights=NULL){
-    if(inherits(y,"DataFrame")) y<-data.matrix(y)
+    if(inherits(y,"DataFrame")){
+        y <- data.matrix(y)
+    }
     
     fitFull <- beta %*% t(basis)
     
@@ -143,7 +147,7 @@ summarise <- function(basis, ng_levels) {
     for(g in levels(ng_levels)){
         whKeep <- which(ng_levels == g)
         if(length(whKeep) > 1){
-            basis_mean[, g] <- rowMeans(basis[, whKeep])
+            basis_mean[, g] <- matrixStats::rowMeans(basis[, whKeep])
         }else if(length(whKeep) != 0){
             basis_mean[, g] <- basis[, whKeep]
         }

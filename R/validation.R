@@ -77,7 +77,7 @@ is_contrasts <- function(contrasts, moanin_model){
             stop(msg)
         }
         
-        if(any(colSums(contrasts) != 0)){
+        if(any(matrixStats::colSums2(contrasts) != 0)){
             msg <- paste("When contrasts provided is",
                 "matrix, all columns should sum to 0.")
             stop(msg)

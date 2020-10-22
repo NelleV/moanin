@@ -106,3 +106,7 @@ if(!require(MASS)){
 if(!require("DelayedArray")){
     BiocManager::install("DelayedArray")
 }
+
+if(!require("matrixStats")){
+    BiocManager::install("matrixStats")
+}

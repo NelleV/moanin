@@ -207,6 +207,7 @@ setMethod("splines_kmeans_score_and_label", "Moanin",
     if(is.null(data)){
         data <- get_log_data(object)
     }else{
+        data <- as.matrix(data)
         if(ncol(data) != ncol(kmeans_clusters$centroids)){
             stop(
                 "User-given data and kmeans resultsare inconsistent. Data is has ", 

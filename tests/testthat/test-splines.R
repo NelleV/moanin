@@ -64,8 +64,8 @@ test_that("splines:rescale_values", {
     moanin_model = moanin::create_moanin_model(data=testData,meta=testMeta)
     expect_silent(rescaled_data <- rescale_values(moanin_model,use_group=FALSE))
     expect_silent(rescaled_data <- rescale_values(moanin_model,data=moanin:::get_log_data(moanin_model),use_group=FALSE))
-    expect_equal(rep(0, nrow(moanin_model)), as.vector(row_min(rescaled_data)))
-    expect_equal(rep(1, nrow(moanin_model)), as.vector(row_max(rescaled_data)))
+    expect_equal(rep(0, nrow(moanin_model)), as.vector(rowMins(rescaled_data)))
+    expect_equal(rep(1, nrow(moanin_model)), as.vector(rowMaxs(rescaled_data)))
 
     #check different imputs
     expect_silent(rescaled_data2<- rescale_values(moanin_model,
