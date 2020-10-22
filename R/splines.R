@@ -38,14 +38,15 @@ fit_splines <- function(moanin_model, data, weights=NULL){
 #'
 #' @keywords internal
 fit_predict_splines <- function(data, moanin_model, 
-                               meta_prediction=NULL){
+                                meta_prediction=NULL){
     basis <- basis_matrix(moanin_model)
     gpVar <- group_variable_name(moanin_model)
     tpVar <- time_variable_name(moanin_model)
-    # if(!is.null(weights)){
-    #     stop("moanin::fit_predict_splines: not implemented")
-    # }
-    if(inherits(data,"DataFrame")) data<-data.matrix(data)
+
+    if(inherits(data,"DataFrame")){
+        data <- data.matrix(data)
+    }
+
     if(is.null(meta_prediction)){
         y_fitted <- t(stats::lm.fit(basis, t(data))$fitted.values)
     }else{
@@ -56,7 +57,8 @@ fit_predict_splines <- function(data, moanin_model,
             "Timepoint"=time_variable(moanin_model),
             "fitting_data"=fitting_data,
             "degrees_of_freedom"=degrees_of_freedom(moanin_model))
-        names(formula_data)[c(1,2)]<-c(gpVar,tpVar)
+
+        names(formula_data)[c(1, 2)] <- c(gpVar, tpVar)
         updated_formula <- stats::update(spline_formula(moanin_model), 
                                         fitting_data ~ .)
         model <- stats::lm(updated_formula, formula_data)
@@ -306,9 +308,9 @@ pvalues_fisher_method <- function(pvalues){
     keep <- (pvalues >= 0) & (pvalues <= 1)
     pvalues[pvalues == 0] <- 1e-285
     
-    lnp <- log(as.matrix(pvalues))
+    lnp <- data.matrix(log(pvalues))
     chisq <- (-2) * matrixStats::rowSums2(lnp)
-    df <- 2 * length(lnp)
+    df <- 2 * dim(lnp)[2]
     fisher_pval <- stats::pchisq(chisq, df, lower.tail=FALSE)
     return(fisher_pval)
 }
