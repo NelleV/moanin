@@ -31,10 +31,12 @@ compute_beta_null <- function(basis, beta, contrasts_coef){
     # We now need to sum all elements associated to the same pairs of splines.
     # Which is, in a particular case every four elements in both directions.
     
-    K <- sapply(seq_len(df),
-                function(jg) matrixStats::rowSums2(K[, (jg-1)*ng + seq_len(ng)]))
-    K <- sapply(seq_len(df),
-                function(jg) matrixStats::colSums2(K[(jg-1)*ng + seq_len(ng),]))
+    K <- vapply(seq_len(df),
+                function(jg) matrixStats::rowSums2(K[, (jg-1)*ng + seq_len(ng)]),
+                numeric(ncol(K)))
+    K <- vapply(seq_len(df),
+                function(jg) matrixStats::colSums2(K[(jg-1)*ng + seq_len(ng),]),
+                numeric(ncol(K)))
     
     T_ <- MASS::ginv(K) %*% t_
     
