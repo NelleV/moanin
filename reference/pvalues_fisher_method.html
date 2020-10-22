@@ -150,11 +150,7 @@ which the p-values come.</p></td>
 <span class='no'>deTimepoints</span><span class='kw'>=</span><span class='fu'><a href='DE_timepoints.html'>DE_timepoints</a></span>(<span class='no'>moanin</span>,
   <span class='kw'>contrasts</span><span class='kw'>=</span><span class='no'>contrasts</span>, <span class='kw'>use_voom_weights</span><span class='kw'>=</span><span class='fl'>FALSE</span>)
 <span class='no'>fisherPval</span><span class='kw'>=</span><span class='fu'>pvalues_fisher_method</span>(
-  <span class='no'>deTimepoints</span>[,<span class='fu'><a href='https://rdrr.io/r/base/grep.html'>grep</a></span>(<span class='st'>"pval"</span>,<span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='no'>deTimepoints</span>))])
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>fisherPval</span>)</div><div class='output co'>#&gt;          NM_009912          NM_008725          NM_007473 ENSMUST00000094955 
-#&gt;       1.943304e-11       9.752936e-02       1.380378e-01       1.267241e-11 
-#&gt;       NM_001042489          NM_008159 
-#&gt;       1.937846e-03       2.135203e-19 </div></pre>
+  <span class='no'>deTimepoints</span>[,<span class='fu'><a href='https://rdrr.io/r/base/grep.html'>grep</a></span>(<span class='st'>"pval"</span>,<span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='no'>deTimepoints</span>))])</div><div class='output co'>#&gt; <span class='error'>Error in matrixStats::rowSums2(lnp): Argument 'x' must be a matrix or a vector.</span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='no'>fisherPval</span>)</div><div class='output co'>#&gt; <span class='error'>Error in h(simpleError(msg, call)): error in evaluating the argument 'x' in selecting a method for function 'head': object 'fisherPval' not found</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

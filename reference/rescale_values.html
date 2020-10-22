@@ -177,7 +177,7 @@ row, all values associated to each group (defined by grouping variable of
 <span class='co'># Can rescale data in Moanin object</span>
 <span class='no'>allData</span><span class='kw'>&lt;-</span><span class='fu'>rescale_values</span>(<span class='no'>moanin</span>)
 <span class='co'># Or provide different data and/or rescale within grouping variable</span>
-<span class='no'>smallData</span><span class='kw'>&lt;-</span><span class='fu'>rescale_values</span>(<span class='no'>moanin</span>, <span class='kw'>data</span><span class='kw'>=</span><span class='no'>testData</span>[<span class='fl'>1</span>:<span class='fl'>10</span>,], <span class='kw'>use_group</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div></pre>
+<span class='no'>smallData</span><span class='kw'>&lt;-</span><span class='fu'>rescale_values</span>(<span class='no'>moanin</span>, <span class='kw'>data</span><span class='kw'>=</span><span class='no'>testData</span>[<span class='fl'>1</span>:<span class='fl'>10</span>,], <span class='kw'>use_group</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='error'>Error in matrixStats::rowMins(data[, mask]): Argument 'x' must be a matrix or a vector.</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
