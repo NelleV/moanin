@@ -111,22 +111,28 @@ lfc_per_time <- function(object, contrasts){
                                 time_variable_name=tpVar)
     
     averaged_meta[,tpVar] <- as.factor(averaged_meta[,tpVar])
-    sample_coefficients <- sapply(averaged_meta[,gpVar], 
-                                  function(x) return(contrasts[x, ]))
+    sample_coefficients <- vapply(
+        averaged_meta[,gpVar], 
+        function(x) return(contrasts[x, ]),
+        numeric(ncol(contrasts)))
+
     if(is.null(dim(sample_coefficients))){
         sample_coefficients <- as.matrix(sample_coefficients)
     }else{
         sample_coefficients <- t(sample_coefficients)
     }
+
     colnames(sample_coefficients) <- colnames(contrasts)
     
     log_fold_changes <- matrix(NA, dim(object)[1],
                      dim(contrasts)[2]*length(unique(time_variable(object))))
     row.names(log_fold_changes) <- row.names(object)
-    colnames(log_fold_changes) <- sapply(
-        colnames(sample_coefficients),FUN=
-            function(x){sapply(unique(averaged_meta[,tpVar]), 
-                               FUN=function(t){paste0(x, ":", t)})})
+    colnames(log_fold_changes) <- vapply(
+        colnames(sample_coefficients),
+        FUN=function(x){vapply(unique(averaged_meta[,tpVar]), 
+                               FUN=function(t){paste0(x, ":", t)},
+                               character(1))},
+        character(length(unique(averaged_meta[, tpVar]))))
     
     for(column in colnames(sample_coefficients)){
         
@@ -158,13 +164,17 @@ average_replicates <- function(object){
         if(is.vector(data)){
             return(data)
         }else{
-            return(rowMeans(data))
+            return(matrixStats::rowMeans2(data))
         }
     }
-    y<-get_log_data(object)
-    if(inherits(y,"DataFrame")) y<-data.matrix(y)
-    replicate_averaged <- sapply(all_levels,
-                   function(m){.row_means(y[, timepoint_group==m])})
+    y <- get_log_data(object)
+    if(inherits(y, "DataFrame")){
+        y <- data.matrix(y)
+    }
+    replicate_averaged <- vapply(
+        all_levels,
+        function(m){.row_means(y[, timepoint_group==m])},
+        numeric(nrow(y)))
     return(replicate_averaged)
 }
 
