@@ -46,9 +46,9 @@ setMethod("estimate_log_fold_change", "Moanin",
         method=c("timecourse", "sum", "max", "timely", 
                  "abs_sum", "abs_squared_sum", "min")){
 
-    tpVar<-time_variable_name(object)
-    gpVar<-group_variable_name(object)
-    method<-match.arg(method)
+    tpVar <- time_variable_name(object)
+    gpVar <- group_variable_name(object)
+    method <- match.arg(method)
     contrasts <- is_contrasts(contrasts, object)
     
     if(method == "timely"){
@@ -61,21 +61,21 @@ setMethod("estimate_log_fold_change", "Moanin",
         log_fold_changes <- data.frame(row.names=row.names(object))
         for(contrast in colnames(contrasts)){
             mask <- (timely_lfc_meta[,gpVar] == contrast) & 
-                !is.na(colSums(timely_lfc))
+                !is.na(matrixStats::colSums2(timely_lfc))
             if(method == "max"){
-                log_fold_changes[, contrast] <- rowMax(abs(timely_lfc[, mask]))
+                log_fold_changes[, contrast] <- matrixStats::rowMaxs(abs(timely_lfc[, mask]))
             } else if(method == "min") {
-                log_fold_changes[, contrast] <- rowMin(abs(timely_lfc[, mask])) 
+                log_fold_changes[, contrast] <- matrixStats::rowMins(abs(timely_lfc[, mask])) 
             }else if(method == "abs_sum"){
-                log_fold_changes[, contrast] <- rowSums(abs(timely_lfc[, mask]))
+                log_fold_changes[, contrast] <- matrixStats::rowSums2(abs(timely_lfc[, mask]))
             }else if(method == "abs_squared_sum"){
-                log_fold_changes[, contrast] <- rowSums(timely_lfc[, mask]**2)
+                log_fold_changes[, contrast] <- matrixStats::rowSums2(timely_lfc[, mask]**2)
             }else if(method == "epicon" || method == "timecourse"){
                 log_fold_changes[, contrast] <- (
-                    rowMeans(abs(timely_lfc[, mask])) * 
-                        sign(rowSums(timely_lfc[, mask])))
+                    matrixStats::rowMeans2(abs(timely_lfc[, mask])) * 
+                        sign(matrixStats::rowSums2(timely_lfc[, mask])))
             }else if(method == "sum"){
-                log_fold_changes[, contrast] <- rowSums(timely_lfc[, mask])
+                log_fold_changes[, contrast] <- matrixStats::rowSums2(timely_lfc[, mask])
             }
         }
         
@@ -112,7 +112,7 @@ lfc_per_time <- function(object, contrasts){
     
     averaged_meta[,tpVar] <- as.factor(averaged_meta[,tpVar])
     sample_coefficients <- sapply(averaged_meta[,gpVar], 
-                                 function(x) return(contrasts[x, ]))
+                                  function(x) return(contrasts[x, ]))
     if(is.null(dim(sample_coefficients))){
         sample_coefficients <- as.matrix(sample_coefficients)
     }else{
