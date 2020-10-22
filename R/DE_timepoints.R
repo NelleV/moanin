@@ -190,7 +190,8 @@ perWeek_barplot <- function(de_results, type=c("qval","pval"),
         labels <- sapply(
             strsplit(gsub(stringReplace, "", qval_colnames), "\\."), .subset2, 3)
     }
-    number_de_genes_per_time <- colSums(de_results[, qval_colnames] < threshold)
+    number_de_genes_per_time <- matrixStats::colSums2(
+        de_results[, qval_colnames] < threshold)
     
     graphics::barplot(number_de_genes_per_time, 
             names.arg=labels, xlab=xlab,ylab=ylab,
