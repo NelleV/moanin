@@ -55,7 +55,10 @@ setMethod("DE_timepoints","Moanin",
             paste(add_factors,collapse="+"))
     }
     designFormula<-stats::as.formula(designText)
-    design <- stats::model.matrix(designFormula, data=colData(object))
+    design <- try(stats::model.matrix(designFormula, data=colData(object)), silent=TRUE)
+    if( inherits(design, "try-error")){
+        stop("Error in creating the design matrix. Error:\n",design)
+    }
     
     cleaned_colnames <- gsub("WeeklyGroup", "", colnames(design))
     colnames(design) <- cleaned_colnames

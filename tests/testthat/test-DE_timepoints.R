@@ -30,6 +30,13 @@ test_that("DE_timepoints::create_timepoints_contrasts", {
     expect_silent( DE_timepoints(moanin_model_counts,
           contrasts=contrasts, use_voom_weights=TRUE))
     
-         
+    #Check add replicate
+    expect_silent( DE_timepoints(moanin_model_counts,
+          contrasts=contrasts, use_voom_weights=TRUE,
+          add_factors="replicate"))
+
+    expect_error( DE_timepoints(moanin_model_counts,
+        contrasts=contrasts, use_voom_weights=TRUE,
+        add_factors="Reps"),"Error in creating the design matrix")
 
 })
