@@ -219,8 +219,11 @@ setMethod("DE_timecourse","Moanin",
     contrasts <- is_contrasts(contrasts, object)
     
     if(use_voom_weights){
-        design <- stats::model.matrix(
-            ~Group*Timepoint + 0,
+        formulaText<-paste0("~",group_variable_name(object)," + ",
+                            time_variable_name(object)," + 0")
+        voomFormula = stats::as.formula(formulaText)
+        
+        design <- stats::model.matrix(voomFormula,
             data=colData(object))
         
         y <- edgeR::DGEList(counts=assay(object))
