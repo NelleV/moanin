@@ -6,6 +6,7 @@ setGeneric("create_timepoints_contrasts",
 #' Fit weekly differential expression analysis
 #'
 #' @inheritParams DE_timecourse
+#' @param add_factors A character vector of additional components to add to the design. See details. 
 #' @return A \code{data.frame} with three columns for each of the contrasts
 #'   given in \code{contrasts}, corresponding to the raw p-value of the contrast
 #'   for that gene (\code{_pval}), the adjusted p-value (\code{_qval}), and the
@@ -18,6 +19,17 @@ setGeneric("create_timepoints_contrasts",
 #' @name DE_timepoints
 #' @importFrom edgeR DGEList calcNormFactors
 #' @importFrom limma voom lmFit contrasts.fit eBayes
+#' @details By default the formula fitted for each gene is
+#' \preformatted{   
+#'    ~ Group*Timepoint +0
+#' }
+#' If the user gives values to \code{add_factors}, then the vector of character values given in \code{add_factors} will be \emph{added} to the default formula. So that \code{add_factors="Replicate"} will change the formula to
+#' \preformatted{   
+#'    ~ Group*Timepoint +0 + Replicate
+#' }
+#' This allows for a small amount of additional complexity to control 
+#' for other variables. Users should work directly with limma for 
+#' more complex models. 
 #' @details If \code{use_voom_weights=TRUE}, the data is given directly to limma
 #'   via \code{assay(object)}. The specific series of
 #'   calls is:
@@ -44,6 +56,12 @@ setGeneric("create_timepoints_contrasts",
 #' deTimepoints=DE_timepoints(moanin, 
 #'     contrasts=contrasts, use_voom_weights=FALSE)
 #' head(deTimepoints)
+#' # Control for replicate variable:
+#' deTimepoints=DE_timepoints(moanin, 
+#'     contrasts=contrasts, add_factors="Replicate",
+#'     use_voom_weights=FALSE)
+#' head(deTimepoints)
+
 #' @export
 setMethod("DE_timepoints","Moanin",
            function(object,

@@ -7,7 +7,7 @@
 \alias{create_timepoints_contrasts,Moanin-method}
 \title{Fit weekly differential expression analysis}
 \usage{
-\S4method{DE_timepoints}{Moanin}(object, contrasts, use_voom_weights = TRUE)
+\S4method{DE_timepoints}{Moanin}(object, contrasts, add_factors = NULL, use_voom_weights = TRUE)
 
 \S4method{create_timepoints_contrasts}{Moanin}(object, group1, group2)
 }
@@ -22,6 +22,8 @@ matrix of contrasts coefficients obtained using
 \code{\link[limma]{makeContrasts}} from the package \code{limma}. If given
 as a character string, will be passed to \code{\link[limma]{makeContrasts}}
 to be converted into such a matrix.}
+
+\item{add_factors}{A character vector of additional components to add to the design. See details.}
 
 \item{use_voom_weights}{boolean, optional, default: TRUE. 
 Whether to use voom weights. See details.}
@@ -50,6 +52,18 @@ Fit weekly differential expression analysis
 Creates pairwise contrasts for all timepoints
 }
 \details{
+By default the formula fitted for each gene is
+\preformatted{   
+   ~ Group*Timepoint +0
+}
+If the user gives values to \code{add_factors}, then the vector of character values given in \code{add_factors} will be \emph{added} to the default formula. So that \code{add_factors="Replicate"} will change the formula to
+\preformatted{   
+   ~ Group*Timepoint +0 + Replicate
+}
+This allows for a small amount of additional complexity to control 
+for other variables. Users should work directly with limma for 
+more complex models.
+
 If \code{use_voom_weights=TRUE}, the data is given directly to limma
   via \code{assay(object)}. The specific series of
   calls is:
@@ -83,6 +97,11 @@ contrasts <- create_timepoints_contrasts(moanin,"C", "K")
 head(contrasts)
 deTimepoints=DE_timepoints(moanin, 
     contrasts=contrasts, use_voom_weights=FALSE)
+head(deTimepoints)
+# Control for replicate variable:
+deTimepoints=DE_timepoints(moanin, 
+    contrasts=contrasts, add_factors="Replicate",
+    use_voom_weights=FALSE)
 head(deTimepoints)
 }
 \seealso{
