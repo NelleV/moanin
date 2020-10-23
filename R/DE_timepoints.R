@@ -6,7 +6,8 @@ setGeneric("create_timepoints_contrasts",
 #' Fit weekly differential expression analysis
 #'
 #' @inheritParams DE_timecourse
-#' @param add_factors A character vector of additional components to add to the design. See details. 
+#' @param add_factors A character vector of additional variables to add to the 
+#' design. See details. 
 #' @return A \code{data.frame} with three columns for each of the contrasts
 #'   given in \code{contrasts}, corresponding to the raw p-value of the contrast
 #'   for that gene (\code{_pval}), the adjusted p-value (\code{_qval}), and the
@@ -23,7 +24,9 @@ setGeneric("create_timepoints_contrasts",
 #' \preformatted{   
 #'    ~ Group*Timepoint +0
 #' }
-#' If the user gives values to \code{add_factors}, then the vector of character values given in \code{add_factors} will be \emph{added} to the default formula. So that \code{add_factors="Replicate"} will change the formula to
+#' If the user gives values to \code{add_factors}, then the vector of character 
+#' values given in \code{add_factors} will be \emph{added} to the default formula. 
+#' So that \code{add_factors="Replicate"} will change the formula to
 #' \preformatted{   
 #'    ~ Group*Timepoint +0 + Replicate
 #' }
