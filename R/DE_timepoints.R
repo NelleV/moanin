@@ -47,10 +47,15 @@ setGeneric("create_timepoints_contrasts",
 #' @export
 setMethod("DE_timepoints","Moanin",
            function(object,
-                    contrasts,
+                    contrasts,add_factors=NULL,
                     use_voom_weights=TRUE){
-    
-    design <- stats::model.matrix(~WeeklyGroup + 0, data=colData(object))
+    designText<-"~WeeklyGroup + 0"
+    if(!is.null(add_factors)){
+        designText<-paste(designText,"+",
+            paste(add_factors,collapse="+"))
+    }
+    designFormula<-stats::as.formula(designText)
+    design <- stats::model.matrix(designFormula, data=colData(object))
     
     cleaned_colnames <- gsub("WeeklyGroup", "", colnames(design))
     colnames(design) <- cleaned_colnames
