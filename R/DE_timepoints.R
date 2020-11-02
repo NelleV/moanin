@@ -172,8 +172,8 @@ setMethod("create_timepoints_contrasts","Moanin",
 #' @examples 
 #' data(exampleData)
 #' moanin <- create_moanin_model(data=testData, meta=testMeta)
-#' contrasts <- create_timepoints_contrasts(moanin,"C", "K")
-#' deTimepoints=DE_timepoints(moanin, 
+#' contrasts <- create_timepoints_contrasts(moanin, "C", "K")
+#' deTimepoints <- DE_timepoints(moanin, 
 #'     contrasts=contrasts, use_voom_weights=FALSE)
 #' perWeek_barplot(deTimepoints)
 #' @export
@@ -187,10 +187,9 @@ perWeek_barplot <- function(de_results, type=c("qval","pval"),
         grepl(type, colnames(de_results))]
     if(is.null(labels)){
         stringReplace <- paste0("_",type)
-        labels <- vapply(
+        labels <- sapply(
             strsplit(gsub(stringReplace, "", qval_colnames), "\\."),
-            .subset2, 3,
-            character(1))
+            .subset2, 3)
     }
     number_de_genes_per_time <- matrixStats::colSums2(
         de_results[, qval_colnames] < threshold)
