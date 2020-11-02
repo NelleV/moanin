@@ -187,9 +187,10 @@ perWeek_barplot <- function(de_results, type=c("qval","pval"),
         grepl(type, colnames(de_results))]
     if(is.null(labels)){
         stringReplace <- paste0("_",type)
-        labels <- sapply(
+        labels <- vapply(
             strsplit(gsub(stringReplace, "", qval_colnames), "\\."),
-            .subset2, 3)
+            FUN=function(x){.subset2(x, 3)},
+            character(1))
     }
     number_de_genes_per_time <- matrixStats::colSums2(
         de_results[, qval_colnames] < threshold)

@@ -1,6 +1,6 @@
 Package: moanin
 Title: An R Package for Time Course RNASeq Data Analysis
-Version: 0.99.12
+Version: 0.99.13
 Authors@R: c(person("Elizabeth", "Purdom", email="epurdom@stat.berkeley.edu",
                     role=c("aut"),
                     comment=c("orcid"="https://orcid.org/0000-0001-9455-7990")),
