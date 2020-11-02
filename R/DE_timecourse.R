@@ -149,7 +149,7 @@ summarise <- function(basis, ng_levels) {
     for(g in levels(ng_levels)){
         whKeep <- which(ng_levels == g)
         if(length(whKeep) > 1){
-            basis_mean[, g] <- matrixStats::rowMeans(basis[, whKeep])
+            basis_mean[, g] <- matrixStats::rowMeans2(basis[, whKeep])
         }else if(length(whKeep) != 0){
             basis_mean[, g] <- basis[, whKeep]
         }
