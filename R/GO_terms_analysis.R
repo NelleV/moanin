@@ -39,8 +39,8 @@
 #' #create fake assignment of genes to group based on TRUE/FALSE values
 #' inGroup=rep(FALSE,nrow(testData))
 #' inGroup[1:10]=TRUE
-#' names(inGroup)<-names(geneId2Go)
-#' find_enriched_go_terms(inGroup,geneId2Go)
+#' names(inGroup) <- row.names(testData)
+#' find_enriched_go_terms(inGroup, geneId2Go)
 #' @seealso \code{\link{create_go_term_mapping}}, \code{\link[KEGGprofile]{find_enriched_pathway}}, \code{\link[pkg:topGO]{GenTable}}, \code{\link[pkg:topGO]{runTest}}, \code{\link[pkg:topGO]{topGOdata-class}}, \code{\link[stats]{p.adjust}} 
 #' @export
 #' @importFrom topGO annFUN.gene2GO runTest GenTable
@@ -48,8 +48,10 @@ find_enriched_go_terms <- function(assignments, gene_id_to_go,
                                   ontology="BP", 
                                   weighted=FALSE,
                                   node_size=10){
-    if(is.null(names(assignments))) stop("assignments must be a named vector,",
-    "where names match names of gene_id_to_go ")
+    if(is.null(names(assignments))){
+        stop("assignments must be a named vector,",
+             "where names match names of gene_id_to_go ")
+    }
     gene_names <- names(assignments)
     assignments <- as.numeric(assignments)
     names(assignments) <- gene_names
