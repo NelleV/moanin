@@ -25,7 +25,7 @@ run_tests() {
     # make check
     make test
     make doc
-    make check
+    #make check
 }
 
 # Start by installing
