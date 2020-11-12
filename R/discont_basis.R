@@ -21,7 +21,7 @@
 #' moanin <- create_moanin_model(data=testData, meta=testMeta,
 #'     spline_formula=~Group:discont_basis(Timepoint,dfPre=3,
 #'         dfPost=3,discont=20,intercept=TRUE)+0,
-#'     df=6)
+#'     degrees_of_freedom=6)
 
 discont_basis<-function(timepoints, discont_point, 
     knots=NULL, dfPre=NULL, dfPost=dfPre,degree=3, 
@@ -75,105 +75,7 @@ discont_basis<-function(timepoints, discont_point,
 }
 
 
-# ## Test EPICON Points:
-# dataDir<-"/Users/epurdom/Documents/Research/EPICON/epiconWorkRepos/mRNASeq/scripts/results/Year1"
-# pybasis<-read.csv(file.path(dataDir,"basis/leaf_basis_preflowering.txt"))
-# barcodes<-pybasis[,1]
-# meta<-read.table(file.path(dataDir,"data/leaf_meta.tsv"))
-# meta<-meta[match(barcodes,meta$Barcode),]
-# fac<-factor(meta$Genotype):factor(meta$Condition)
-#
-# pybasis<-data.matrix(pybasis[,-1])
-# pyord<-do.call("order",as.data.frame(t(pybasis)))
-# pybasis<-pybasis[,pyord]
-#
-#
-# #bs says degrees of freedom is too small -- makes it 4
-# basis<-create_basis(meta$Time.Point,discont_point=8.5,
-#     dfPre=3, dfPost=3,degree=3, intercept=TRUE,type="bs")
-# rbasis<-model.matrix(~Genotype:Condition:basis+0,data=meta)
-# rbasis<-unname(rbasis)
-# rord<-do.call("order",as.data.frame(t(rbasis)))
-# rbasis<-rbasis[,rord]
-#
-# # basisNoInt<-create_basis(meta$Time.Point,discont_point=8.5,
-# #     dfPre=3, dfPost=3,degree=3, intercept=FALSE,type="bs")
-# # prepostFac<-factor(meta$Time.Point<=8.5)
-# # rbasisNI<-model.matrix(~Genotype:Condition:basisNoInt+Genotype:Condition:prepostFac+0,data=meta)
-# # rordNI<-do.call("order",as.data.frame(t(rbasisNI)))
-# # rbasisNI<-rbasisNI[,rordNI]
-# #rbasisNI<-unname(rbasisNI)
-# dim(rbasis)
-# dim(pybasis)
-# dim(rbasisNI)
-#
-#
-# # simTimepoints<-rep(seq(1,17,length=100),2)
-# # simCondition<-sort(gl(n=2,k=2,length=100))
-# # simBasis<-model.matrix(~simCondition:create_basis(simTimepoints,discont_point=8.5,
-# #     dfPre=3, dfPost=3,degree=3, intercept=TRUE,type="bs")
-#
-#
-# ##########
-# ##Get same order
-# ##########
-# #sort by factor
-#
-#
-# plotPerLevel<-function(level,mat,basisCol,add=TRUE,col="black"){
-#    wh<-which(fac==level)
-#    ord<-order(meta$Time.Point[wh])
-#    if(add)
-#        lines(meta$Time.Point[wh][ord],
-#            mat[wh,basisCol][ord],type="l",lty=1,col=col)
-#    else plot(meta$Time.Point[wh][ord],
-#         mat[wh,basisCol][ord],type="l",lty=1,col=col,
-#         xlab="Timepoint",ylab="Basis",ylim=c(0,1))
-#
-# }
-# levs<-levels(fac)
-# dev.set(2)
-# par(mfrow=c(6,6))
-# for(i in 1:ncol(rbasis)){
-#    for(ll in 1:length(levs)){
-#      plotPerLevel(level=levs[ll],mat=rbasis,basisCol=i,add=(ll!=1), col=palette()[ll])
-#    }
-#    if(i==3) title(main="R Basis")
-#
-#    if(i==ncol(rbasis)){
-#        plot.new()
-#        legend("topleft",levs,fill=palette()[1:4])
-#    }
-#
-# }
-# dev.set(2)
-# par(mfrow=c(6,7))
-# for(i in 1:ncol(rbasisNI)){
-#    for(ll in 1:length(levs)){
-#      plotPerLevel(level=levs[ll],mat=rbasisNI,basisCol=i,add=(ll!=1), col=palette()[ll])
-#    }
-#    if(i==3) title(main="R Basis, different Int")
-#
-#    if(i==ncol(rbasis)){
-#        plot.new()
-#        legend("topleft",levs,fill=palette()[1:4])
-#    }
-#
-# }
-# dev.set(3)
-# par(mfrow=c(6,6))
-# for(i in 1:ncol(pybasis)){
-#    for(ll in 1:length(levs)){
-#      plotPerLevel(level=levs[ll],mat=pybasis,basisCol=i,add=(ll!=1), col=palette()[ll])
-#
-#    }
-#    if(i==3) title(main="Python Basis")
-#    if(i==ncol(pybasis)){
-#        plot.new()
-#        legend("topleft",levs,fill=palette()[1:4])
-#    }
-#
-# }
+
 
 
 

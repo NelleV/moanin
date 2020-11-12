@@ -24,6 +24,6 @@ test_that("moanin_model::discont_basis",{
     moanin <- create_moanin_model(data=testData, meta=testMeta,
         spline_formula=~Group:discont_basis(Timepoint,dfPre=3,
             dfPost=3,discont=20,intercept=TRUE)+0,
-        df=6)
+        degrees_of_freedom=6)
     
 })
