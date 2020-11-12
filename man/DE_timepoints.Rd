@@ -23,7 +23,8 @@ matrix of contrasts coefficients obtained using
 as a character string, will be passed to \code{\link[limma]{makeContrasts}}
 to be converted into such a matrix.}
 
-\item{add_factors}{A character vector of additional components to add to the design. See details.}
+\item{add_factors}{A character vector of additional variables to add to the 
+design. See details.}
 
 \item{use_voom_weights}{boolean, optional, default: TRUE. 
 Whether to use voom weights. See details.}
@@ -56,7 +57,9 @@ By default the formula fitted for each gene is
 \preformatted{   
    ~ Group*Timepoint +0
 }
-If the user gives values to \code{add_factors}, then the vector of character values given in \code{add_factors} will be \emph{added} to the default formula. So that \code{add_factors="Replicate"} will change the formula to
+If the user gives values to \code{add_factors}, then the vector of character 
+values given in \code{add_factors} will be \emph{added} to the default formula. 
+So that \code{add_factors="Replicate"} will change the formula to
 \preformatted{   
    ~ Group*Timepoint +0 + Replicate
 }
