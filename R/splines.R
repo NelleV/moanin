@@ -2,7 +2,7 @@ setGeneric("rescale_values",function(object,...) {
     standardGeneric("rescale_values")})
 
 #' Fit splines to each gene of data matrix
-#' @param moanin_model object of class Moanin
+#' @param design_matrix basis matrix to fit
 #' @param data a matrix of data to fix splines to
 #' @param weights A matrix of weights, of the same dimension as \code{data}.
 #'   
@@ -10,20 +10,19 @@ setGeneric("rescale_values",function(object,...) {
 #'   matrix containing the coefficients for the corresponding gene in
 #'   \code{data}.
 #' @keywords internal
-fit_splines <- function(moanin_model, data, weights=NULL){
-    basis <- basis_matrix(moanin_model)
-    n <- ncol(basis)
+fit_splines <- function(design_matrix, data, weights=NULL){
+    n <- ncol(design_matrix)
     nr <- nrow(data)
     if(inherits(data,"DataFrame")) data<-data.matrix(data)
     
     if(!is.null(weights)){
         beta <- matrix(nrow=nr, ncol=n)
         for(i in seq_len(nr)){
-            beta[i,] <- stats::lm.wfit(basis, data[i,], weights[i,])$coefficients
+            beta[i,] <- stats::lm.wfit(design_matrix, data[i,], weights[i,])$coefficients
         }
         row.names(beta) <- row.names(data)
     }else{
-        beta <- t(stats::lm.fit(basis, t(data))$coefficients)
+        beta <- t(stats::lm.fit(design_matrix, t(data))$coefficients)
     }
     return(beta)
 }

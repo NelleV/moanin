@@ -14,6 +14,7 @@ center_data <- function(y, ng_labels){
 
 compute_beta_null <- function(basis, beta, contrasts_coef){
     ng <- length(contrasts_coef)
+    ## FIXME: This assumes a particular form for the formula, which may not be true if user add additional controlling values, for example. 
     df <- ncol(basis) / ng
     contrasts_coef_ <- rep(contrasts_coef, times=df)
     
@@ -245,7 +246,7 @@ setMethod("DE_timecourse","Moanin",
         basis <- t(center_data(t(basis)))
     }
     
-    beta <- fit_splines(data=y, moanin_model=object, weights=weights)
+    beta <- fit_splines(data=y, design_matrix=basis_matrix(object), weights=weights)
     
     if(dim(contrasts)[1] != ng){
         stop("The contrast coef vector should be of the same size" +
