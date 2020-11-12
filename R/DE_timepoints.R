@@ -2,6 +2,9 @@ setGeneric("DE_timepoints",
            function(object,...) { standardGeneric("DE_timepoints")})
 setGeneric("create_timepoints_contrasts", 
            function(object,...) { standardGeneric("create_timepoints_contrasts")})
+setGeneric("create_diff_contrasts", 
+                      function(object,...) { standardGeneric("create_diff_contrasts")})
+
 
 #' Fit weekly differential expression analysis
 #'
@@ -59,6 +62,12 @@ setGeneric("create_timepoints_contrasts",
 #' deTimepoints=DE_timepoints(moanin, 
 #'     contrasts=contrasts, use_voom_weights=FALSE)
 #' head(deTimepoints)
+#' contrastsDiff <- create_diff_contrasts(moanin,"C", "K")
+#' deDiffTimepoints=DE_timepoints(moanin, 
+#'     contrasts=contrasts,
+#'     use_voom_weights=FALSE)
+#' # provide the sets of timepoints to compare:
+#' contrastsDiff<-create_timepoints_contrasts(moanin,"C", "K",timepoints_before=c(72,120),timepoints_after=c(168,168),type="diff_timepoint")
 #' # Control for replicate variable:
 #' deTimepoints=DE_timepoints(moanin, 
 #'     contrasts=contrasts, add_factors="Replicate",
@@ -137,30 +146,54 @@ setMethod("DE_timepoints","Moanin",
 #'   that must match a value contained in \code{moanin_model$meta}.
 #' @param group2 Second group to consider in making contrasts, character value
 #'   that must match a value contained in \code{moanin_model$meta}.
+#' @param timepoints_after for create_diff_contrasts, the set of timepoints to compare, see details where contrast will be timepoints_after - timepoints_before 
+#' @param timepoints_before for create_diff_contrasts, see details the set of timepoints to compare, where contrast will be timepoints_after - timepoints_before 
 #' @details \code{create_timepoints_contrasts} creates the needed contrasts for
 #'   comparing two groups for every timepoint in the format needed for
 #'   \code{DE_timepoints} (i.e. \code{\link[limma]{makeContrasts}}, to which the
 #'   contrasts are ultimately passed). The time points are determined by the
 #'   meta data in the \code{moanin_object} provided by the user.
+#' @details \code{type="diff_timepoint"} will create contrasts that compare the difference between two timepoints between two levels of the \code{group_variable} of the \code{Moanin} object. These are contrasts in the form (TP i - TP (i-1))[Group1] - (TP i - TP (i-1))[Group2]. 
+#' @export
 #' @return \code{create_timepoints_contrasts}: a character vector with each
 #'   element of the vector corresponding to a contrast to be compared.
 #' @seealso \code{\link[limma]{makeContrasts}}
 #' @rdname DE_timepoints
 #' @export
 setMethod("create_timepoints_contrasts","Moanin",
- function(object, group1, group2){
+ function(object, group1, group2, 
+     type=c("per_timepoint","diff_timepoint"),
+     timepoints=sort(unique(time_variable(object))),
+     timepoints_before=head(sort(timepoints),-1),
+     timepoints_after=tail(sort(timepoints),-1)
+     ){
+    type<-match.arg(type)
+    if(type=="per_timepoint"){
+        return(pertimepoint_contrast(object=object, group1=group1,
+            group2=group2,timepoints=timepoints))
+    }
+    if(type=="diff_timepoint"){
+        return(timepointdiff_contrasts(object=object, group1=group1, 
+            group2=group2, timepoints_before=timepoints_before,
+            timepoints_after=timepoints_after))
+    }
+})
+         
+pertimepoint_contrast<-function(object, group1, group2, 
+     timepoints){
     object <- object[,group_variable(object) %in% c(group1, group2)]
     all_timepoints <- sort(unique(time_variable(object)))
-    contrasts <- rep(NA, length(all_timepoints))
+    if(!all(timepoints%in% all_timepoints)) 
+        stop("timepoints must consist only of timepoints in the time_variable of Moanin object")
+    contrasts <- rep(NA, length(timepoints))
     msg<-""
     foundMissing<-FALSE
-    for(i in seq_along(all_timepoints)){
+    for(i in seq_along(timepoints)){
         # First, check that the two conditions have been sampled for this
         # timepoint
-        timepoint <- all_timepoints[i]
+        timepoint <- timepoints[i]
         submeta <- object[,time_variable(object) == timepoint]
         if(length(unique(time_by_group_variable(submeta))) == 2){
-            groups <- as.character(unique(time_by_group_variable(submeta)))
             contrasts[i] <- paste0(group1, ".", timepoint, "-", group2, ".", 
                                   timepoint)
         }else if(length(unique(time_by_group_variable(submeta))) == 1){
@@ -178,9 +211,58 @@ setMethod("create_timepoints_contrasts","Moanin",
     if(foundMissing) warning(msg)
     return(contrasts[!is.na(contrasts)])
  }
-)
 
-#' Creates pairwise contrasts for all timepoints
+
+timepointdiff_contrasts<-function(object, group1, group2, timepoints_before=NULL,timepoints_after=NULL){
+    object <- object[,group_variable(object) %in% c(group1, group2)]
+    all_timepoints <- sort(unique(time_variable(object)))
+    
+    ### Checks for timepoints
+    if((is.null(timepoints_before) & !is.null(timepoints_after)) ||
+    (!is.null(timepoints_before) & is.null(timepoints_after))){
+        stop("either timepoints_before and timepoints_after must be given, or both must be NULL")
+    }
+    if(is.null(timepoints_before)){
+        timepoints_before<-head(all_timepoints,-1)
+        timepoints_after<-tail(all_timepoints,-1)
+    }
+    if(!all(timepoints_before %in% all_timepoints) || !all(timepoints_after %in% all_timepoints)) 
+        stop("timepoints_before and timepoints_after must consist only of timepoints in the time_variable of Moanin object")
+    if(!all(timepoints_before<timepoints_after)) 
+        stop("each timepoints_after element has to be strictly greater than the corresponding timepoints_before element")
+    
+    contrasts <- rep(NA, length(timepoints_before))
+    # Will give a tally of timepoint pairs can't do
+    msg<-""
+    foundMissing<-FALSE
+    for(i in seq_along(timepoints_before)){
+        tpbefore <- timepoints_before[i]
+        tpafter<-timepoints_after[i]
+        
+        # First, check that the two conditions have been sampled 
+        # for both timepoints
+        # Could do all at once, but not worth effort
+        combos<-expand.grid(tp=c(tpbefore,tpafter),
+            groups=c(group1,group2))
+        npercombo<-sapply(1:nrow(combos),function(i){
+            tp<-combos[i,1]
+            gp<-as.character(combos[i,2])
+            sum(time_variable(object)==tp & group_variable(object)==gp)
+        })
+        if(any(npercombo==0)){
+            msg <- paste(msg,"Cannot compare",tpbefore,"and",tpafter,"because one of the timepoints is missing in one of the conditions.\n")
+            foundMissing<-TRUE
+        }else{
+          contrasts[i] <- paste0(group1, ".", tpafter, "-", group1, ".", tpbefore,"-",group2,".",tpafter,"+",group2,".",tpbefore)
+            
+        } 
+    }
+    if(foundMissing) warning(msg)
+    return(contrasts[!is.na(contrasts)])
+ }
+
+
+#' Creates barplot of results of per-timepoint comparison
 #'
 #' @param de_results results from \code{\link{DE_timepoints}}
 #' @param type type of p-value to count ("qval" or "pval")
