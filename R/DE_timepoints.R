@@ -283,8 +283,8 @@ timepointdiff_contrasts<-function(object, group1, group2, timepoints_before=NULL
 #' @examples 
 #' data(exampleData)
 #' moanin <- create_moanin_model(data=testData, meta=testMeta)
-#' contrasts <- create_timepoints_contrasts(moanin,"C", "K")
-#' deTimepoints=DE_timepoints(moanin, 
+#' contrasts <- create_timepoints_contrasts(moanin, "C", "K")
+#' deTimepoints <- DE_timepoints(moanin, 
 #'     contrasts=contrasts, use_voom_weights=FALSE)
 #' perWeek_barplot(deTimepoints)
 #' @export
@@ -300,7 +300,7 @@ perWeek_barplot <- function(de_results, type=c("qval","pval"),
         stringReplace <- paste0("_",type)
         labels <- vapply(
             strsplit(gsub(stringReplace, "", qval_colnames), "\\."),
-            .subset2, 3,
+            FUN=function(x){.subset2(x, 3)},
             character(1))
     }
     number_de_genes_per_time <- matrixStats::colSums2(

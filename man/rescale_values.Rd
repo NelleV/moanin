@@ -43,9 +43,9 @@ If the user set \code{log_transform=TRUE} in the creation of the
 }
 \examples{
 data(exampleData)
-moanin=create_moanin_model(data=testData, meta=testMeta)
+moanin <- create_moanin_model(data=testData, meta=testMeta)
 # Can rescale data in Moanin object
-allData<-rescale_values(moanin)
+allData <- rescale_values(moanin)
 # Or provide different data and/or rescale within grouping variable
-smallData<-rescale_values(moanin, data=testData[1:10,], use_group=TRUE)
+smallData <- rescale_values(moanin, data=testData[1:10,], use_group=TRUE)
 }

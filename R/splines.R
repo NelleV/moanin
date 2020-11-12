@@ -138,19 +138,19 @@ create_meta_prediction <- function(moanin_model, num_timepoints=100){
 #' @name rescale_values
 #' @examples 
 #' data(exampleData)
-#' moanin=create_moanin_model(data=testData, meta=testMeta)
+#' moanin <- create_moanin_model(data=testData, meta=testMeta)
 #' # Can rescale data in Moanin object
-#' allData<-rescale_values(moanin)
+#' allData <- rescale_values(moanin)
 #' # Or provide different data and/or rescale within grouping variable
-#' smallData<-rescale_values(moanin, data=testData[1:10,], use_group=TRUE)
+#' smallData <- rescale_values(moanin, data=testData[1:10,], use_group=TRUE)
 #' @aliases rescale_values,Moanin-method
-setMethod("rescale_values","Moanin",
+setMethod("rescale_values", "Moanin",
     function(object, data=NULL, use_group=FALSE){
     if(is.null(data)){
         data <- get_log_data(object)
     }
     if(use_group){
-        if(inherits(data,"DataFrame")){
+        if(is.data.frame(data) || inherits(data, "DataFrame")){
             data <- data.matrix(data)
         }
         factors_to_consider <- levels(group_variable(object))
@@ -163,14 +163,15 @@ setMethod("rescale_values","Moanin",
             data[whNonZero,mask] <- data[whNonZero,mask] / ymax[whNonZero]
         }
         return(data)
+    } else {
+        return(rescale_values(object=NULL, data=data))
     }
-    else return(rescale_values(object=NULL,data=data) )
 })
 
 #' @aliases rescale_values,NULL-method
 #' @export
 #' @rdname rescale_values
-setMethod("rescale_values","NULL",
+setMethod("rescale_values", "NULL",
     function(object, data){
         if(inherits(data,"DataFrame")) data<-data.matrix(data)
         ymin <- matrixStats::rowMins(data) 
@@ -182,6 +183,7 @@ setMethod("rescale_values","NULL",
         }
         return(data)
 })
+
 #' @aliases rescale_values,missing-method
 #' @export
 #' @rdname rescale_values

@@ -79,8 +79,8 @@ geneId2Go <- create_go_term_mapping(testGenesGO)
 #create fake assignment of genes to group based on TRUE/FALSE values
 inGroup=rep(FALSE,nrow(testData))
 inGroup[1:10]=TRUE
-names(inGroup)<-names(geneId2Go)
-find_enriched_go_terms(inGroup,geneId2Go)
+names(inGroup) <- row.names(testData)
+find_enriched_go_terms(inGroup, geneId2Go)
 }
 \seealso{
 \code{\link{create_go_term_mapping}}, \code{\link[KEGGprofile]{find_enriched_pathway}}, \code{\link[pkg:topGO]{GenTable}}, \code{\link[pkg:topGO]{runTest}}, \code{\link[pkg:topGO]{topGOdata-class}}, \code{\link[stats]{p.adjust}}
