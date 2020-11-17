@@ -12,58 +12,114 @@ center_data <- function(y, ng_labels){
     return(y)
 }
 
-compute_beta_null <- function(basis, beta, contrasts_coef){
-    ng <- length(contrasts_coef)
-    ## FIXME: This assumes a particular form for the formula, which may not be true if user add additional controlling values, for example. 
-    df <- ncol(basis) / ng
-    contrasts_coef_ <- rep(contrasts_coef, times=df)
+# compute_beta_null <- function(basis, beta, contrasts_coef){
+#     ## FIXME: This function assumes a particular form for the basis matrix, which may not be true if user add additional controlling values, for example.
+#
+#     ng <- length(contrasts_coef)
+#     df <- ncol(basis) / ng
+#     contrasts_coef_ <- rep(contrasts_coef, times=df)
+#
+#     # beta a matrix of genes by variables matrix
+#     # Reshape b so that array and dimension 2 corresponds to a group and drop the intercept
+#     b_ <- array(beta, dim=c(dim(beta)[1], ng, df))
+#     # First start by constructing the matrix T
+#     t_ <- apply(b_, 1, function(x){matrixStats::colSums2(x*contrasts_coef)})
+#
+#     # The observations can not be assumed to be balanced...
+#     # We need to get rid of the intercept for this part
+#     # FIXME don't invert this matrix...
+#     part_K <- MASS::ginv(t(basis) %*% basis)
+#     K <- part_K * contrasts_coef_**2
+#
+#     # We now need to sum all elements associated to the same pairs of splines.
+#     # Which is, in a particular case every four elements in both directions.
+#
+#     K <- vapply(seq_len(df),
+#                 function(jg) matrixStats::rowSums2(K[, (jg-1)*ng + seq_len(ng)]),
+#                 numeric(ncol(K)))
+#     K <- vapply(seq_len(df),
+#                 function(jg) matrixStats::colSums2(K[(jg-1)*ng + seq_len(ng),]),
+#                 numeric(ncol(K)))
+#
+#     T_ <- MASS::ginv(K) %*% t_
+#
+#     # We got T. Now, let's move on to the rest
+#     tmp <- as.array(rep(as.vector(T_), each=ng), dim=c(1, 1, 1))
+#     dim(tmp) <- c(ng * df, dim(beta)[1])
+#     C_ <- contrasts_coef * part_K %*% tmp
+#
+#     C_ <- t(C_)
+#     dim(C_) <- c(dim(beta)[1], ng, df)
+#     beta_null <- b_ - C_
+#
+#     # Last step: reshape beta null so that it is of the same shape as beta
+#     dim(beta_null) <- dim(beta)
+#     return(beta_null)
+# }
+
+# updated function to compute beta under the null. 
+compute_beta_null_2<-function(moanin_model,contrast_matrix,beta){
+    Xmat<-basis_matrix(moanin_model) #n x p
+    if(ncol(contrast_matrix)!=ncol(Xmat)) stop("invalid contrast_matrix provided, wrong dimensions (number of columns)")
     
-    # Reshape b so that each row corresponds to a group and drop the intercept
-    b_ <- array(beta, dim=c(dim(beta)[1], ng, df))
-    # First start by constructing the matrix T
-    t_ <- apply(b_, 1, function(x){matrixStats::colSums2(x*contrasts_coef)})
+    #right now, very basic just to check answer is correct.
+    #need to rewrite interms of singular values, etc.
+    invdesign<-solve(t(Xmat)%*%Xmat)
+    invCdesign<-solve(contrast_matrix%*%invdesign%*%t(contrast_matrix))
+    Wmat<-invdesign%*%t(contrast_matrix)%*%invCdesign%*%contrast_matrix
+    # # The full upper matrix (for checking)
+    # Rmat<-invdesign-Wmat%*%invdesign
     
-    # The observations can not be assumed to be balanced...
-    # We need to get rid of the intercept for this part
-    # FIXME don't invert this matrix…
-    part_K <- MASS::ginv(t(basis) %*% basis)
-    K <- part_K * contrasts_coef_**2
+    return(beta-beta%*%t(Wmat))
     
-    # We now need to sum all elements associated to the same pairs of splines.
-    # Which is, in a particular case every four elements in both directions.
+}
+#Expands contrasts to a matrix of contrasts, one for each basis vector/variable. rows are contrasts, columns are the number of total variables. 
+expand_contrast<-function(moanin_model,contrast_vector){
+    design_matrix<-basis_matrix(moanin_model)
+    gpname<-group_variable_name(moanin_model)
+    if(length(grep(gpname, colnames(design_matrix)))==0) 
+        stop("basis_matrix does not have column names that include" +
+            "the group_variable_name, cannot return full contrast matrix")
+    if(is.null(names(contrast_vector))) stop("Error, no names")
+    levs<-names(contrast_vector)
+    glevs<-paste0(gpname,levs)
+    #Check that replicated the same:
+    m<-lapply(glevs,grep,colnames(design_matrix))
+    nvar_per_level<-vapply(m,FUN=length,numeric(1))
+    if(!all(nvar_per_level==nvar_per_level[1]))
+        stop("There are not equal numbers of variables (basis functions) per level of grouping factor")
+    nvar_per_level<-unique(nvar_per_level)
     
-    K <- vapply(seq_len(df),
-                function(jg) matrixStats::rowSums2(K[, (jg-1)*ng + seq_len(ng)]),
-                numeric(ncol(K)))
-    K <- vapply(seq_len(df),
-                function(jg) matrixStats::colSums2(K[(jg-1)*ng + seq_len(ng),]),
-                numeric(ncol(K)))
+    #find the variables for each level (`vars`)
+    full_vars<-colnames(design_matrix)[m[[1]]]
+    vars<-gsub(glevs[1],"",full_vars)
+    # check they are all there
+    combos<-as.vector(outer(glevs,vars,FUN=paste0))
+    if(!all(combos %in% colnames(design_matrix)))
+        stop("Not all the same variables are crossed with the group variable")
     
-    T_ <- MASS::ginv(K) %*% t_
-    
-    # We got T. Now, let's move on to the rest
-    tmp <- as.array(rep(as.vector(T_), each=ng), dim=c(1, 1, 1))
-    dim(tmp) <- c(ng * df, dim(beta)[1])
-    C_ <- contrasts_coef * part_K %*% tmp
-    
-    C_ <- t(C_)
-    dim(C_) <- c(dim(beta)[1], ng, df)
-    beta_null <- b_ - C_
-    
-    # Last step: reshape beta null so that it is of the same shape as beta
-    dim(beta_null) <- dim(beta)
-    return(beta_null)
+    contrast_full<-matrix(0,
+        nrow=length(vars),
+        ncol=ncol(design_matrix))
+    colnames(contrast_full)<-colnames(design_matrix)
+    for(ii in seq_along(vars)){
+        varnames<-paste0(glevs,vars[ii])
+        m<-match(varnames,colnames(design_matrix))
+        if(any(is.na(m))) stop("coding error in matching to design matrix")
+        contrast_full[ii,m]<-contrast_vector
+    }
+    return(contrast_full)
 }
 
-
 lrtStat <- function(resNull, resFull, ng_labels=NULL) {
-    # FIbasisME I'm pretty sure that in the case of contrasts, the degrees of
+    # FIXME I'm pretty sure that in the case of contrasts, the degrees of
     # freedom computed here are wrong as they include part of the data that is
     # not used for the test. This needs to be fixed
     stat <- 0
     if(is.null(ng_labels)){
-        ss0 <- matrixStats::rowSums2(resNull^2)
-        ss1 <- matrixStats::rowSums2(resFull^2)
+        ## F-statistic: n*(RSSNull-RSSFull)/RSSFull
+        ss0 <- matrixStats::rowSums2(resNull^2) #RSSNull
+        ss1 <- matrixStats::rowSums2(resFull^2) #RSSFull
         n <- ncol(resNull)
         stat <- stat + n * (ss0 - ss1)/(ss1)
         
@@ -117,12 +173,12 @@ compute_pvalue <- function(basis, y, beta, beta_null, ng_labels,
     # estimate degrees of freedom.
     if(is.null(n_groups)){
         n_groups <- nlevels(ng_labels)
-        # FIbasisME Raise warning
+        # FIXME Raise warning
     }
     
     if(is.null(n_samples)){
-        n_samples <- ncol(basis)
-        # FIbasisME raise warning
+        n_samples <- ncol(basis) #is this correct? Shouldn't it be nrow(basis)?
+        # FIXME raise warning
     }
     
     df <- degrees_of_freedom
@@ -130,7 +186,7 @@ compute_pvalue <- function(basis, y, beta, beta_null, ng_labels,
     if(statistics == "ftest"){
         stat <- lrtStat(resNull, resFull)
         if(is.null(df2)){
-            # FIbasisME Check this.
+            # FIXME Check this.
             df2 <- n_samples - degrees_of_freedom * n_groups
         }
         df1 <- df
@@ -221,8 +277,16 @@ setMethod("DE_timecourse","Moanin",
     ng_labels <- group_variable(object)
     ng <- nlevels(ng_labels)
 
+    # Will make this a matrix, if not already one, 
+    # using limma's makeContrasts. 
+    # So returns a matrix, column for each contrast
     contrasts <- is_contrasts(contrasts, object)
-    
+    if(dim(contrasts)[1] != ng){
+        stop("The contrast coef vector should be of the same size" +
+                 " as the number of groups")
+    }
+
+
     if(use_voom_weights){
         formulaText<-paste0("~",group_variable_name(object)," + ",
                             time_variable_name(object)," + 0")
@@ -247,11 +311,7 @@ setMethod("DE_timecourse","Moanin",
     }
     
     beta <- fit_splines(data=y, design_matrix=basis_matrix(object), weights=weights)
-    
-    if(dim(contrasts)[1] != ng){
-        stop("The contrast coef vector should be of the same size" +
-                 " as the number of groups")
-    }
+
     results <- data.frame(row.names=row.names(object))
     for(col in seq_len(ncol(contrasts))){
         contrast <- contrasts[, col]
@@ -265,7 +325,14 @@ setMethod("DE_timecourse","Moanin",
         n_samples_fit <- sum(group_variable(object) %in% groups_of_interest)
         n_groups <- length(groups_of_interest)
         
-        beta_null <- compute_beta_null(basis, beta, contrast)
+        # Right now uses `expand_contrasts` to create full contrast matrix (one per basis function), sort of a hack.
+        # But could let user provide it...
+        contrast_matrix<-expand_contrast(object,contrast)
+        beta_null<-compute_beta_null_2(object,
+            contrast_matrix=contrast_matrix,beta)
+        
+        #beta_null <- compute_beta_null(basis, beta, contrast)
+        #all.equal(unname(beta_null),unname(beta_null_2))
         
         ## FIXME: This assumes a particular form for the formula, which may not be true if user add additional controlling values, for example. 
         degrees_of_freedom <- dim(basis)[2] / ng    
@@ -288,3 +355,6 @@ setMethod("DE_timecourse","Moanin",
 }
 
 )
+
+
+

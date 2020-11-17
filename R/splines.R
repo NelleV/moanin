@@ -1,11 +1,11 @@
 setGeneric("rescale_values",function(object,...) { 
     standardGeneric("rescale_values")})
 
-#' Fit splines to each gene of data matrix
-#' @param design_matrix basis matrix to fit
+#' Fit splines to each gene of data matrix, used by DE_timecourse
+#' @param design_matrix design matrix (containing evaluated basis matrix, but potentially other variables) to fit
 #' @param data a matrix of data to fix splines to
 #' @param weights A matrix of weights, of the same dimension as \code{data}.
-#'   
+#' @details Needed to allow for fitting weights, in which case for loop over every row/gene. Otherwise, just a call to lm.fit.
 #' @return matrix of the coefficients for each basis function, each row of the
 #'   matrix containing the coefficients for the corresponding gene in
 #'   \code{data}.
@@ -17,6 +17,7 @@ fit_splines <- function(design_matrix, data, weights=NULL){
     
     if(!is.null(weights)){
         beta <- matrix(nrow=nr, ncol=n)
+        ##FIXME: can't we multiply data by weights and then make call to lm.fit -- would be faster than looping over all genes, no?
         for(i in seq_len(nr)){
             beta[i,] <- stats::lm.wfit(design_matrix, data[i,], weights[i,])$coefficients
         }
