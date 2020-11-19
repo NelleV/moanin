@@ -135,10 +135,10 @@ compute_pvalue <- function(basis, y, beta, beta_null, ng_labels,
         df1 <- df
         pval <- stats::pf(stat * df2 / df1, df1=df1, df2=df2, lower.tail=FALSE)
     }else{
-        lstat <- lrtStat(resNull, resFull, ng_labels=ng_labels)
-        pval <- stats::pchisq(lstat, df=degrees_of_freedom, lower.tail=FALSE)
+        stat <- lrtStat(resNull, resFull, ng_labels=ng_labels)
+        pval <- stats::pchisq(stat, df=degrees_of_freedom, lower.tail=FALSE)
     }
-    return(pval)
+    return(cbind(pval,stat))
 }
 
 summarise <- function(basis, ng_levels) {
@@ -276,10 +276,11 @@ setMethod("DE_timecourse","Moanin",
         
         colname_qval <- paste(contrast_name, "_qval", sep="")
         colname_pval <- paste(contrast_name, "_pval", sep="")
+        colname_stat <- paste(contrast_name, "_stat", sep="")
         
-        results[colname_pval] <- pval
-        qval <- stats::p.adjust(pval, method="BH")
-        dim(qval) <- dim(pval)
+        results[colname_stat] <- pval[,2]
+        results[colname_pval] <- pval[,1]
+        qval <- stats::p.adjust(pval[,1], method="BH")
         results[colname_qval] <- qval
     }
     
