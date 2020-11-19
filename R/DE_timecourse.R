@@ -271,10 +271,10 @@ compute_pvalue <- function(basis, y, beta, beta_null,
 setMethod("DE_timecourse","Moanin",
          function(object,
                   contrasts,
-                  center=FALSE,
+                  center=FALSE, statistic=c("lrt","ftest"),
                   use_voom_weights=TRUE){
-    basis <- basis_matrix(object)
-    
+    statistic<-match.arg(statistic)            
+    basis <- basis_matrix(object)    
     ng_labels <- group_variable(object)
     ng <- nlevels(ng_labels)
 
@@ -333,7 +333,7 @@ setMethod("DE_timecourse","Moanin",
             contrast_matrix=contrast_matrix,beta)
         
         pval <- compute_pvalue(basis, y, beta, beta_null, 
-                              weights=weights,
+                              weights=weights,statistic=statistic,
                               degrees_of_freedom=nrow(contrast_matrix))
         
         colname_qval <- paste(contrast_name, "_qval", sep="")
@@ -346,9 +346,11 @@ setMethod("DE_timecourse","Moanin",
     }
     
     return(results)
-}
+})
 
-)
+# ##
+# myf<-DE_timecourse(moanin, contrasts="K-C", use_voom_weights=FALSE,statistic="ftest")
+# mylrt<-DE_timecourse(moanin, contrasts="K-C", use_voom_weights=FALSE,statistic="lrt")
 
-
+nellelrt<-DE_timecourse(moanin, contrasts="K-C", use_voom_weights=FALSE)
 
