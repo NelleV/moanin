@@ -63,7 +63,8 @@ compute_beta_null_2<-function(moanin_model,contrast_matrix,beta){
     if(ncol(contrast_matrix)!=ncol(Xmat)) stop("invalid contrast_matrix provided, wrong dimensions (number of columns)")
     
     #right now, very basic just to check answer is correct.
-    #need to rewrite interms of singular values, etc.
+    # need to rewrite in terms of singular values, etc. 
+    # for computational efficiency/stability
     invdesign<-solve(t(Xmat)%*%Xmat)
     invCdesign<-solve(contrast_matrix%*%invdesign%*%t(contrast_matrix))
     Wmat<-invdesign%*%t(contrast_matrix)%*%invCdesign%*%contrast_matrix
@@ -111,55 +112,70 @@ expand_contrast<-function(moanin_model,contrast_vector){
     return(contrast_full)
 }
 
-lrtStat <- function(resNull, resFull, ng_labels=NULL) {
-    # FIXME I'm pretty sure that in the case of contrasts, the degrees of
-    # freedom computed here are wrong as they include part of the data that is
-    # not used for the test. This needs to be fixed
-    stat <- 0
-    if(is.null(ng_labels)){
-        ## F-statistic: n*(RSSNull-RSSFull)/RSSFull
-        ss0 <- matrixStats::rowSums2(resNull^2) #RSSNull
-        ss1 <- matrixStats::rowSums2(resFull^2) #RSSFull
-        n <- ncol(resNull)
-        stat <- stat + n * (ss0 - ss1)/(ss1)
-        
-    }else{
-        for(g in levels(ng_labels)){
-            whKeep <- which(ng_labels == g)
-            sub_resNull <- resNull[,whKeep]
-            sub_resFull <- resFull[,whKeep]
-            
-            # Somehow the two lines above don't return the same object depending on
-            # the dimension of resNull and resFull, so need to distinguish the case
-            # where there is only one observation in data.
-            if(is.null(dim(sub_resNull))){
-                ss0 <- sum(sub_resNull^2)
-                ss1 <- sum(sub_resFull^2)
-                n <- length(sub_resNull)
-            }else{
-                ss0 <- matrixStats::rowSums2(sub_resNull^2)
-                ss1 <- matrixStats::rowSums2(sub_resFull^2)
-                n <- ncol(sub_resNull)
-            }
-            stat <- stat + n * (ss0 - ss1)/(ss1)
-        }
-    }
-    
-    return(stat)
+
+calculateStat<-function(resNull,resFull,type=c("lrt","ftest")){
+    type<-match.arg(type)
+    #resNull and resFull are G x n matrices of residuals
+    if(!all(dim(resNull)==dim(resFull))) 
+        stop("resNull and resFull must be of equal dimensions")
+    n<-ncol(resNull)
+    ss0 <- matrixStats::rowSums2(resNull^2) #RSSNull
+    ss1 <- matrixStats::rowSums2(resFull^2) #RSSFull
+    if(type=="lrt") 
+        return(n*(log(ss0)-log(ss1)))
+    #Note that F-statistic returned is missing the df factors, which are done in calculating the p-values (for simplicity so don't have to pass df to this function.)
+    if(type=="ftest") 
+        return((ss0 - ss1)/(ss1))
+
 }
 
-compute_pvalue <- function(basis, y, beta, beta_null, ng_labels,
-                          n_groups=NULL,
-                          n_samples=NULL,
+# lrtStat <- function(resNull, resFull, ng_labels=NULL) {
+#     # FIXME I'm pretty sure that in the case of contrasts, the degrees of
+#     # freedom computed here are wrong as they include part of the data that is
+#     # not used for the test. This needs to be fixed
+#     stat <- 0
+#     if(is.null(ng_labels)){
+#         ## F-statistic: (RSSNull-RSSFull)/RSSFull -- why multiply by n?
+#         ss0 <- matrixStats::rowSums2(resNull^2) #RSSNull
+#         ss1 <- matrixStats::rowSums2(resFull^2) #RSSFull
+#         n <- ncol(resNull)
+#         stat <- stat + n * (ss0 - ss1)/(ss1)
+#
+#     }else{
+#         for(g in levels(ng_labels)){
+#             whKeep <- which(ng_labels == g)
+#             sub_resNull <- resNull[,whKeep]
+#             sub_resFull <- resFull[,whKeep]
+#
+#             # Somehow the two lines above don't return the same object depending on
+#             # the dimension of resNull and resFull, so need to distinguish the case
+#             # where there is only one observation in data.
+#             if(is.null(dim(sub_resNull))){
+#                 ss0 <- sum(sub_resNull^2)
+#                 ss1 <- sum(sub_resFull^2)
+#                 n <- length(sub_resNull)
+#             }else{
+#                 ss0 <- matrixStats::rowSums2(sub_resNull^2)
+#                 ss1 <- matrixStats::rowSums2(sub_resFull^2)
+#                 n <- ncol(sub_resNull)
+#             }
+#             stat <- stat + n * (ss0 - ss1)/(ss1)
+#         }
+#     }
+#
+#     return(stat)
+# }
+
+compute_pvalue <- function(basis, y, beta, beta_null, 
                           degrees_of_freedom=NULL,
-                          statistics="lrt",
-                          df2=NULL, weights=NULL){
+                          statistics=c("lrt","ftest"),
+                          weights=NULL){
+    statistics<-match.arg(statistics)
     if(inherits(y,"DataFrame")){
         y <- data.matrix(y)
     }
-    
-    fitFull <- beta %*% t(basis)
-    
+    #Creates G x n matrices, with fits on the rows
+    fitFull <- beta %*% t(basis)    
     fitNull <- beta_null %*% t(basis)
     
     if(!is.null(weights)){
@@ -169,50 +185,35 @@ compute_pvalue <- function(basis, y, beta, beta_null, ng_labels,
         resNull <- y - fitNull
         resFull <- y - fitFull
     }
-    
-    # estimate degrees of freedom.
-    if(is.null(n_groups)){
-        n_groups <- nlevels(ng_labels)
-        # FIXME Raise warning
-    }
-    
-    if(is.null(n_samples)){
-        n_samples <- ncol(basis) #is this correct? Shouldn't it be nrow(basis)?
-        # FIXME raise warning
-    }
-    
-    df <- degrees_of_freedom
-    
+    n_variables<-ncol(basis) #p
+    n_samples <- nrow(basis) 
+    stat<-calculateStat(resNull,resFull,type=statistics)
     if(statistics == "ftest"){
-        stat <- lrtStat(resNull, resFull)
-        if(is.null(df2)){
-            # FIXME Check this.
-            df2 <- n_samples - degrees_of_freedom * n_groups
-        }
-        df1 <- df
+        df2 <- n_samples - n_variables
+        df1 <- degrees_of_freedom
         pval <- stats::pf(stat * df2 / df1, df1=df1, df2=df2, lower.tail=FALSE)
     }else{
-        lstat <- lrtStat(resNull, resFull, ng_labels=ng_labels)
-        pval <- stats::pchisq(lstat, df=degrees_of_freedom, lower.tail=FALSE)
+        pval <- stats::pchisq(stat, df=degrees_of_freedom, lower.tail=FALSE)
     }
     return(pval)
 }
 
-summarise <- function(basis, ng_levels) {
-    basis_mean <- matrix(nrow=nrow(basis), ncol=nlevels(ng_levels))
-    colnames(basis_mean) <- levels(ng_levels)
-    rownames(basis_mean) <- rownames(basis)
-    
-    for(g in levels(ng_levels)){
-        whKeep <- which(ng_levels == g)
-        if(length(whKeep) > 1){
-            basis_mean[, g] <- matrixStats::rowMeans2(basis[, whKeep])
-        }else if(length(whKeep) != 0){
-            basis_mean[, g] <- basis[, whKeep]
-        }
-    }
-    return(basis_mean)
-}
+## This function isn't used anywhere I see...
+# summarise <- function(basis, ng_levels) {
+#     basis_mean <- matrix(nrow=nrow(basis), ncol=nlevels(ng_levels))
+#     colnames(basis_mean) <- levels(ng_levels)
+#     rownames(basis_mean) <- rownames(basis)
+#
+#     for(g in levels(ng_levels)){
+#         whKeep <- which(ng_levels == g)
+#         if(length(whKeep) > 1){
+#             basis_mean[, g] <- matrixStats::rowMeans2(basis[, whKeep])
+#         }else if(length(whKeep) != 0){
+#             basis_mean[, g] <- basis[, whKeep]
+#         }
+#     }
+#     return(basis_mean)
+# }
 
 
 #' Run spline models and test for DE of contrasts.
@@ -331,16 +332,9 @@ setMethod("DE_timecourse","Moanin",
         beta_null<-compute_beta_null_2(object,
             contrast_matrix=contrast_matrix,beta)
         
-        #beta_null <- compute_beta_null(basis, beta, contrast)
-        #all.equal(unname(beta_null),unname(beta_null_2))
-        
-        ## FIXME: This assumes a particular form for the formula, which may not be true if user add additional controlling values, for example. 
-        degrees_of_freedom <- dim(basis)[2] / ng    
-        pval <- compute_pvalue(basis, y, beta, beta_null, ng_labels, 
+        pval <- compute_pvalue(basis, y, beta, beta_null, 
                               weights=weights,
-                              n_samples=n_samples_fit,
-                              n_groups=n_groups,
-                              degrees_of_freedom=degrees_of_freedom)
+                              degrees_of_freedom=nrow(contrast_matrix))
         
         colname_qval <- paste(contrast_name, "_qval", sep="")
         colname_pval <- paste(contrast_name, "_pval", sep="")
