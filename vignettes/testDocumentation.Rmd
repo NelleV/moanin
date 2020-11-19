@@ -43,7 +43,7 @@ Currently the code does this implicitly in the code to calculate the fit $\beta_
 
 I created a function which scans the column names of `basis_matrix` and tries to create this matrix $C$. And then calculate $\beta_0$ as 
 
-$$\beta_0=(X'X)^{-1}-(X'X)^{-1}C'\left( C(X'X)^{-1}C'\right)^{-1}C(X'X)^{-1}=\hat\beta - W\hat\beta$$
+$$\beta_0=(X'X)^{-1}XY-(X'X)^{-1}C'\left( C(X'X)^{-1}C'\right)^{-1}C(X'X)^{-1}XY=\hat\beta - W\hat\beta$$
 where
 $$W=(X'X)^{-1}C'\left( C(X'X)^{-1}C'\right)^{-1}C$$
 
@@ -54,12 +54,12 @@ Then there are two test statistics to consider for testing the null hypothesis
 1. F-statistic: 
 $$F=\frac{(RSS_{null}-RSS_{full})/k}{RSS_{full}/n-p} \sim F_{k,n-p}$$
 2. Likelihood Ratio statistic:
-$$\lambda=2 \frac{\ell(\hat\beta,\hat\sigma)}{\ell(\hat\beta_0,\hat\sigma_0)}=n\log\frac{RSS_{null}}{RSS_{full}}\sim \chi^2_{k}$$
+$$\lambda=2 (\ell(\hat\beta,\hat\sigma)-\ell(\hat\beta_0,\hat\sigma_0))=n\log\frac{RSS_{null}}{RSS_{full}}\sim \chi^2_{k}$$
 
 where $\ell(\beta,\sigma)$ is the log-likelihood of the normal regression model, $\hat\beta, \hat\sigma$ refer to the MLE estimates under the full model, $\hat\beta_0, \hat\sigma_0$ under the null model and for both models, using their respective estimates $\hat\beta$ or $\hat\beta_0$,
 $$RSS(\hat\beta)=||Y-X\hat\beta||^2$$
-$$\hat\sigma=\frac{1}{n}||Y-X\hat\beta||^2$$
+$$\hat\sigma^2=\frac{1}{n}||Y-X\hat\beta||^2$$
 
-However, both of these definitions appear to be different from the current implementations.
+However, both of these definitions for the test-statistics appear to be different from the current implementations.
 
 
