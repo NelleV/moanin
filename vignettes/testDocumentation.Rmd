@@ -1,0 +1,65 @@
+---
+title: "documentation of timecourse DE"
+output: BiocStyle::html_document
+vignette: >
+  %\VignetteEngine{knitr::knitr}
+    %\VignetteIndexEntry{Installation}
+      %\usepackage[UTF-8]{inputenc}
+---
+```{r echo=FALSE, include=FALSE}
+knitr::opts_chunk$set(
+  cache=TRUE, autodep=TRUE, warning=FALSE, error=FALSE, message=FALSE,
+  echo=FALSE, out.width=".5\\textwidth",
+  duplicate.label="allow", fig.pos <- "H", out.extra = "")
+```
+
+```{r}
+library(devtools)
+load_all()
+data(exampleData)
+moanin <- create_moanin_model(data=testData, meta=testMeta)
+# deTimecourse=DE_timecourse(moanin, contrasts="K-C", use_voom_weights=FALSE)
+# head(deTimecourse)
+```
+
+For a contrast of the form `"K-C"` we currently convert this to 
+
+```{r}
+is_contrasts("K-C",moanin)
+```
+
+However, these are the contrasts that need to be done *per basis variable*. In particular, we really have the following set of constraints that we are imposing simultaneously:
+
+```{r}
+cns<-moanin:::expand_contrast(moanin,is_contrasts("K-C",moanin)[,1])
+colnames(cns)<-gsub("splines::ns(Timepoint, df = 4)","basis",colnames(cns),fixed=TRUE)
+cns
+```
+
+If we call this matrix $C\in R^{k \times p}$, then our null hypothesis is
+$$C\beta = 0$$
+
+Currently the code does this implicitly in the code to calculate the fit $\beta_0$ under the null, and is based on the assumption that the design matrix $X$ (`basis_matrix`) has a variable per group in a repeated fashion. This creates problems if there are other variables in the formula.
+
+I created a function which scans the column names of `basis_matrix` and tries to create this matrix $C$. And then calculate $\beta_0$ as 
+
+$$\beta_0=(X'X)^{-1}-(X'X)^{-1}C'\left( C(X'X)^{-1}C'\right)^{-1}C(X'X)^{-1}=\hat\beta - W\hat\beta$$
+where
+$$W=(X'X)^{-1}C'\left( C(X'X)^{-1}C'\right)^{-1}C$$
+
+(currently I have a naive implementation that literally inverts these equations, and I get the same solution as the old code, but I will update it to use Moore-Penrose inverses, etc.)
+
+Then there are two test statistics to consider for testing the null hypothesis
+
+1. F-statistic: 
+$$F=\frac{(RSS_{null}-RSS_{full})/k}{RSS_{full}/n-p} \sim F_{k,n-p}$$
+2. Likelihood Ratio statistic:
+$$\lambda=2 \frac{\ell(\hat\beta,\hat\sigma)}{\ell(\hat\beta_0,\hat\sigma_0)}=n\log\frac{RSS_{null}}{RSS_{full}}\sim \chi^2_{k}$$
+
+where $\ell(\beta,\sigma)$ is the log-likelihood of the normal regression model, $\hat\beta, \hat\sigma$ refer to the MLE estimates under the full model, $\hat\beta_0, \hat\sigma_0$ under the null model and for both models, using their respective estimates $\hat\beta$ or $\hat\beta_0$,
+$$RSS(\hat\beta)=||Y-X\hat\beta||^2$$
+$$\hat\sigma=\frac{1}{n}||Y-X\hat\beta||^2$$
+
+However, both of these definitions appear to be different from the current implementations.
+
+

@@ -353,5 +353,5 @@ setMethod("DE_timecourse","Moanin",
 # myf<-DE_timecourse(moanin, contrasts="K-C", use_voom_weights=FALSE,statistic="ftest")
 # mylrt<-DE_timecourse(moanin, contrasts="K-C", use_voom_weights=FALSE,statistic="lrt")
 
-nellelrt<-DE_timecourse(moanin, contrasts="K-C", use_voom_weights=FALSE)
+#nellelrt<-DE_timecourse(moanin, contrasts="K-C", use_voom_weights=FALSE)
 
