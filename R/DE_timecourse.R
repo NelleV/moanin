@@ -195,7 +195,7 @@ compute_pvalue <- function(basis, y, beta, beta_null,
     }else{
         pval <- stats::pchisq(stat, df=degrees_of_freedom, lower.tail=FALSE)
     }
-    return(pval)
+    return(cbind(pval,stat))
 }
 
 ## This function isn't used anywhere I see...
@@ -338,10 +338,11 @@ setMethod("DE_timecourse","Moanin",
         
         colname_qval <- paste(contrast_name, "_qval", sep="")
         colname_pval <- paste(contrast_name, "_pval", sep="")
+        colname_stat <- paste(contrast_name, "_stat", sep="")
         
-        results[colname_pval] <- pval
-        qval <- stats::p.adjust(pval, method="BH")
-        dim(qval) <- dim(pval)
+        results[colname_stat] <- pval[,2]
+        results[colname_pval] <- pval[,1]
+        qval <- stats::p.adjust(pval[,1], method="BH")
         results[colname_qval] <- qval
     }
     
