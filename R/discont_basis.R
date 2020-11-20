@@ -22,7 +22,7 @@
 #'     spline_formula=~Group:discont_basis(Timepoint,dfPre=3,
 #'         dfPost=3,discont=20,intercept=TRUE)+0,
 #'     degrees_of_freedom=6)
-
+#' @export
 discont_basis<-function(timepoints, discont_point, 
     knots=NULL, dfPre=NULL, dfPost=dfPre,degree=3, 
         intercept=TRUE,type=c("ns","bs")){

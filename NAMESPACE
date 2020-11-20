@@ -2,6 +2,7 @@
 
 export(consensus_matrix)
 export(create_go_term_mapping)
+export(discont_basis)
 export(find_enriched_go_terms)
 export(get_auc_similarity_scores)
 export(perWeek_barplot)
