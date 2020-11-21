@@ -12,51 +12,6 @@ center_data <- function(y, ng_labels){
     return(y)
 }
 
-# compute_beta_null <- function(basis, beta, contrasts_coef){
-#     ## FIXME: This function assumes a particular form for the basis matrix, which may not be true if user add additional controlling values, for example.
-#
-#     ng <- length(contrasts_coef)
-#     df <- ncol(basis) / ng
-#     contrasts_coef_ <- rep(contrasts_coef, times=df)
-#
-#     # beta a matrix of genes by variables matrix
-#     # Reshape b so that array and dimension 2 corresponds to a group and drop the intercept
-#     b_ <- array(beta, dim=c(dim(beta)[1], ng, df))
-#     # First start by constructing the matrix T
-#     t_ <- apply(b_, 1, function(x){matrixStats::colSums2(x*contrasts_coef)})
-#
-#     # The observations can not be assumed to be balanced...
-#     # We need to get rid of the intercept for this part
-#     # FIXME don't invert this matrix...
-#     part_K <- MASS::ginv(t(basis) %*% basis)
-#     K <- part_K * contrasts_coef_**2
-#
-#     # We now need to sum all elements associated to the same pairs of splines.
-#     # Which is, in a particular case every four elements in both directions.
-#
-#     K <- vapply(seq_len(df),
-#                 function(jg) matrixStats::rowSums2(K[, (jg-1)*ng + seq_len(ng)]),
-#                 numeric(ncol(K)))
-#     K <- vapply(seq_len(df),
-#                 function(jg) matrixStats::colSums2(K[(jg-1)*ng + seq_len(ng),]),
-#                 numeric(ncol(K)))
-#
-#     T_ <- MASS::ginv(K) %*% t_
-#
-#     # We got T. Now, let's move on to the rest
-#     tmp <- as.array(rep(as.vector(T_), each=ng), dim=c(1, 1, 1))
-#     dim(tmp) <- c(ng * df, dim(beta)[1])
-#     C_ <- contrasts_coef * part_K %*% tmp
-#
-#     C_ <- t(C_)
-#     dim(C_) <- c(dim(beta)[1], ng, df)
-#     beta_null <- b_ - C_
-#
-#     # Last step: reshape beta null so that it is of the same shape as beta
-#     dim(beta_null) <- dim(beta)
-#     return(beta_null)
-# }
-
 # updated function to compute beta under the null. 
 compute_beta_null<-function(moanin_model,contrast_matrix,beta){
     Xmat<-basis_matrix(moanin_model) #n x p
@@ -128,42 +83,6 @@ calculateStat<-function(resNull,resFull,type=c("lrt","ftest")){
 
 }
 
-# lrtStat <- function(resNull, resFull, ng_labels=NULL) {
-#     # FIXME I'm pretty sure that in the case of contrasts, the degrees of
-#     # freedom computed here are wrong as they include part of the data that is
-#     # not used for the test. This needs to be fixed
-#     stat <- 0
-#     if(is.null(ng_labels)){
-#         ## F-statistic: (RSSNull-RSSFull)/RSSFull -- why multiply by n?
-#         ss0 <- matrixStats::rowSums2(resNull^2) #RSSNull
-#         ss1 <- matrixStats::rowSums2(resFull^2) #RSSFull
-#         n <- ncol(resNull)
-#         stat <- stat + n * (ss0 - ss1)/(ss1)
-#
-#     }else{
-#         for(g in levels(ng_labels)){
-#             whKeep <- which(ng_labels == g)
-#             sub_resNull <- resNull[,whKeep]
-#             sub_resFull <- resFull[,whKeep]
-#
-#             # Somehow the two lines above don't return the same object depending on
-#             # the dimension of resNull and resFull, so need to distinguish the case
-#             # where there is only one observation in data.
-#             if(is.null(dim(sub_resNull))){
-#                 ss0 <- sum(sub_resNull^2)
-#                 ss1 <- sum(sub_resFull^2)
-#                 n <- length(sub_resNull)
-#             }else{
-#                 ss0 <- matrixStats::rowSums2(sub_resNull^2)
-#                 ss1 <- matrixStats::rowSums2(sub_resFull^2)
-#                 n <- ncol(sub_resNull)
-#             }
-#             stat <- stat + n * (ss0 - ss1)/(ss1)
-#         }
-#     }
-#
-#     return(stat)
-# }
 
 compute_pvalue <- function(basis, y, beta, beta_null, 
                           degrees_of_freedom=NULL,
@@ -253,7 +172,7 @@ compute_pvalue <- function(basis, y, beta, beta_null,
 setMethod("DE_timecourse","Moanin",
          function(object,
                   contrasts,
-                  center=FALSE, statistic=c("lrt","ftest"),
+                  center=FALSE, statistic=c("ftest","lrt"),
                   use_voom_weights=TRUE){
     statistic<-match.arg(statistic)            
     basis <- basis_matrix(object)    
@@ -302,12 +221,7 @@ setMethod("DE_timecourse","Moanin",
         # Create the name of the column
         contrast_name <- colnames(contrasts)[col]
         contrast_name <- gsub(" ", "", contrast_name, fixed=TRUE)
-        
-        # # Get the number of samples used for this particular contrast:
-        # groups_of_interest <- names(contrast)[contrast != 0]
-        # n_samples_fit <- sum(group_variable(object) %in% groups_of_interest)
-        # n_groups <- length(groups_of_interest)
-        
+                
         # Right now uses `expand_contrasts` to create full contrast matrix (one per basis function), sort of a hack.
         # But could let user provide it...
         contrast_matrix<-expand_contrast(object,contrast)
