@@ -58,15 +58,12 @@ center_data <- function(y, ng_labels){
 # }
 
 # updated function to compute beta under the null. 
-compute_beta_null_2<-function(moanin_model,contrast_matrix,beta){
+compute_beta_null<-function(moanin_model,contrast_matrix,beta){
     Xmat<-basis_matrix(moanin_model) #n x p
     if(ncol(contrast_matrix)!=ncol(Xmat)) stop("invalid contrast_matrix provided, wrong dimensions (number of columns)")
     
-    #right now, very basic just to check answer is correct.
-    # need to rewrite in terms of singular values, etc. 
-    # for computational efficiency/stability
-    invdesign<-solve(t(Xmat)%*%Xmat)
-    invCdesign<-solve(contrast_matrix%*%invdesign%*%t(contrast_matrix))
+    invdesign<-MASS::ginv(t(Xmat)%*%Xmat)
+    invCdesign<-MASS::ginv(contrast_matrix %*%invdesign %*% t(contrast_matrix))
     Wmat<-invdesign%*%t(contrast_matrix)%*%invCdesign%*%contrast_matrix
     # # The full upper matrix (for checking)
     # Rmat<-invdesign-Wmat%*%invdesign
@@ -123,7 +120,9 @@ calculateStat<-function(resNull,resFull,type=c("lrt","ftest")){
     ss1 <- matrixStats::rowSums2(resFull^2) #RSSFull
     if(type=="lrt") 
         return(n*(log(ss0)-log(ss1)))
-    #Note that F-statistic returned is missing the df factors, which are done in calculating the p-values (for simplicity so don't have to pass df to this function.)
+    # Note that F-statistic returned below is intentionally missing the 
+    # df terms, which are done later when calculating the p-values 
+    # (this is for simplicity so don't have to pass df to this function.)
     if(type=="ftest") 
         return((ss0 - ss1)/(ss1))
 
@@ -197,23 +196,6 @@ compute_pvalue <- function(basis, y, beta, beta_null,
     }
     return(cbind(pval,stat))
 }
-
-## This function isn't used anywhere I see...
-# summarise <- function(basis, ng_levels) {
-#     basis_mean <- matrix(nrow=nrow(basis), ncol=nlevels(ng_levels))
-#     colnames(basis_mean) <- levels(ng_levels)
-#     rownames(basis_mean) <- rownames(basis)
-#
-#     for(g in levels(ng_levels)){
-#         whKeep <- which(ng_levels == g)
-#         if(length(whKeep) > 1){
-#             basis_mean[, g] <- matrixStats::rowMeans2(basis[, whKeep])
-#         }else if(length(whKeep) != 0){
-#             basis_mean[, g] <- basis[, whKeep]
-#         }
-#     }
-#     return(basis_mean)
-# }
 
 
 #' Run spline models and test for DE of contrasts.
@@ -321,15 +303,15 @@ setMethod("DE_timecourse","Moanin",
         contrast_name <- colnames(contrasts)[col]
         contrast_name <- gsub(" ", "", contrast_name, fixed=TRUE)
         
-        # Get the number of samples used for this particular contrast:
-        groups_of_interest <- names(contrast)[contrast != 0]
-        n_samples_fit <- sum(group_variable(object) %in% groups_of_interest)
-        n_groups <- length(groups_of_interest)
+        # # Get the number of samples used for this particular contrast:
+        # groups_of_interest <- names(contrast)[contrast != 0]
+        # n_samples_fit <- sum(group_variable(object) %in% groups_of_interest)
+        # n_groups <- length(groups_of_interest)
         
         # Right now uses `expand_contrasts` to create full contrast matrix (one per basis function), sort of a hack.
         # But could let user provide it...
         contrast_matrix<-expand_contrast(object,contrast)
-        beta_null<-compute_beta_null_2(object,
+        beta_null<-compute_beta_null(object,
             contrast_matrix=contrast_matrix,beta)
         
         pval <- compute_pvalue(basis, y, beta, beta_null, 
