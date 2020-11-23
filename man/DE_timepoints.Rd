@@ -17,7 +17,8 @@
     "group_and_timepoint_diff"),
   timepoints = sort(unique(time_variable(object))),
   timepoints_before = head(sort(timepoints), -1),
-  timepoints_after = tail(sort(timepoints), -1)
+  timepoints_after = tail(sort(timepoints), -1),
+  format = c("vector", "data.frame")
 )
 }
 \arguments{
@@ -59,6 +60,14 @@ the set of timepoints to compare, see details. By default, taken from the
 \code{"per_group_timepoint_diff"} or, \code{"group_and_timepoint_diff"},
 the set of timepoints to compare, see details. By default, taken from the
 \code{timepoints} variable.}
+
+\item{format}{the choice of "vector" (the default) for
+\code{create_timepoints_contrasts} returns just the character vector of
+contrasts. If instead \code{format="data.frame"} then a data.frame is
+return that identifies the timepoint and group comparisons involved in each
+contrast. If this is the desired output, then the input to
+\code{DE_timepoints} should be the column corresponding to the contrast.
+See examples.}
 }
 \value{
 A \code{data.frame} with three columns for each of the contrasts
@@ -159,12 +168,15 @@ deDiffTimepoints2=DE_timepoints(moanin,
     contrasts=contrastsDiff2,
     use_voom_weights=FALSE)
 
-#compare selected timepoints across groups:
+# Compare selected timepoints across groups. 
+# This time we also return format="data.frame" which helps us keep track of
+# the meaning of each contrast. 
 contrastsGroupDiff<-create_timepoints_contrasts(moanin,"C", "K",
    timepoints_before=c(72,120),timepoints_after=c(168,168),
-   type="group_and_timepoint_diff")
+   type="group_and_timepoint_diff",format="data.frame")
+head(contrastsGroupDiff)
 deGroupDiffTimepoints=DE_timepoints(moanin, 
-    contrasts=contrastsGroupDiff,
+    contrasts=contrastsGroupDiff$contrasts,
     use_voom_weights=FALSE)
 }
 \seealso{

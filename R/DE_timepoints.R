@@ -84,12 +84,15 @@ setGeneric("create_diff_contrasts",
 #'     contrasts=contrastsDiff2,
 #'     use_voom_weights=FALSE)
 #'
-#' #compare selected timepoints across groups:
+#' # Compare selected timepoints across groups. 
+#' # This time we also return format="data.frame" which helps us keep track of
+#' # the meaning of each contrast. 
 #' contrastsGroupDiff<-create_timepoints_contrasts(moanin,"C", "K",
 #'    timepoints_before=c(72,120),timepoints_after=c(168,168),
-#'    type="group_and_timepoint_diff")
+#'    type="group_and_timepoint_diff",format="data.frame")
+#' head(contrastsGroupDiff)
 #' deGroupDiffTimepoints=DE_timepoints(moanin, 
-#'     contrasts=contrastsGroupDiff,
+#'     contrasts=contrastsGroupDiff$contrasts,
 #'     use_voom_weights=FALSE)
 #' @export
 setMethod("DE_timepoints","Moanin",
@@ -176,6 +179,13 @@ setMethod("DE_timepoints","Moanin",
 #'   \code{"per_group_timepoint_diff"} or, \code{"group_and_timepoint_diff"},
 #'   the set of timepoints to compare, see details. By default, taken from the
 #'   \code{timepoints} variable.
+#' @param format the choice of "vector" (the default) for
+#'   \code{create_timepoints_contrasts} returns just the character vector of
+#'   contrasts. If instead \code{format="data.frame"} then a data.frame is
+#'   return that identifies the timepoint and group comparisons involved in each
+#'   contrast. If this is the desired output, then the input to
+#'   \code{DE_timepoints} should be the column corresponding to the contrast.
+#'   See examples.
 #' @details \code{create_timepoints_contrasts} creates the needed contrasts for
 #'   comparing groups or timepoints in the format needed for
 #'   \code{DE_timepoints} (i.e. \code{\link[limma]{makeContrasts}}), to which the
@@ -203,31 +213,37 @@ setMethod("create_timepoints_contrasts","Moanin",
             "group_and_timepoint_diff"),
      timepoints=sort(unique(time_variable(object))),
      timepoints_before=head(sort(timepoints),-1),
-     timepoints_after=tail(sort(timepoints),-1)
+     timepoints_after=tail(sort(timepoints),-1),
+     format=c("vector","data.frame")
      ){
     type<-match.arg(type)
+    format<-match.arg(format)
     if(type=="per_timepoint_group_diff"){
         if(is.null(group2)) 
             stop("cannot choose type='per_timepoint_group_diff'" + 
             "and give a NULL value for argument `group2`")
-        return(pertimepoint_contrast(object=object, group1=group1,
-            group2=group2,timepoints=timepoints))
+        contrasts<-pertimepoint_contrast(object=object, group1=group1,
+            group2=group2,timepoints=timepoints)
     }
     if(type=="group_and_timepoint_diff"){
         if(is.null(group2)) 
             stop("cannot choose type='group_and_timepoint_diff'" + 
              "and give a NULL value for argument `group2`")
-        return(timepointdiff_contrasts(object=object, group1=group1, 
+        contrasts<-timepointdiff_contrasts(object=object, group1=group1, 
             group2=group2, timepoints_before=timepoints_before,
-            timepoints_after=timepoints_after))
+            timepoints_after=timepoints_after)
     }
     if(type=="per_group_timepoint_diff"){
         if(!is.null(group2)) 
             stop("cannot choose type='per_group_timepoint_diff'" + 
                      "and give a value for argument `group2`")
-        return(timepointdiff_contrasts(object=object, group1=group1, 
+        contrasts<-timepointdiff_contrasts(object=object, group1=group1, 
             group2=NULL, timepoints_before=timepoints_before,
-            timepoints_after=timepoints_after))
+            timepoints_after=timepoints_after)
+    }
+    if(format=="vector") return(contrasts$contrasts)
+    else{
+        return(contrasts)
     }
 })
          
@@ -261,7 +277,9 @@ pertimepoint_contrast<-function(object, group1, group2,
         }
     }
     if(foundMissing) warning(msg)
-    return(contrasts[!is.na(contrasts)])
+    timepoints<-timepoints[!is.na(contrasts)]
+    contrasts<-contrasts[!is.na(contrasts)]
+    return(data.frame("contrasts"=contrasts,"timepoints"=as.character(timepoints),"group"=paste0(group1,"-",group2)))
  }
 
 
@@ -314,7 +332,13 @@ timepointdiff_contrasts<-function(object, group1, group2,
         } 
     }
     if(foundMissing) warning(msg)
-    return(contrasts[!is.na(contrasts)])
+    timepoints_before<-timepoints_before[!is.na(contrasts)]
+    timepoints_after<-timepoints_after[!is.na(contrasts)]
+    if(!is.null(group2)) group<-paste0(group1,"-",group2) else group<-group1
+    contrasts<-contrasts[!is.na(contrasts)]
+    timepoints<-paste0(timepoints_after,"-",timepoints_before)
+    return(data.frame("contrasts"=contrasts,"timepoints"=as.character(timepoints),"group"=group))
+    
  }
 
 
