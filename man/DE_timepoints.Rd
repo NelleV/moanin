@@ -12,8 +12,9 @@
 \S4method{create_timepoints_contrasts}{Moanin}(
   object,
   group1,
-  group2,
-  type = c("per_timepoint", "diff_timepoint"),
+  group2 = NULL,
+  type = c("per_timepoint_group_diff", "per_group_timepoint_diff",
+    "group_and_timepoint_diff"),
   timepoints = sort(unique(time_variable(object))),
   timepoints_before = head(sort(timepoints), -1),
   timepoints_after = tail(sort(timepoints), -1)
@@ -38,14 +39,26 @@ design. See details.}
 Whether to use voom weights. See details.}
 
 \item{group1}{First group to consider in making contrasts, character value
-that must match a value contained in \code{moanin_model$meta}.}
+that must match a value of the grouping variable contained in
+\code{moanin_model}.}
 
 \item{group2}{Second group to consider in making contrasts, character value
-that must match a value contained in \code{moanin_model$meta}.}
+that must match a value of the grouping variable contained in
+\code{moanin_model}, unless type=="per_group_timepoint_diff", in which case
+should be NULL (only \code{group1} is used in comparison)}
 
-\item{timepoints_before}{for create_diff_contrasts, see details the set of timepoints to compare, where contrast will be timepoints_after - timepoints_before}
+\item{timepoints}{vector of timepoints to compare. Must be contained in the
+\code{time_variable} of the \code{moanin} object.}
 
-\item{timepoints_after}{for create_diff_contrasts, the set of timepoints to compare, see details where contrast will be timepoints_after - timepoints_before}
+\item{timepoints_before}{for \code{type} equal to
+\code{"per_group_timepoint_diff"} or, \code{"group_and_timepoint_diff"},
+the set of timepoints to compare, see details. By default, taken from the
+\code{timepoints} variable.}
+
+\item{timepoints_after}{for \code{type} equal to
+\code{"per_group_timepoint_diff"} or, \code{"group_and_timepoint_diff"},
+the set of timepoints to compare, see details. By default, taken from the
+\code{timepoints} variable.}
 }
 \value{
 A \code{data.frame} with three columns for each of the contrasts
@@ -100,32 +113,59 @@ If the user set \code{log_transform=TRUE} in the creation of the
 }
 
 \code{create_timepoints_contrasts} creates the needed contrasts for
-  comparing two groups for every timepoint in the format needed for
-  \code{DE_timepoints} (i.e. \code{\link[limma]{makeContrasts}}, to which the
-  contrasts are ultimately passed). The time points are determined by the
-  meta data in the \code{moanin_object} provided by the user.
+  comparing groups or timepoints in the format needed for
+  \code{DE_timepoints} (i.e. \code{\link[limma]{makeContrasts}}), to which the
+  contrasts are ultimately passed. The time points and groups are determined
+  by the levels of the \code{grouping_variable} and the values of
+  \code{time_variable} in the \code{moanin_object} provided by the user.
 
-\code{type="diff_timepoint"} will create contrasts that compare the difference between two timepoints between two levels of the \code{group_variable} of the \code{Moanin} object. These are contrasts in the form (TP i - TP (i-1))[Group1] - (TP i - TP (i-1))[Group2].
+Three different types of contrasts are created:
+  \itemize{
+ \item{"per_timepoint_group_diff"}{Contrasts that compare the groups within a timepoint}
+ \item{"per_group_timepoint_diff"}{Contrasts that compare two timepoints within a group}
+ \item{"group_and_timepoint_diff"}{Contrasts that compare the
+  difference between two timepoints between two levels of the
+  \code{group_variable} of the \code{Moanin} object. These are contrasts in
+  the form (TP i - TP (i-1))[Group1] - (TP i - TP (i-1))[Group2].}
+}
 }
 \examples{
 data(exampleData)
 moanin <- create_moanin_model(data=testData, meta=testMeta)
-contrasts <- create_timepoints_contrasts(moanin,"C", "K")
+# compare groups within each timepoint
+contrasts <- create_timepoints_contrasts(moanin,"C", "K",
+   type="per_timepoint_group_diff")
 head(contrasts)
 deTimepoints=DE_timepoints(moanin, 
     contrasts=contrasts, use_voom_weights=FALSE)
 head(deTimepoints)
-contrastsDiff <- create_diff_contrasts(moanin,"C", "K")
-deDiffTimepoints=DE_timepoints(moanin, 
-    contrasts=contrasts,
-    use_voom_weights=FALSE)
-# provide the sets of timepoints to compare:
-contrastsDiff<-create_timepoints_contrasts(moanin,"C", "K",timepoints_before=c(72,120),timepoints_after=c(168,168),type="diff_timepoint")
 # Control for replicate variable:
 deTimepoints=DE_timepoints(moanin, 
     contrasts=contrasts, add_factors="Replicate",
     use_voom_weights=FALSE)
 head(deTimepoints)
+
+# compare adjacent timepoints within each group
+contrastsDiff <- create_timepoints_contrasts(moanin,"C",
+   type="per_group_timepoint_diff")
+deDiffTimepoints=DE_timepoints(moanin, 
+    contrasts=contrastsDiff,
+    use_voom_weights=FALSE)
+# provide the sets of timepoints to compare:
+contrastsDiff2<-create_timepoints_contrasts(moanin,"C",
+   timepoints_before=c(72,120),timepoints_after=c(168,168),
+   type="per_group_timepoint_diff")
+deDiffTimepoints2=DE_timepoints(moanin, 
+    contrasts=contrastsDiff2,
+    use_voom_weights=FALSE)
+
+#compare selected timepoints across groups:
+contrastsGroupDiff<-create_timepoints_contrasts(moanin,"C", "K",
+   timepoints_before=c(72,120),timepoints_after=c(168,168),
+   type="group_and_timepoint_diff")
+deGroupDiffTimepoints=DE_timepoints(moanin, 
+    contrasts=contrastsGroupDiff,
+    use_voom_weights=FALSE)
 }
 \seealso{
 \code{\link[limma]{makeContrasts}}
