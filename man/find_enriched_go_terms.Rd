@@ -21,21 +21,21 @@ tested for enrichment of GO terms. The names of the vector should be the
 gene names. Elements with TRUE will consist of the gene cluster.}
 
 \item{gene_id_to_go}{List giving the Gene ID to GO object required for topGO
-(see \code{\link[pkg:topGO]{topGOdata-class}}). 
+(see \code{\link[topGO]{topGOdata-class}}). 
 \code{create_go_term_mapping} can construct such a list from a
 data-frame.}
 
 \item{ontology}{string, optional, default: BP. specficies which ontology to
 use (passed to \code{ontology} argument in creating a new \code{topGOdata}
 object). Can be 'BP', 'CC', or 'NF'. See
-\code{\link[pkg:topGO]{topGOdata-class}}.}
+\code{\link[topGO]{topGOdata-class}}.}
 
 \item{weighted}{boolean, optional, default: FALSE. Whether to use the
-weighted algorithm or not in \code{\link[pkg:topGO]{runTest}}.}
+weighted algorithm or not in \code{\link[topGO]{runTest}}.}
 
 \item{node_size}{integer, optional, default: 10. Consider only GO terms with
 node_size number of genes, passed to \code{nodeSize} argument of
-\code{\link[pkg:topGO]{topGOdata-class}}}
+\code{\link[topGO]{topGOdata-class}}}
 
 \item{genes}{dataframe, with two required columns. The first gives the gene
 names, with column name by the argument \code{gene_col}. The other column
@@ -47,10 +47,10 @@ genes will be in multiple rows of the input.}
 contains the correct gene reference. By default, is "refseq_mrna".}
 }
 \value{
-Returns results in the format of \code{\link[pkg:topGO]{GenTable}}.
+Returns results in the format of \code{\link[topGO]{GenTable}}.
 
 \code{create_go_term_mapping} returns a list giving the gene to GO id
-  in the format required by \code{\link[pkg:topGO]{topGOdata-class}}.
+  in the format required by \code{\link[topGO]{topGOdata-class}}.
 }
 \description{
 Find enriched GO terms
@@ -60,10 +60,10 @@ Create the Gene to GO Term mapping
 \details{
 \code{find_enriched_go_terms} is a wrapper for running a GO
  enrichment analysis via the package \code{topGO}. This function creates a
- \code{\link[pkg:topGO]{topGOdata-class}} object, runs the function
- \code{\link[pkg:topGO]{runTest}} to test for enrichment using the
+ \code{\link[topGO]{topGOdata-class}} object, runs the function
+ \code{\link[topGO]{runTest}} to test for enrichment using the
  \code{statistic="fisher"} option, and then runs
- \code{\link[pkg:topGO]{GenTable}}. This function then does some post-processing
+ \code{\link[topGO]{GenTable}}. This function then does some post-processing
  of the results, returning only GO terms that satisfy:
  \enumerate{
  \item{BH adjusted p-values less than 0.05 using
@@ -83,5 +83,5 @@ names(inGroup) <- row.names(testData)
 find_enriched_go_terms(inGroup, geneId2Go)
 }
 \seealso{
-\code{\link{create_go_term_mapping}}, \code{\link[KEGGprofile]{find_enriched_pathway}}, \code{\link[pkg:topGO]{GenTable}}, \code{\link[pkg:topGO]{runTest}}, \code{\link[pkg:topGO]{topGOdata-class}}, \code{\link[stats]{p.adjust}}
+\code{\link{create_go_term_mapping}}, \code{\link[KEGGprofile]{find_enriched_pathway}}, \code{\link[topGO]{GenTable}}, \code{\link[topGO]{runTest}}, \code{\link[topGO]{topGOdata-class}}, \code{\link[stats]{p.adjust}}
 }

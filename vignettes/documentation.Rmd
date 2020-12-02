@@ -170,11 +170,11 @@ head(weeklyPre[,1:10])
 
 Different types of contrasts are available within `create_timepoint_contrasts` based on the `type` argument. Previously we used the default (`per_timepoint_group_diff`) which gives the group differences per timepoint. 
 
-We can also use the same kind of approach to compare within a group the difference between two timepoints, or between two groups the difference in timepoints. 
+We can also use the same kind of approach to compare within a group the difference between two timepoints. Here we look at the difference between adjacent timepoints in "Postflowering", 
 
 ```{r}
 preDiffContrasts <- create_timepoints_contrasts(
-    moaninObject, "Postflowering", "Control" ,type="per_group_timepoint_diff")
+    moaninObject, "Preflowering" ,type="per_group_timepoint_diff")
 head(preDiffContrasts)
 ```
 
@@ -184,7 +184,7 @@ These contrasts we can create by setting `type="group_and_timepoint_diff"`
 
 ```{r}
 preGroupDiffContrasts <- create_timepoints_contrasts(
-    moaninObject, "Postflowering", "Control" ,type="group_and_timepoint_diff")
+    moaninObject, "Preflowering", "Control" ,type="group_and_timepoint_diff")
 head(preGroupDiffContrasts)
 ```
 

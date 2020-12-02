@@ -18,6 +18,8 @@ discont_basis(
 \arguments{
 \item{timepoints}{vector of numeric timepoints for which the splines basis will be evaluated}
 
+\item{discont_point}{a single numeric value that represents where the discontinuity should be}
+
 \item{knots}{passed to \code{ns} or \code{bs}. If not NULL, should give knots on either side of \code{discon_point} as single vector -- they will be separated in the call to \code{discon_point}}
 
 \item{dfPre}{the df for the basis functions defined before the discontinuity point}
@@ -29,8 +31,6 @@ discont_basis(
 \item{intercept}{Whether to include an intercept (vector of all 1s) for each side of the discontinuity. Note this is different than the argument \code{intercept} of either \code{bs} or \code{ns}, which is set to \code{FALSE}.}
 
 \item{type}{either "ns" or "bs" indicating which splines basis function should be used.}
-
-\item{discon_point}{a single numeric value that represents where the discontinuity should be}
 }
 \description{
 Provides set of basis functions on either side of a time point, allowing for a discontinuity in the fitted functions

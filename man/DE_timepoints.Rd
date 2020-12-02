@@ -48,6 +48,8 @@ that must match a value of the grouping variable contained in
 \code{moanin_model}, unless type=="per_group_timepoint_diff", in which case
 should be NULL (only \code{group1} is used in comparison)}
 
+\item{type}{the type of contrasts that should be created. See details.}
+
 \item{timepoints}{vector of timepoints to compare. Must be contained in the
 \code{time_variable} of the \code{moanin} object.}
 
@@ -130,8 +132,10 @@ If the user set \code{log_transform=TRUE} in the creation of the
 
 Three different types of contrasts are created:
   \itemize{
- \item{"per_timepoint_group_diff"}{Contrasts that compare the groups within a timepoint}
- \item{"per_group_timepoint_diff"}{Contrasts that compare two timepoints within a group}
+ \item{"per_timepoint_group_diff"}{Contrasts that compare the groups within a
+ timepoint}
+ \item{"per_group_timepoint_diff"}{Contrasts that compare two timepoints
+ within a group}
  \item{"group_and_timepoint_diff"}{Contrasts that compare the
   difference between two timepoints between two levels of the
   \code{group_variable} of the \code{Moanin} object. These are contrasts in

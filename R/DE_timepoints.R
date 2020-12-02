@@ -186,6 +186,7 @@ setMethod("DE_timepoints","Moanin",
 #'   contrast. If this is the desired output, then the input to
 #'   \code{DE_timepoints} should be the column corresponding to the contrast.
 #'   See examples.
+#' @param type the type of contrasts that should be created. See details.
 #' @details \code{create_timepoints_contrasts} creates the needed contrasts for
 #'   comparing groups or timepoints in the format needed for
 #'   \code{DE_timepoints} (i.e. \code{\link[limma]{makeContrasts}}), to which the
@@ -194,8 +195,10 @@ setMethod("DE_timepoints","Moanin",
 #'   \code{time_variable} in the \code{moanin_object} provided by the user.
 #' @details Three different types of contrasts are created:
 #'   \itemize{
-#'  \item{"per_timepoint_group_diff"}{Contrasts that compare the groups within a timepoint}
-#'  \item{"per_group_timepoint_diff"}{Contrasts that compare two timepoints within a group}
+#'  \item{"per_timepoint_group_diff"}{Contrasts that compare the groups within a
+#'  timepoint}
+#'  \item{"per_group_timepoint_diff"}{Contrasts that compare two timepoints
+#'  within a group}
 #'  \item{"group_and_timepoint_diff"}{Contrasts that compare the
 #'   difference between two timepoints between two levels of the
 #'   \code{group_variable} of the \code{Moanin} object. These are contrasts in
@@ -206,6 +209,7 @@ setMethod("DE_timepoints","Moanin",
 #'   element of the vector corresponding to a contrast to be compared.
 #' @seealso \code{\link[limma]{makeContrasts}}
 #' @rdname DE_timepoints
+#' @importFrom utils head tail
 #' @export
 setMethod("create_timepoints_contrasts","Moanin",
  function(object, group1, group2=NULL, 
@@ -222,6 +226,9 @@ setMethod("create_timepoints_contrasts","Moanin",
         if(is.null(group2)) 
             stop("cannot choose type='per_timepoint_group_diff'" + 
             "and give a NULL value for argument `group2`")
+        if(!all(timepoints%in% time_variable(object))) 
+            stop("timepoints must consist only of timepoints in the time_variable of Moanin object")
+        
         contrasts<-pertimepoint_contrast(object=object, group1=group1,
             group2=group2,timepoints=timepoints)
     }
@@ -229,6 +236,10 @@ setMethod("create_timepoints_contrasts","Moanin",
         if(is.null(group2)) 
             stop("cannot choose type='group_and_timepoint_diff'" + 
              "and give a NULL value for argument `group2`")
+        if(!all(timepoints_before %in% time_variable(object))) 
+            stop("timepoints_before must consist only of timepoints in the time_variable of Moanin object")
+        if(!all(timepoints_after %in% time_variable(object))) 
+            stop("timepoints_after must consist only of timepoints in the time_variable of Moanin object")
         contrasts<-timepointdiff_contrasts(object=object, group1=group1, 
             group2=group2, timepoints_before=timepoints_before,
             timepoints_after=timepoints_after)
@@ -251,8 +262,7 @@ pertimepoint_contrast<-function(object, group1, group2,
      timepoints){
     object <- object[,group_variable(object) %in% c(group1, group2)]
     all_timepoints <- sort(unique(time_variable(object)))
-    if(!all(timepoints%in% all_timepoints)) 
-        stop("timepoints must consist only of timepoints in the time_variable of Moanin object")
+    timepoints<-timepoints[.which_timepoints(timepoints,all_timepoints,argname="timepoints")]
     contrasts <- rep(NA, length(timepoints))
     msg<-""
     foundMissing<-FALSE
@@ -282,6 +292,18 @@ pertimepoint_contrast<-function(object, group1, group2,
     return(data.frame("contrasts"=contrasts,"timepoints"=as.character(timepoints),"group"=paste0(group1,"-",group2)))
  }
 
+.which_timepoints<-function(timepoints, possibles,argname){
+    wh<-which(timepoints%in% possibles)
+    if(!all(timepoints%in% possibles)){
+        if(length(wh)>0){
+            warning("removing timepoints in ",argname," not measured for these groups\n")
+        }
+        else{
+            stop("None of the requested timepoints measured for these groups")
+        }
+    }
+    return(wh)
+}
 
 timepointdiff_contrasts<-function(object, group1, group2, 
     timepoints_before=NULL,timepoints_after=NULL){
@@ -297,10 +319,11 @@ timepointdiff_contrasts<-function(object, group1, group2,
         timepoints_before<-head(all_timepoints,-1)
         timepoints_after<-tail(all_timepoints,-1)
     }
-    if(!all(timepoints_before %in% all_timepoints) || !all(timepoints_after %in% all_timepoints)) 
-        stop("timepoints_before and timepoints_after must consist only of timepoints in the time_variable of Moanin object")
-    if(!all(timepoints_before<timepoints_after)) 
-        stop("each timepoints_after element has to be strictly greater than the corresponding timepoints_before element")
+    wh_before<-.which_timepoints(timepoints_before,all_timepoints,"timepoints_before")
+    wh_after<-.which_timepoints(timepoints_after,all_timepoints,"timepoints_after")
+    wh<-intersect(wh_before,wh_after)
+    timepoints_before<-timepoints_before[wh]
+    timepoints_after<-timepoints_after[wh]
     
     contrasts <- rep(NA, length(timepoints_before))
     # Will give a tally of timepoint pairs can't do

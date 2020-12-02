@@ -5,24 +5,24 @@
 #'   tested for enrichment of GO terms. The names of the vector should be the
 #'   gene names. Elements with TRUE will consist of the gene cluster.
 #' @param gene_id_to_go List giving the Gene ID to GO object required for topGO
-#'   (see \code{\link[pkg:topGO]{topGOdata-class}}). 
+#'   (see \code{\link[topGO]{topGOdata-class}}). 
 #'   \code{create_go_term_mapping} can construct such a list from a
 #'   data-frame.
 #'@param ontology string, optional, default: BP. specficies which ontology to
 #'  use (passed to \code{ontology} argument in creating a new \code{topGOdata}
 #'  object). Can be 'BP', 'CC', or 'NF'. See
-#'  \code{\link[pkg:topGO]{topGOdata-class}}.
+#'  \code{\link[topGO]{topGOdata-class}}.
 #'@param weighted boolean, optional, default: FALSE. Whether to use the
-#'  weighted algorithm or not in \code{\link[pkg:topGO]{runTest}}.
+#'  weighted algorithm or not in \code{\link[topGO]{runTest}}.
 #'@param node_size integer, optional, default: 10. Consider only GO terms with
 #'  node_size number of genes, passed to \code{nodeSize} argument of
-#'  \code{\link[pkg:topGO]{topGOdata-class}}
+#'  \code{\link[topGO]{topGOdata-class}}
 #'@details \code{find_enriched_go_terms} is a wrapper for running a GO
 #'  enrichment analysis via the package \code{topGO}. This function creates a
-#'  \code{\link[pkg:topGO]{topGOdata-class}} object, runs the function
-#'  \code{\link[pkg:topGO]{runTest}} to test for enrichment using the
+#'  \code{\link[topGO]{topGOdata-class}} object, runs the function
+#'  \code{\link[topGO]{runTest}} to test for enrichment using the
 #'  \code{statistic="fisher"} option, and then runs
-#'  \code{\link[pkg:topGO]{GenTable}}. This function then does some post-processing
+#'  \code{\link[topGO]{GenTable}}. This function then does some post-processing
 #'  of the results, returning only GO terms that satisfy:
 #'  \enumerate{
 #'  \item{BH adjusted p-values less than 0.05 using
@@ -30,7 +30,7 @@
 #'  \item{GO terms are \emph{enriched}, i.e. the number of genes from the GO 
 #'  term found in the subset is greater than expected}
 #'  }
-#' @return Returns results in the format of \code{\link[pkg:topGO]{GenTable}}.
+#' @return Returns results in the format of \code{\link[topGO]{GenTable}}.
 #' @aliases create_go_term_mapping
 #' @examples 
 #' data(exampleData)
@@ -41,7 +41,7 @@
 #' inGroup[1:10]=TRUE
 #' names(inGroup) <- row.names(testData)
 #' find_enriched_go_terms(inGroup, geneId2Go)
-#' @seealso \code{\link{create_go_term_mapping}}, \code{\link[KEGGprofile]{find_enriched_pathway}}, \code{\link[pkg:topGO]{GenTable}}, \code{\link[pkg:topGO]{runTest}}, \code{\link[pkg:topGO]{topGOdata-class}}, \code{\link[stats]{p.adjust}} 
+#' @seealso \code{\link{create_go_term_mapping}}, \code{\link[KEGGprofile]{find_enriched_pathway}}, \code{\link[topGO]{GenTable}}, \code{\link[topGO]{runTest}}, \code{\link[topGO]{topGOdata-class}}, \code{\link[stats]{p.adjust}} 
 #' @export
 #' @importFrom topGO annFUN.gene2GO runTest GenTable
 find_enriched_go_terms <- function(assignments, gene_id_to_go,
@@ -113,7 +113,7 @@ find_enriched_go_terms <- function(assignments, gene_id_to_go,
 #' @param gene_col the name of the column of the \code{genes} data frame that
 #'   contains the correct gene reference. By default, is "refseq_mrna".
 #' @return \code{create_go_term_mapping} returns a list giving the gene to GO id
-#'   in the format required by \code{\link[pkg:topGO]{topGOdata-class}}.
+#'   in the format required by \code{\link[topGO]{topGOdata-class}}.
 #' @rdname find_enriched_go_terms
 #' @export
 create_go_term_mapping <- function(genes, gene_col="refseq_mrna"){

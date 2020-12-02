@@ -1,6 +1,6 @@
 #' Provides set of basis functions on either side of a time point, allowing for a discontinuity in the fitted functions
 #' @param timepoints vector of numeric timepoints for which the splines basis will be evaluated
-#' @param discon_point a single numeric value that represents where the discontinuity should be
+#' @param discont_point a single numeric value that represents where the discontinuity should be
 #' @param knots passed to \code{ns} or \code{bs}. If not NULL, should give knots on either side of \code{discon_point} as single vector -- they will be separated in the call to \code{discon_point}
 #' @param intercept Whether to include an intercept (vector of all 1s) for each side of the discontinuity. Note this is different than the argument \code{intercept} of either \code{bs} or \code{ns}, which is set to \code{FALSE}. 
 #' @param type either "ns" or "bs" indicating which splines basis function should be used.
@@ -42,7 +42,7 @@ discont_basis<-function(timepoints, discont_point,
     postPoints<-which(timepoints>discont_point)    
     if(!is.null(knots)){
         knotsPre<-knots[knots<=discont_point]                 
-        knotsPost<-knots[knots>discon_point]
+        knotsPost<-knots[knots>discont_point]
     }
     else{
         knotsPre<-knotsPost<-NULL
