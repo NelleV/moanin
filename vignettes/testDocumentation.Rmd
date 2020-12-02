@@ -1,9 +1,9 @@
 ---
-title: "documentation of timecourse DE"
+title: "Implementation details"
 output: BiocStyle::html_document
 vignette: >
   %\VignetteEngine{knitr::knitr}
-    %\VignetteIndexEntry{Installation}
+    %\VignetteIndexEntry{Implementation Details}
       %\usepackage[UTF-8]{inputenc}
 ---
 ```{r echo=FALSE, include=FALSE}

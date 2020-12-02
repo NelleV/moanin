@@ -2,12 +2,12 @@
 % Please edit documentation in R/splines.R
 \name{fit_splines}
 \alias{fit_splines}
-\title{Fit splines to each gene of data matrix}
+\title{Fit splines to each gene of data matrix, used by DE_timecourse}
 \usage{
-fit_splines(moanin_model, data, weights = NULL)
+fit_splines(design_matrix, data, weights = NULL)
 }
 \arguments{
-\item{moanin_model}{object of class Moanin}
+\item{design_matrix}{design matrix (containing evaluated basis matrix, but potentially other variables) to fit}
 
 \item{data}{a matrix of data to fix splines to}
 
@@ -19,6 +19,9 @@ matrix of the coefficients for each basis function, each row of the
   \code{data}.
 }
 \description{
-Fit splines to each gene of data matrix
+Fit splines to each gene of data matrix, used by DE_timecourse
+}
+\details{
+Needed to allow for fitting weights, in which case for loop over every row/gene. Otherwise, just a call to lm.fit.
 }
 \keyword{internal}
