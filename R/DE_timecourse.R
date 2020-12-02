@@ -135,10 +135,10 @@ compute_pvalue <- function(basis, y, beta, beta_null, ng_labels,
         df1 <- df
         pval <- stats::pf(stat * df2 / df1, df1=df1, df2=df2, lower.tail=FALSE)
     }else{
-        lstat <- lrtStat(resNull, resFull, ng_labels=ng_labels)
-        pval <- stats::pchisq(lstat, df=degrees_of_freedom, lower.tail=FALSE)
+        stat <- lrtStat(resNull, resFull, ng_labels=ng_labels)
+        pval <- stats::pchisq(stat, df=degrees_of_freedom, lower.tail=FALSE)
     }
-    return(pval)
+    return(cbind(pval,stat))
 }
 
 summarise <- function(basis, ng_levels) {
@@ -174,17 +174,21 @@ summarise <- function(basis, ng_levels) {
 #'  Whether to use voom weights. See details.
 #' @details The implementation of the spline fit and the calculation of p-values
 #'   was based on code from \code{\link[edge]{edge}}, and expanded to enable
-#'   handling of comparisons of groups via contrasts.#' @seealso
+#'   handling of comparisons of groups via contrasts. The code assumes that the \code{Moanin} object was created via either a formula or a basis where a different spline was fit for each \code{group_variable} and thus the contrasts are comparisons of those spline fits. If the \code{Moanin} object was created via user-provided basis matrix or formula, then the user should take a great deal of caution in using this code, as the degrees of freedom for the tests of significance cannot be verified to be correct. 
+#' @seealso
 #'   \code{\link[limma]{makeContrasts}}, \code{\link{create_moanin_model}},
 #'   \code{\link{DE_timepoints}}, \code{\link[edge]{edge}}
 #' @details If \code{use_voom_weights=TRUE}, then before fitting splines to each gene,
 #' voom weights are calculated from \code{assay(object)}:
 #' \preformatted{
-#'   y <- edgeR::DGEList(counts=assay(object))
-#'   y <- edgeR::calcNormFactors(y, method="upperquartile")
-#'   v <- limma::voom(y, contrasts, plot=FALSE)
-#'   weights <- limma::lmFit(v)
+#'    y <- edgeR::DGEList(counts=assay(object))
+#'    y <- edgeR::calcNormFactors(y, method="upperquartile")
+#'    v <- limma::voom(y, design, plot=FALSE)
+#'    weights <- v$weights
 #' }
+#' The design matrix for the voom weights is based on the formula
+#' \code{~Group + Timepoint +0}
+#' where Group and Timepoint are replaced with the user-defined values where appropriate. 
 #' These weights are given to the \code{lm.fit} which fits the spline coefficients.
 #' This workflow assumes that the input to the \code{Moanin} object were counts.
 #' @details If the user set \code{log_transform=TRUE} in the creation of the
@@ -259,10 +263,11 @@ setMethod("DE_timecourse","Moanin",
         groups_of_interest <- names(contrast)[contrast != 0]
         n_samples_fit <- sum(group_variable(object) %in% groups_of_interest)
         n_groups <- length(groups_of_interest)
-        degrees_of_freedom <- dim(basis)[2] / ng
         
         beta_null <- compute_beta_null(basis, beta, contrast)
         
+        ## FIXME: This assumes a particular form for the formula, which may not be true if user add additional controlling values, for example. 
+        degrees_of_freedom <- dim(basis)[2] / ng    
         pval <- compute_pvalue(basis, y, beta, beta_null, ng_labels, 
                               weights=weights,
                               n_samples=n_samples_fit,
@@ -271,10 +276,11 @@ setMethod("DE_timecourse","Moanin",
         
         colname_qval <- paste(contrast_name, "_qval", sep="")
         colname_pval <- paste(contrast_name, "_pval", sep="")
+        colname_stat <- paste(contrast_name, "_stat", sep="")
         
-        results[colname_pval] <- pval
-        qval <- stats::p.adjust(pval, method="BH")
-        dim(qval) <- dim(pval)
+        results[colname_stat] <- pval[,2]
+        results[colname_pval] <- pval[,1]
+        qval <- stats::p.adjust(pval[,1], method="BH")
         results[colname_qval] <- qval
     }
     
