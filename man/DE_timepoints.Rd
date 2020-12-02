@@ -7,9 +7,19 @@
 \alias{create_timepoints_contrasts,Moanin-method}
 \title{Fit weekly differential expression analysis}
 \usage{
-\S4method{DE_timepoints}{Moanin}(object, contrasts, use_voom_weights = TRUE)
+\S4method{DE_timepoints}{Moanin}(object, contrasts, add_factors = NULL, use_voom_weights = TRUE)
 
-\S4method{create_timepoints_contrasts}{Moanin}(object, group1, group2)
+\S4method{create_timepoints_contrasts}{Moanin}(
+  object,
+  group1,
+  group2 = NULL,
+  type = c("per_timepoint_group_diff", "per_group_timepoint_diff",
+    "group_and_timepoint_diff"),
+  timepoints = sort(unique(time_variable(object))),
+  timepoints_before = head(sort(timepoints), -1),
+  timepoints_after = tail(sort(timepoints), -1),
+  format = c("vector", "data.frame")
+)
 }
 \arguments{
 \item{object}{An object of class \code{\link{Moanin}}, an object containing
@@ -23,14 +33,43 @@ matrix of contrasts coefficients obtained using
 as a character string, will be passed to \code{\link[limma]{makeContrasts}}
 to be converted into such a matrix.}
 
+\item{add_factors}{A character vector of additional variables to add to the 
+design. See details.}
+
 \item{use_voom_weights}{boolean, optional, default: TRUE. 
 Whether to use voom weights. See details.}
 
 \item{group1}{First group to consider in making contrasts, character value
-that must match a value contained in \code{moanin_model$meta}.}
+that must match a value of the grouping variable contained in
+\code{moanin_model}.}
 
 \item{group2}{Second group to consider in making contrasts, character value
-that must match a value contained in \code{moanin_model$meta}.}
+that must match a value of the grouping variable contained in
+\code{moanin_model}, unless type=="per_group_timepoint_diff", in which case
+should be NULL (only \code{group1} is used in comparison)}
+
+\item{type}{the type of contrasts that should be created. See details.}
+
+\item{timepoints}{vector of timepoints to compare. Must be contained in the
+\code{time_variable} of the \code{moanin} object.}
+
+\item{timepoints_before}{for \code{type} equal to
+\code{"per_group_timepoint_diff"} or, \code{"group_and_timepoint_diff"},
+the set of timepoints to compare, see details. By default, taken from the
+\code{timepoints} variable.}
+
+\item{timepoints_after}{for \code{type} equal to
+\code{"per_group_timepoint_diff"} or, \code{"group_and_timepoint_diff"},
+the set of timepoints to compare, see details. By default, taken from the
+\code{timepoints} variable.}
+
+\item{format}{the choice of "vector" (the default) for
+\code{create_timepoints_contrasts} returns just the character vector of
+contrasts. If instead \code{format="data.frame"} then a data.frame is
+return that identifies the timepoint and group comparisons involved in each
+contrast. If this is the desired output, then the input to
+\code{DE_timepoints} should be the column corresponding to the contrast.
+See examples.}
 }
 \value{
 A \code{data.frame} with three columns for each of the contrasts
@@ -50,6 +89,20 @@ Fit weekly differential expression analysis
 Creates pairwise contrasts for all timepoints
 }
 \details{
+By default the formula fitted for each gene is
+\preformatted{   
+   ~ Group*Timepoint +0
+}
+If the user gives values to \code{add_factors}, then the vector of character 
+values given in \code{add_factors} will be \emph{added} to the default formula. 
+So that \code{add_factors="Replicate"} will change the formula to
+\preformatted{   
+   ~ Group*Timepoint +0 + Replicate
+}
+This allows for a small amount of additional complexity to control 
+for other variables. Users should work directly with limma for 
+more complex models.
+
 If \code{use_voom_weights=TRUE}, the data is given directly to limma
   via \code{assay(object)}. The specific series of
   calls is:
@@ -71,19 +124,64 @@ If the user set \code{log_transform=TRUE} in the creation of the
 }
 
 \code{create_timepoints_contrasts} creates the needed contrasts for
-  comparing two groups for every timepoint in the format needed for
-  \code{DE_timepoints} (i.e. \code{\link[limma]{makeContrasts}}, to which the
-  contrasts are ultimately passed). The time points are determined by the
-  meta data in the \code{moanin_object} provided by the user.
+  comparing groups or timepoints in the format needed for
+  \code{DE_timepoints} (i.e. \code{\link[limma]{makeContrasts}}), to which the
+  contrasts are ultimately passed. The time points and groups are determined
+  by the levels of the \code{grouping_variable} and the values of
+  \code{time_variable} in the \code{moanin_object} provided by the user.
+
+Three different types of contrasts are created:
+  \itemize{
+ \item{"per_timepoint_group_diff"}{Contrasts that compare the groups within a
+ timepoint}
+ \item{"per_group_timepoint_diff"}{Contrasts that compare two timepoints
+ within a group}
+ \item{"group_and_timepoint_diff"}{Contrasts that compare the
+  difference between two timepoints between two levels of the
+  \code{group_variable} of the \code{Moanin} object. These are contrasts in
+  the form (TP i - TP (i-1))[Group1] - (TP i - TP (i-1))[Group2].}
+}
 }
 \examples{
 data(exampleData)
 moanin <- create_moanin_model(data=testData, meta=testMeta)
-contrasts <- create_timepoints_contrasts(moanin,"C", "K")
+# compare groups within each timepoint
+contrasts <- create_timepoints_contrasts(moanin,"C", "K",
+   type="per_timepoint_group_diff")
 head(contrasts)
 deTimepoints=DE_timepoints(moanin, 
     contrasts=contrasts, use_voom_weights=FALSE)
 head(deTimepoints)
+# Control for replicate variable:
+deTimepoints=DE_timepoints(moanin, 
+    contrasts=contrasts, add_factors="Replicate",
+    use_voom_weights=FALSE)
+head(deTimepoints)
+
+# compare adjacent timepoints within each group
+contrastsDiff <- create_timepoints_contrasts(moanin,"C",
+   type="per_group_timepoint_diff")
+deDiffTimepoints=DE_timepoints(moanin, 
+    contrasts=contrastsDiff,
+    use_voom_weights=FALSE)
+# provide the sets of timepoints to compare:
+contrastsDiff2<-create_timepoints_contrasts(moanin,"C",
+   timepoints_before=c(72,120),timepoints_after=c(168,168),
+   type="per_group_timepoint_diff")
+deDiffTimepoints2=DE_timepoints(moanin, 
+    contrasts=contrastsDiff2,
+    use_voom_weights=FALSE)
+
+# Compare selected timepoints across groups. 
+# This time we also return format="data.frame" which helps us keep track of
+# the meaning of each contrast. 
+contrastsGroupDiff<-create_timepoints_contrasts(moanin,"C", "K",
+   timepoints_before=c(72,120),timepoints_after=c(168,168),
+   type="group_and_timepoint_diff",format="data.frame")
+head(contrastsGroupDiff)
+deGroupDiffTimepoints=DE_timepoints(moanin, 
+    contrasts=contrastsGroupDiff$contrasts,
+    use_voom_weights=FALSE)
 }
 \seealso{
 \code{\link[limma]{makeContrasts}}

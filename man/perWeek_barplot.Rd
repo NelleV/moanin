@@ -2,7 +2,7 @@
 % Please edit documentation in R/DE_timepoints.R
 \name{perWeek_barplot}
 \alias{perWeek_barplot}
-\title{Creates pairwise contrasts for all timepoints}
+\title{Creates barplot of results of per-timepoint comparison}
 \usage{
 perWeek_barplot(
   de_results,
@@ -37,7 +37,7 @@ This is a plotting function, and returns (invisibly) the results of
   \code{\link{barplot}}
 }
 \description{
-Creates pairwise contrasts for all timepoints
+Creates barplot of results of per-timepoint comparison
 }
 \details{
 \code{create_timepoints_contrasts} creates the needed contrasts for
