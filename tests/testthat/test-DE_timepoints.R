@@ -12,7 +12,16 @@ test_that("DE_timepoints::create_timepoints_contrasts", {
         group_variable_name="condition",
         time_variable_name="time")
     expect_silent(contrasts<-create_timepoints_contrasts( moanin_model,"M", "C"))
+    expect_silent(contrasts<-create_timepoints_contrasts( moanin_model,"M", 
+                  type="per_group_timepoint_diff"))
+    expect_silent(contrasts<-create_timepoints_contrasts( moanin_model,"M", "C",
+                  type="group_and_timepoint_diff"))
 
+    # can't give two groups for this contrast
+    expect_error(contrasts<-create_timepoints_contrasts( moanin_model,"M", "C",
+                    type="per_group_timepoint_diff"))
+
+    
     # Now drop timepoint 6 in condition C. That should raise a warning
     mask = !((testMeta$condition == "C") & (testMeta$time == 6))
     msg = paste0("timepoint 6 is missing in condition C")

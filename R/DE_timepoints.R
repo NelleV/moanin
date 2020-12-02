@@ -224,8 +224,7 @@ setMethod("create_timepoints_contrasts","Moanin",
     format<-match.arg(format)
     if(type=="per_timepoint_group_diff"){
         if(is.null(group2)) 
-            stop("cannot choose type='per_timepoint_group_diff'" + 
-            "and give a NULL value for argument `group2`")
+            stop("cannot choose type='per_timepoint_group_diff' and give a NULL value for argument `group2`")
         if(!all(timepoints%in% time_variable(object))) 
             stop("timepoints must consist only of timepoints in the time_variable of Moanin object")
         
@@ -234,8 +233,7 @@ setMethod("create_timepoints_contrasts","Moanin",
     }
     if(type=="group_and_timepoint_diff"){
         if(is.null(group2)) 
-            stop("cannot choose type='group_and_timepoint_diff'" + 
-             "and give a NULL value for argument `group2`")
+            stop("cannot choose type='group_and_timepoint_diff' and give a NULL value for argument `group2`")
         if(!all(timepoints_before %in% time_variable(object))) 
             stop("timepoints_before must consist only of timepoints in the time_variable of Moanin object")
         if(!all(timepoints_after %in% time_variable(object))) 
@@ -246,8 +244,7 @@ setMethod("create_timepoints_contrasts","Moanin",
     }
     if(type=="per_group_timepoint_diff"){
         if(!is.null(group2)) 
-            stop("cannot choose type='per_group_timepoint_diff'" + 
-                     "and give a value for argument `group2`")
+            stop("cannot choose type='per_group_timepoint_diff' and give a value for argument `group2`")
         contrasts<-timepointdiff_contrasts(object=object, group1=group1, 
             group2=NULL, timepoints_before=timepoints_before,
             timepoints_after=timepoints_after)
