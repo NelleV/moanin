@@ -166,6 +166,47 @@ dim(weeklyPre)
 head(weeklyPre[,1:10])
 ```
 
+## Compare change across two time points
+
+Different types of contrasts are available within `create_timepoint_contrasts` based on the `type` argument. Previously we used the default (`per_timepoint_group_diff`) which gives the group differences per timepoint. 
+
+We can also use the same kind of approach to compare within a group the difference between two timepoints. Here we look at the difference between adjacent timepoints in "Postflowering", 
+
+```{r}
+preDiffContrasts <- create_timepoints_contrasts(
+    moaninObject, "Preflowering" ,type="per_group_timepoint_diff")
+head(preDiffContrasts)
+```
+
+We can also compare these time differences between the two groups, a contrast that takes the form of 
+$$(TP i - TP (i-1))[Group1] - (TP i - TP (i-1))[Group2]$$
+These contrasts we can create by setting `type="group_and_timepoint_diff"`
+
+```{r}
+preGroupDiffContrasts <- create_timepoints_contrasts(
+    moaninObject, "Preflowering", "Control" ,type="group_and_timepoint_diff")
+head(preGroupDiffContrasts)
+```
+
+By default the consecutive times are compared, but we could instead compare non-consecutive time points by giving an explicit vector of the timepoints to compare:
+
+```{r}
+preGroupDiffContrasts <- create_timepoints_contrasts(
+    moaninObject, "Preflowering", "Control" ,
+    type="group_and_timepoint_diff",timepoints_before=c(6,8),timepoints_after=c(8,9))
+head(preDiffContrasts)
+```
+
+We can again submit these contrasts to `DE_timepoints`
+
+```{r}
+weeklyGroupDiffPre <- DE_timepoints(moaninObject[1:500,], 
+    contrasts=preGroupDiffContrasts,
+     use_voom_weights=TRUE)
+head(weeklyGroupDiffPre)
+```
+
+
 # Time-course differential expression analysis between two groups
 
 The results of such a weekly analysis can be quite difficult to interpret, the
