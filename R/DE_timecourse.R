@@ -128,6 +128,8 @@ compute_pvalue <- function(basis, y, beta, beta_null,
 #'  \code{\link[limma]{makeContrasts}} from the package \code{limma}. If given
 #'  as a character string, will be passed to \code{\link[limma]{makeContrasts}}
 #'  to be converted into such a matrix.
+#' @param statistic Which test statistic to use, a likelihood ratio statistic or
+#'  a F-test.
 #' @param center boolean, whether to center the data matrix
 #' @param use_voom_weights boolean, optional, default: TRUE. 
 #'  Whether to use voom weights. See details.
@@ -229,7 +231,7 @@ setMethod("DE_timecourse","Moanin",
             contrast_matrix=contrast_matrix,beta)
         
         pval <- compute_pvalue(basis, y, beta, beta_null, 
-                              weights=weights,statistic=statistic,
+                              weights=weights,statistics=statistic,
                               degrees_of_freedom=nrow(contrast_matrix))
         
         colname_qval <- paste(contrast_name, "_qval", sep="")
@@ -244,10 +246,4 @@ setMethod("DE_timecourse","Moanin",
     
     return(results)
 })
-
-# ##
-# myf<-DE_timecourse(moanin, contrasts="K-C", use_voom_weights=FALSE,statistic="ftest")
-# mylrt<-DE_timecourse(moanin, contrasts="K-C", use_voom_weights=FALSE,statistic="lrt")
-
-#nellelrt<-DE_timecourse(moanin, contrasts="K-C", use_voom_weights=FALSE)
 

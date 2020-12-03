@@ -14,18 +14,15 @@ knitr::opts_chunk$set(
 ```
 
 ```{r}
-library(devtools)
-load_all()
+library(moanin)
 data(exampleData)
 moanin <- create_moanin_model(data=testData, meta=testMeta)
-# deTimecourse=DE_timecourse(moanin, contrasts="K-C", use_voom_weights=FALSE)
-# head(deTimecourse)
 ```
 
 For a contrast of the form `"K-C"` we currently convert this to 
 
 ```{r}
-is_contrasts("K-C",moanin)
+moanin:::is_contrasts("K-C",moanin)
 ```
 
 However, these are the contrasts that need to be done *per basis variable*. In particular, we really have the following set of constraints that we are imposing simultaneously:

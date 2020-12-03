@@ -27,6 +27,9 @@ to be converted into such a matrix.}
 
 \item{center}{boolean, whether to center the data matrix}
 
+\item{statistic}{Which test statistic to use, a likelihood ratio statistic or
+a F-test.}
+
 \item{use_voom_weights}{boolean, optional, default: TRUE. 
 Whether to use voom weights. See details.}
 }
