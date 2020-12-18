@@ -16,19 +16,21 @@ knitr::opts_chunk$set(
 ```{r}
 library(moanin)
 data(exampleData)
-moanin <- create_moanin_model(data=testData, meta=testMeta)
+moaninObject <- create_moanin_model(data=testData, meta=testMeta)
 ```
 
 For a contrast of the form `"K-C"` we currently convert this to 
 
 ```{r}
-moanin:::is_contrasts("K-C",moanin)
+contr<-getFromNamespace("is_contrasts","moanin")
+contr("K-C",moaninObject)
 ```
 
 However, these are the contrasts that need to be done *per basis variable*. In particular, we really have the following set of constraints that we are imposing simultaneously:
 
 ```{r}
-cns<-moanin:::expand_contrast(moanin,is_contrasts("K-C",moanin)[,1])
+expand<-getFromNamespace("expand_contrast","moanin")
+cns<-expand(moaninObject,contr("K-C",moaninObject)[,1])
 colnames(cns)<-gsub("splines::ns(Timepoint, df = 4)","basis",colnames(cns),fixed=TRUE)
 cns
 ```
