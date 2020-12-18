@@ -133,7 +133,6 @@ setMethod("DE_timepoints","Moanin",
     fit$adj.p.value <- stats::p.adjust(fit$p.value, method="BH")
     dim(fit$adj.p.value) <- dim(fit$p.value)
     colnames(fit$adj.p.value) <- contrast_names
-    browser()
     combine_results <- function(ii, fit2){
         contrast_formula <- contrasts[ii]
         de_analysis <- data.frame(row.names=row.names(object))
