@@ -133,7 +133,7 @@ setMethod("DE_timepoints","Moanin",
     fit$adj.p.value <- stats::p.adjust(fit$p.value, method="BH")
     dim(fit$adj.p.value) <- dim(fit$p.value)
     colnames(fit$adj.p.value) <- contrast_names
-    
+    browser()
     combine_results <- function(ii, fit2){
         contrast_formula <- contrasts[ii]
         de_analysis <- data.frame(row.names=row.names(object))
@@ -143,12 +143,12 @@ setMethod("DE_timepoints","Moanin",
         colname_qval <- paste(base_colname, "_qval", sep="")
         colname_lfc <- paste(base_colname, "_lfc", sep="")
         
-        tt <- limma::topTable(
-            fit2, coef=ii, number=length(rownames(fit2$coef)),
-            p.value=1, adjust.method="none",
-            genelist=rownames(fit2$coef))
         de_analysis[colname_pval] <- fit2$p.value[, contrast_formula]
         de_analysis[colname_qval] <- fit2$adj.p.value[,  contrast_formula]
+        tt <- limma::topTable(
+            fit2, coef=ii, number=length(rownames(fit2$coef)),
+            p.value=1, adjust.method="none", sort.by="none",
+            genelist=rownames(fit2$coef))
         de_analysis[colname_lfc] <- tt$logFC
         return(de_analysis)
     }
