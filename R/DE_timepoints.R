@@ -11,9 +11,10 @@ setGeneric("create_diff_contrasts",
 #' @inheritParams DE_timecourse
 #' @param add_factors A character vector of additional variables to add to the 
 #' design. See details. 
-#' @return A \code{data.frame} with three columns for each of the contrasts
+#' @return A \code{data.frame} with four columns for each of the contrasts
 #'   given in \code{contrasts}, corresponding to the raw p-value of the contrast
-#'   for that gene (\code{_pval}), the adjusted p-value (\code{_qval}), and the
+#'   for that gene (\code{_pval}), the adjusted p-value (\code{_qval}),
+#'  the t-statistic of the contrast (\code{_stat), and the
 #'   estimate of log-fold-change (\code{_lfc}). The adjusted p-values are
 #'   FDR-adjusted based on the Benjamini-Hochberg method, as implemented in
 #'   \code{\link[stats]{p.adjust}}. The adjustment is done across all p-values
@@ -141,6 +142,7 @@ setMethod("DE_timepoints","Moanin",
         colname_pval <- paste(base_colname, "_pval", sep="")
         colname_qval <- paste(base_colname, "_qval", sep="")
         colname_lfc <- paste(base_colname, "_lfc", sep="")
+        colname_stat <- paste(base_colname, "_stat", sep="")
         
         de_analysis[colname_pval] <- fit2$p.value[, contrast_formula]
         de_analysis[colname_qval] <- fit2$adj.p.value[,  contrast_formula]
@@ -148,10 +150,10 @@ setMethod("DE_timepoints","Moanin",
             fit2, coef=ii, number=length(rownames(fit2$coef)),
             p.value=1, adjust.method="none", sort.by="none",
             genelist=rownames(fit2$coef))
+        de_analysis[colname_stat] <- tt$t
         de_analysis[colname_lfc] <- tt$logFC
         return(de_analysis)
     }
-    
     all_results <- do.call("cbind",
                           lapply(seq_along(contrast_names),
                                  combine_results, fit2=fit))
