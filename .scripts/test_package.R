@@ -1,2 +1,2 @@
-library(devtools)
-devtools::test()
+library(testthat)
+testthat::test_local()

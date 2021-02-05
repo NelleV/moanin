@@ -1,4 +1,4 @@
-setGeneric("rescale_values",function(object,...) { 
+setGeneric("rescale_values", function(object,...) { 
     standardGeneric("rescale_values")})
 
 #' Fit splines to each gene of data matrix
@@ -168,12 +168,14 @@ setMethod("rescale_values", "Moanin",
     }
 })
 
-#' @aliases rescale_values,NULL-method
+#' @aliases rescale_values, NULL-method
 #' @export
 #' @rdname rescale_values
 setMethod("rescale_values", "NULL",
     function(object, data){
-        if(inherits(data,"DataFrame")) data<-data.matrix(data)
+        if(inherits(data, "DataFrame")){
+            data <- data.matrix(data)
+        }
         ymin <- matrixStats::rowMins(data) 
         data <- data - ymin
         ymax <- matrixStats::rowMaxs(data)
@@ -187,7 +189,7 @@ setMethod("rescale_values", "NULL",
 #' @aliases rescale_values,missing-method
 #' @export
 #' @rdname rescale_values
-setMethod("rescale_values","missing",
+setMethod("rescale_values", "missing",
           function(object, ...){
               rescale_values(object=NULL, ... )
           })
@@ -200,7 +202,9 @@ align_data_onto_centroid <- function(data, centroid, positive_scaling=TRUE,
     n_samples <- dim(data)[2]
     n_genes <- dim(data)[1]
     if(n_samples != length(centroid)){
-        stop("align_data_onto_centroid: problem in dimensions")
+        stop(
+            paste0("align_data_onto_centroid: problem in dimensions. There are ",
+                   n_samples, "but centroid is of length", length(centroid)))
     }
     
     # No clue why sometimes the vector/matrix is not numeric

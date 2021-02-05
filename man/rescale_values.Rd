@@ -4,6 +4,8 @@
 \alias{rescale_values}
 \alias{rescale_values,Moanin-method}
 \alias{rescale_values,NULL-method}
+\alias{rescale_values,}
+\alias{NULL-method}
 \alias{rescale_values,missing-method}
 \title{Rescales rows of data to be between 0 and 1}
 \usage{
