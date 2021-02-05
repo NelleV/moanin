@@ -23,6 +23,7 @@ doc-doxygen:
 
 doc-html: install
 	$(RSCRIPT) .scripts/build_documentation_html.R
+	touch docs/.nojekyll
 
 doc: doc-html
 
