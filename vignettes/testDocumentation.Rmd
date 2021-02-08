@@ -48,6 +48,8 @@ $$W=(X'X)^{-1}C'\left( C(X'X)^{-1}C'\right)^{-1}C$$
 
 (currently I have a naive implementation that literally inverts these equations, and I get the same solution as the old code, but I will update it to use Moore-Penrose inverses, etc.)
 
+# Test statistics
+
 Then there are two test statistics to consider for testing the null hypothesis
 
 1. F-statistic: 
@@ -61,4 +63,33 @@ $$\hat\sigma^2=\frac{1}{n}||Y-X\hat\beta||^2$$
 
 However, both of these definitions for the test-statistics appear to be different from the current implementations.
 
+## Current implementation
 
+The 
+
+## New implementation
+
+`calculateStat` is an internal function that takes as input the residuals under the null model and the residuals under the full model, given as $G x n$ matrices (i.e. each row is the residuals for a gene model). 
+
+The Sum of Squares is calculated for each (the sum of the squared residuals).
+
+For a LRT, the stiatistic returned is `n*(log(ss0)-log(ss1)`
+
+For a F-test `(ss0 - ss1)/(ss1)` is returned (the df are multiplied when calculating a p-values later...). 
+
+The code is:
+
+```{r eval=FALSE}
+if(!all(dim(resNull)==dim(resFull))) 
+    stop("resNull and resFull must be of equal dimensions")
+n<-ncol(resNull)
+ss0 <- matrixStats::rowSums2(resNull^2) #RSSNull
+ss1 <- matrixStats::rowSums2(resFull^2) #RSSFull
+if(type=="lrt") 
+    return(n*(log(ss0)-log(ss1)))
+# Note that F-statistic returned below is intentionally missing the 
+# df terms, which are done later when calculating the p-values 
+# (this is for simplicity so don't have to pass df to this function.)
+if(type=="ftest") 
+    return((ss0 - ss1)/(ss1))
+```
