@@ -19,67 +19,72 @@ data(exampleData)
 moaninObject <- create_moanin_model(data=testData, meta=testMeta)
 ```
 
-For a contrast of the form `"K-C"` we currently convert this to 
+# Handling contrasts with a generic formula
+Assume we have $L$ levels in our grouping variable. 
+
+For a contrast of the form `"K-C"` where "K" and "C" are two of the three levels of the grouping variable (as in our example data, see `?exampleData`) we currently convert this internally (via the internal `is_contrasts` function) to 
 
 ```{r}
 contr<-getFromNamespace("is_contrasts","moanin")
-contr("K-C",moaninObject)
+t(contr("K-C",moaninObject))
 ```
 
-However, these are the contrasts that need to be done *per basis variable*. In particular, we really have the following set of constraints that we are imposing simultaneously:
+However, this "contrast" isn't really the underlying contrast, meaning it's not really a linear combination of all the coefficients in the model -- since it's dimension is not of length $p$. We are fitting a function $f_\ell$ for each level, which is defined by a linear combination of spline basis functions. So our set of coefficients are the coefficients of all the basis functions. So we need contrasts of length $p$, where $p$ is the number of coefficients in our design matrix $X$  (`basis_matrix`). 
+
+In particular, we want to take the contrast for the entire function $f_\ell$, i.e. $f_K=f_C$. That means we want all of the coefficients for $f_K$ and $f_C$ to be equal. (Note -- I guess conceivably you could have a different set of constraints that still resulted in $f_{K}=f_{C}$? )
+So the above contrasts need to be done *per basis variable*. 
+
+What we are really doing is the following set of constraints that we are imposing on our $p$ coefficients in our design matrix $X$ the linear model simultaneously:
 
 ```{r}
-expand<-getFromNamespace("expand_contrast","moanin")
+expand<-moanin:::expand_contrast
 cns<-expand(moaninObject,contr("K-C",moaninObject)[,1])
 colnames(cns)<-gsub("splines::ns(Timepoint, df = 4)","basis",colnames(cns),fixed=TRUE)
 cns
 ```
 
-If we call this matrix $C\in R^{k \times p}$, then our null hypothesis is
-$$C\beta = 0$$
+If we call this matrix $C\in R^{d \times p}$, then our null hypothesis is
+$$\theta=C\beta = 0$$
+where $\beta$ is the underlying coefficient in our linear model $E(y)=X\beta$, $\theta$ is a $d$-dimensional vector, and $d$ is related to the degrees of freedom of our spline (i.e. how many coefficients in our design matrix $X$ correspond to coefficients in $f_\ell$). 
 
-Currently the code does this implicitly in the code to calculate the fit $\beta_0$ under the null, and is based on the assumption that the design matrix $X$ (`basis_matrix`) has a variable per group in a repeated fashion. This creates problems if there are other variables in the formula.
+Currently the package does this implicitly in the code to calculate the fit $\beta_0$ under the null (which then defines the residuals under the null in the calculation of the test-statistics, see below). But the way it is done is based on the assumption that the design matrix $X$ has a coefficient per group in a repeated fashion, which it does if you use the default formula. But this creates problems if there are other variables in the formula separate from the grouping variable. 
 
-I created a function which scans the column names of `basis_matrix` and tries to create this matrix $C$. And then calculate $\beta_0$ as 
+I created a function which scans the column names of `basis_matrix` and tries to figure out which ones correspond to level $\ell$ so as to create this matrix $C$ shown above. Then I updated the calculation of  $\beta_0$ to be 
 
 $$\beta_0=(X'X)^{-1}XY-(X'X)^{-1}C'\left( C(X'X)^{-1}C'\right)^{-1}C(X'X)^{-1}XY=\hat\beta - W\hat\beta$$
 where
 $$W=(X'X)^{-1}C'\left( C(X'X)^{-1}C'\right)^{-1}C$$
 
-(currently I have a naive implementation that literally inverts these equations, and I get the same solution as the old code, but I will update it to use Moore-Penrose inverses, etc.)
+and $\hat{\beta}$ is the estimate of $\beta$ under the full (unconstrained model). I have confirmed on the test data in the package that this is giving the same estimates of the $\beta_0$ as the current implementation in the simple grouping situation that the current implementation assumes. 
 
-# Test statistics
 
-Then there are two test statistics to consider for testing the null hypothesis
+The code that scans the columns to create $C$ is a weak link, by the way, and probably not robust!
 
+
+<!-- (currently I have a naive implementation that literally inverts these equations, and I get the same solution as the old code, but I will update it to use Moore-Penrose inverses, etc.) -->
+
+# Test statistics and Implementation details
+
+Both the current and the new implementation provide two test statistics, "fstat" and "lrt" to consider for testing the null hypothesis. 
+
+These are done by the `calculateStat` function, which is an internal function. `calculateStat` takes as input the residuals under the null model (`resNull`) and the residuals under the full model (`resFull`), given as $G x n$ matrices (i.e. each row is the residuals for a gene model). In both implementations, the F-statistic version of the test multiplies the degrees of freedom later when getting the p-values.
+
+## New implementation
 1. F-statistic: 
-$$F=\frac{(RSS_{null}-RSS_{full})/k}{RSS_{full}/n-p} \sim F_{k,n-p}$$
+$$F=\frac{(RSS_{null}-RSS_{full})/d}{RSS_{full}/(n-p)} \sim F_{d,n-p}$$
 2. Likelihood Ratio statistic:
-$$\lambda=2 (\ell(\hat\beta,\hat\sigma)-\ell(\hat\beta_0,\hat\sigma_0))=n\log\frac{RSS_{null}}{RSS_{full}}\sim \chi^2_{k}$$
+$$\lambda=2 (\ell(\hat\beta,\hat\sigma)-\ell(\hat\beta_0,\hat\sigma_0))=n\log\frac{RSS_{null}}{RSS_{full}}\sim \chi^2_{d}$$
 
 where $\ell(\beta,\sigma)$ is the log-likelihood of the normal regression model, $\hat\beta, \hat\sigma$ refer to the MLE estimates under the full model, $\hat\beta_0, \hat\sigma_0$ under the null model and for both models, using their respective estimates $\hat\beta$ or $\hat\beta_0$,
 $$RSS(\hat\beta)=||Y-X\hat\beta||^2$$
 $$\hat\sigma^2=\frac{1}{n}||Y-X\hat\beta||^2$$
 
-However, both of these definitions for the test-statistics appear to be different from the current implementations.
+This means that $F=\frac{n-p}{d}(e^{n\lambda}-1)$. We would note that some people approach the LRT by calculating it assuming that $\sigma^2$ is known, getting
+$$\tilde{\lambda}=\frac{(RSS_{null}-RSS_{full})}{\sigma^2} $$ and then estimate $\sigma^2$ as $RSS_{full}/(n-p)$. This would get us directly back to the $F$ statistic above, up to the constant $d$. In the above calculation, I am not doing this. Instead, I am maximizing the likelihood with $\sigma$ unknown which gives us instead the difference in the *logarithm* of RSS. 
 
-## Current implementation
+The code in the new implementation is:
 
-The 
-
-## New implementation
-
-`calculateStat` is an internal function that takes as input the residuals under the null model and the residuals under the full model, given as $G x n$ matrices (i.e. each row is the residuals for a gene model). 
-
-The Sum of Squares is calculated for each (the sum of the squared residuals).
-
-For a LRT, the stiatistic returned is `n*(log(ss0)-log(ss1)`
-
-For a F-test `(ss0 - ss1)/(ss1)` is returned (the df are multiplied when calculating a p-values later...). 
-
-The code is:
-
-```{r eval=FALSE}
+```{r eval=FALSE, echo=TRUE}
 if(!all(dim(resNull)==dim(resFull))) 
     stop("resNull and resFull must be of equal dimensions")
 n<-ncol(resNull)
@@ -93,3 +98,57 @@ if(type=="lrt")
 if(type=="ftest") 
     return((ss0 - ss1)/(ss1))
 ```
+
+
+## Current implementation
+
+For the lrt, the sum of the squared residuals (RSS) appears to be calculated per group in the grouping variable (getting values $RSS_{null,\ell}$ and $RSS_{full,\ell}$ for a level $\ell$). And the returned statistic is:
+$$\sum_\ell \sum_{i=1}^{n_\ell} n_\ell (RSS_{null,\ell}-RSS_{full,\ell})/RSS_{full,\ell}$$
+
+The full code for this is:
+
+```{r eval=FALSE, echo=TRUE}
+stat<-0
+# ng_labels is a factor that gives the groups in the contrast
+for(g in levels(ng_labels)){
+    whKeep <- which(ng_labels == g)
+    sub_resNull <- resNull[,whKeep]
+    sub_resFull <- resFull[,whKeep]
+    
+    # Somehow the two lines above don't return the same object depending on
+    # the dimension of resNull and resFull, so need to distinguish the case
+    # where there is only one observation in data.
+    if(is.null(dim(sub_resNull))){
+        ss0 <- sum(sub_resNull^2)
+        ss1 <- sum(sub_resFull^2)
+        n <- length(sub_resNull)
+    }else{
+        ss0 <- matrixStats::rowSums2(sub_resNull^2)
+        ss1 <- matrixStats::rowSums2(sub_resFull^2)
+        n <- ncol(sub_resNull)
+    }
+    stat <- stat + n * (ss0 - ss1)/(ss1)
+}
+```
+
+For the f-test, the statistic appears to be $$n(RSS_{null}-RSS_{full})/RSS_{full}.$$
+
+The code is given by:
+
+```{r eval=FALSE, echo=TRUE}
+stat<-0
+ss0 <- matrixStats::rowSums2(resNull^2)
+ss1 <- matrixStats::rowSums2(resFull^2)
+n <- ncol(resNull)
+stat <- stat + n * (ss0 - ss1)/(ss1)
+```
+
+## Comparison
+
+Both of the definitions in the new implementation for the test-statistics appear to be different from the current implementations. However,  in our comparisons on epicon data, the f-statistic p-values are actually the same in both implementations, and only the LRT p-values changed between the implementations. 
+
+For the f-statistic, the difference between the two implementations appears to be a constant factor of $n$, so it might be that the calculations of the degrees of freedom, which are taken in later code before taking the p-value, correct for this. 
+
+The current LRT seems to actually be more of the average of the F-statistic calculated within each group rather than the LRT and I'm not sure where that comes from.
+
+

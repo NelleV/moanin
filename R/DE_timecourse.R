@@ -27,6 +27,8 @@ compute_beta_null<-function(moanin_model,contrast_matrix,beta){
     
 }
 #Expands contrasts to a matrix of contrasts, one for each basis vector/variable. rows are contrasts, columns are the number of total variables. 
+#' @keywords internal
+#' @rdname internal
 expand_contrast<-function(moanin_model,contrast_vector){
     design_matrix<-basis_matrix(moanin_model)
     gpname<-group_variable_name(moanin_model)
