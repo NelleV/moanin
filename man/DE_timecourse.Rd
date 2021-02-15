@@ -5,7 +5,13 @@
 \alias{DE_timecourse,Moanin-method}
 \title{Run spline models and test for DE of contrasts.}
 \usage{
-\S4method{DE_timecourse}{Moanin}(object, contrasts, center = FALSE, use_voom_weights = TRUE)
+\S4method{DE_timecourse}{Moanin}(
+  object,
+  contrasts,
+  center = FALSE,
+  statistic = c("ftest", "lrt"),
+  use_voom_weights = TRUE
+)
 }
 \arguments{
 \item{object}{An object of class \code{\link{Moanin}}, an object containing
@@ -20,6 +26,9 @@ as a character string, will be passed to \code{\link[limma]{makeContrasts}}
 to be converted into such a matrix.}
 
 \item{center}{boolean, whether to center the data matrix}
+
+\item{statistic}{Which test statistic to use, a likelihood ratio statistic or
+a F-test.}
 
 \item{use_voom_weights}{boolean, optional, default: TRUE. 
 Whether to use voom weights. See details.}

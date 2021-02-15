@@ -25,6 +25,8 @@
   mfrow = NULL,
   addToPlot = NULL,
   ylab = "",
+  xaxis = TRUE,
+  yaxis = TRUE,
   xlab = "Time",
   ...
 )
@@ -87,6 +89,10 @@ created (see \code{\link{par}}). If missing, the function will set a value.}
 the user to add more to the plot.}
 
 \item{ylab}{label for the y-axis}
+
+\item{xaxis}{Logical, whether to add x-axis labels to plot (if FALSE can be manually created by user with call to addToPlot)}
+
+\item{yaxis}{Logical, whether to add y-axis labels to plot (if FALSE can be manually created by user with call to addToPlot)}
 
 \item{xlab}{label for the x-axis}
 
