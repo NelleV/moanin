@@ -109,7 +109,7 @@ setMethod("plot_splines_data",c("Moanin","matrix"),
             stop("Centroid must be a single vector (or matrix of 1 row) to data, for fitting the functional form")
         } 
     }
-    if(!is.null(subset_data) )  data <- data[subset_data,]
+    if(!is.null(subset_data) )  data <- data[subset_data, ,drop=FALSE]
     
     n_observations <- dim(data)[1]
     ### Work out the mfrow/number of plots and check makes sense
