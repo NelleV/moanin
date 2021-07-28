@@ -3,7 +3,7 @@ title: "moanin: An R Package for Time Course RNASeq Data Analysis"
 output: BiocStyle::html_document
 vignette: >
   %\VignetteEngine{knitr::knitr}
-    %\VignetteIndexEntry{Installation}
+    %\VignetteIndexEntry{The Moanin Package}
       %\usepackage[UTF-8]{inputenc}
 ---
 ```{r echo=FALSE, include=FALSE}

@@ -36,6 +36,8 @@ setGeneric("plot_splines_data",
 #'  the user to add more to the plot.
 #'@param xlab label for the x-axis
 #'@param ylab label for the y-axis
+#' @param xaxis Logical, whether to add x-axis labels to plot (if FALSE can be manually created by user with call to addToPlot)
+#' @param yaxis Logical, whether to add y-axis labels to plot (if FALSE can be manually created by user with call to addToPlot)
 #'@param ... arguments to be passed to the individual plot commands (Will be
 #'  sent to all plot commands)
 #' @details If \code{data} is NULL, the data plotted will be from
@@ -97,7 +99,8 @@ setMethod("plot_splines_data",c("Moanin","matrix"),
                 simpleY=TRUE, centroid=NULL,
                 scale_centroid=c("toData","toCentroid","none"),
                 mar=c(2.5, 2.5, 3.0, 1.0),
-                mfrow=NULL, addToPlot=NULL, ylab="", xlab="Time",...){
+                mfrow=NULL, addToPlot=NULL, ylab="", xaxis=TRUE,
+                yaxis=TRUE, xlab="Time",...){
     scale_centroid <- match.arg(scale_centroid)
     check_data_meta(data=data,object=object)
     if(!is.null(centroid)){
@@ -106,7 +109,7 @@ setMethod("plot_splines_data",c("Moanin","matrix"),
             stop("Centroid must be a single vector (or matrix of 1 row) to data, for fitting the functional form")
         } 
     }
-    if(!is.null(subset_data) )  data <- data[subset_data,]
+    if(!is.null(subset_data) )  data <- data[subset_data, ,drop=FALSE]
     
     n_observations <- dim(data)[1]
     ### Work out the mfrow/number of plots and check makes sense
@@ -190,25 +193,29 @@ setMethod("plot_splines_data",c("Moanin","matrix"),
         if(!is.null(plot_names)){
             name <- plot_names[i]
         }
+        xaxt<-if(!i %in% bottomPlots & xaxis) "n" else "s"
+        if("xaxt" %in% names(list(...))) xaxt<-list(...)$xaxt
+        yaxt<-if(!i %in% bottomPlots & yaxis) "n" else "s"
+        if("yaxt" %in% names(list(...))) yaxt<-list(...)$yaxt
         plot_centroid_individual(
             data=data[i, ], centroid=if(is.null(centroid)) centroid else centroid[i,],
             object[i,], colors=colors,
             smooth=smooth,
             subset_conditions=subset_conditions,
             main=name, yrange=yrange,
-            xaxt=if(!i %in% bottomPlots) "n" else "s",
-            yaxt=if(!i %in% sidePlots & simpleY) "n" else "s", 
+            xaxt=xaxt,
+            yaxt=yaxt, 
             xlab=xlab,ylab=ylab,...)
         
         if(is.function(addToPlot)){
             addToPlot()
         }
         
-        if(!i %in% bottomPlots){
+        if(!i %in% bottomPlots & xaxis){
             axis(1, labels=FALSE)
         }
         
-        if(!i %in% sidePlots & simpleY){
+        if(!i %in% sidePlots & simpleY & yaxis){
             axis(2, labels=FALSE)
         }
         

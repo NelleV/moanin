@@ -83,5 +83,6 @@ is_contrasts <- function(contrasts, moanin_model){
             stop(msg)
         }
     }
+
     return(contrasts) 
 }

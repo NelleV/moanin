@@ -12,97 +12,90 @@ center_data <- function(y, ng_labels){
     return(y)
 }
 
-compute_beta_null <- function(basis, beta, contrasts_coef){
-    ng <- length(contrasts_coef)
-    df <- ncol(basis) / ng
-    contrasts_coef_ <- rep(contrasts_coef, times=df)
+# updated function to compute beta under the null. 
+compute_beta_null<-function(moanin_model,contrast_matrix,beta){
+    Xmat<-basis_matrix(moanin_model) #n x p
+    if(ncol(contrast_matrix)!=ncol(Xmat)) stop("invalid contrast_matrix provided, wrong dimensions (number of columns)")
     
-    # Reshape b so that each row corresponds to a group and drop the intercept
-    b_ <- array(beta, dim=c(dim(beta)[1], ng, df))
-    # First start by constructing the matrix T
-    t_ <- apply(b_, 1, function(x){matrixStats::colSums2(x*contrasts_coef)})
+    invdesign<-MASS::ginv(t(Xmat)%*%Xmat)
+    invCdesign<-MASS::ginv(contrast_matrix %*%invdesign %*% t(contrast_matrix))
+    Wmat<-invdesign%*%t(contrast_matrix)%*%invCdesign%*%contrast_matrix
+    # # The full upper matrix (for checking)
+    # Rmat<-invdesign-Wmat%*%invdesign
     
-    # The observations can not be assumed to be balanced...
-    # We need to get rid of the intercept for this part
-    # FIXME don't invert this matrix…
-    part_K <- MASS::ginv(t(basis) %*% basis)
-    K <- part_K * contrasts_coef_**2
+    return(beta-beta%*%t(Wmat))
     
-    # We now need to sum all elements associated to the same pairs of splines.
-    # Which is, in a particular case every four elements in both directions.
-    
-    K <- vapply(seq_len(df),
-                function(jg) matrixStats::rowSums2(K[, (jg-1)*ng + seq_len(ng)]),
-                numeric(ncol(K)))
-    K <- vapply(seq_len(df),
-                function(jg) matrixStats::colSums2(K[(jg-1)*ng + seq_len(ng),]),
-                numeric(ncol(K)))
-    
-    T_ <- MASS::ginv(K) %*% t_
-    
-    # We got T. Now, let's move on to the rest
-    tmp <- as.array(rep(as.vector(T_), each=ng), dim=c(1, 1, 1))
-    dim(tmp) <- c(ng * df, dim(beta)[1])
-    C_ <- contrasts_coef * part_K %*% tmp
-    
-    C_ <- t(C_)
-    dim(C_) <- c(dim(beta)[1], ng, df)
-    beta_null <- b_ - C_
-    
-    # Last step: reshape beta null so that it is of the same shape as beta
-    dim(beta_null) <- dim(beta)
-    return(beta_null)
 }
-
-
-lrtStat <- function(resNull, resFull, ng_labels=NULL) {
-    # FIbasisME I'm pretty sure that in the case of contrasts, the degrees of
-    # freedom computed here are wrong as they include part of the data that is
-    # not used for the test. This needs to be fixed
-    stat <- 0
-    if(is.null(ng_labels)){
-        ss0 <- matrixStats::rowSums2(resNull^2)
-        ss1 <- matrixStats::rowSums2(resFull^2)
-        n <- ncol(resNull)
-        stat <- stat + n * (ss0 - ss1)/(ss1)
-        
-    }else{
-        for(g in levels(ng_labels)){
-            whKeep <- which(ng_labels == g)
-            sub_resNull <- resNull[,whKeep]
-            sub_resFull <- resFull[,whKeep]
-            
-            # Somehow the two lines above don't return the same object depending on
-            # the dimension of resNull and resFull, so need to distinguish the case
-            # where there is only one observation in data.
-            if(is.null(dim(sub_resNull))){
-                ss0 <- sum(sub_resNull^2)
-                ss1 <- sum(sub_resFull^2)
-                n <- length(sub_resNull)
-            }else{
-                ss0 <- matrixStats::rowSums2(sub_resNull^2)
-                ss1 <- matrixStats::rowSums2(sub_resFull^2)
-                n <- ncol(sub_resNull)
-            }
-            stat <- stat + n * (ss0 - ss1)/(ss1)
-        }
+#Expands contrasts to a matrix of contrasts, one for each basis vector/variable. rows are contrasts, columns are the number of total variables. 
+#' @keywords internal
+#' @rdname internal
+expand_contrast<-function(moanin_model,contrast_vector){
+    design_matrix<-basis_matrix(moanin_model)
+    gpname<-group_variable_name(moanin_model)
+    if(length(grep(gpname, colnames(design_matrix)))==0) 
+        stop("basis_matrix does not have column names that include" +
+            "the group_variable_name, cannot return full contrast matrix")
+    if(is.null(names(contrast_vector))) stop("Error, no names")
+    levs<-names(contrast_vector)
+    glevs<-paste0(gpname,levs)
+    #Check that replicated the same:
+    m<-lapply(glevs,grep,colnames(design_matrix))
+    nvar_per_level<-vapply(m,FUN=length,numeric(1))
+    if(!all(nvar_per_level==nvar_per_level[1]))
+        stop("There are not equal numbers of variables (basis functions) per level of grouping factor")
+    nvar_per_level<-unique(nvar_per_level)
+    
+    #find the variables for each level (`vars`)
+    full_vars<-colnames(design_matrix)[m[[1]]]
+    vars<-gsub(glevs[1],"",full_vars)
+    # check they are all there
+    combos<-as.vector(outer(glevs,vars,FUN=paste0))
+    if(!all(combos %in% colnames(design_matrix)))
+        stop("Not all the same variables are crossed with the group variable")
+    
+    contrast_full<-matrix(0,
+        nrow=length(vars),
+        ncol=ncol(design_matrix))
+    colnames(contrast_full)<-colnames(design_matrix)
+    for(ii in seq_along(vars)){
+        varnames<-paste0(glevs,vars[ii])
+        m<-match(varnames,colnames(design_matrix))
+        if(any(is.na(m))) stop("coding error in matching to design matrix")
+        contrast_full[ii,m]<-contrast_vector
     }
-    
-    return(stat)
+    return(contrast_full)
 }
 
-compute_pvalue <- function(basis, y, beta, beta_null, ng_labels,
-                          n_groups=NULL,
-                          n_samples=NULL,
+
+calculateStat<-function(resNull,resFull,type=c("lrt","ftest")){
+    type<-match.arg(type)
+    #resNull and resFull are G x n matrices of residuals
+    if(!all(dim(resNull)==dim(resFull))) 
+        stop("resNull and resFull must be of equal dimensions")
+    n<-ncol(resNull)
+    ss0 <- matrixStats::rowSums2(resNull^2) #RSSNull
+    ss1 <- matrixStats::rowSums2(resFull^2) #RSSFull
+    if(type=="lrt") 
+        return(n*(log(ss0)-log(ss1)))
+    # Note that F-statistic returned below is intentionally missing the 
+    # df terms, which are done later when calculating the p-values 
+    # (this is for simplicity so don't have to pass df to this function.)
+    if(type=="ftest") 
+        return((ss0 - ss1)/(ss1))
+
+}
+
+
+compute_pvalue <- function(basis, y, beta, beta_null, 
                           degrees_of_freedom=NULL,
-                          statistics="lrt",
-                          df2=NULL, weights=NULL){
+                          statistics=c("lrt","ftest"),
+                          weights=NULL){
+    statistics<-match.arg(statistics)
     if(inherits(y,"DataFrame")){
         y <- data.matrix(y)
     }
-    
-    fitFull <- beta %*% t(basis)
-    
+    #Creates G x n matrices, with fits on the rows
+    fitFull <- beta %*% t(basis)    
     fitNull <- beta_null %*% t(basis)
     
     if(!is.null(weights)){
@@ -112,49 +105,17 @@ compute_pvalue <- function(basis, y, beta, beta_null, ng_labels,
         resNull <- y - fitNull
         resFull <- y - fitFull
     }
-    
-    # estimate degrees of freedom.
-    if(is.null(n_groups)){
-        n_groups <- nlevels(ng_labels)
-        # FIbasisME Raise warning
-    }
-    
-    if(is.null(n_samples)){
-        n_samples <- ncol(basis)
-        # FIbasisME raise warning
-    }
-    
-    df <- degrees_of_freedom
-    
+    n_variables<-ncol(basis) #p
+    n_samples <- nrow(basis) 
+    stat<-calculateStat(resNull,resFull,type=statistics)
     if(statistics == "ftest"){
-        stat <- lrtStat(resNull, resFull)
-        if(is.null(df2)){
-            # FIbasisME Check this.
-            df2 <- n_samples - degrees_of_freedom * n_groups
-        }
-        df1 <- df
+        df2 <- n_samples - n_variables
+        df1 <- degrees_of_freedom
         pval <- stats::pf(stat * df2 / df1, df1=df1, df2=df2, lower.tail=FALSE)
     }else{
-        stat <- lrtStat(resNull, resFull, ng_labels=ng_labels)
         pval <- stats::pchisq(stat, df=degrees_of_freedom, lower.tail=FALSE)
     }
     return(cbind(pval,stat))
-}
-
-summarise <- function(basis, ng_levels) {
-    basis_mean <- matrix(nrow=nrow(basis), ncol=nlevels(ng_levels))
-    colnames(basis_mean) <- levels(ng_levels)
-    rownames(basis_mean) <- rownames(basis)
-    
-    for(g in levels(ng_levels)){
-        whKeep <- which(ng_levels == g)
-        if(length(whKeep) > 1){
-            basis_mean[, g] <- matrixStats::rowMeans2(basis[, whKeep])
-        }else if(length(whKeep) != 0){
-            basis_mean[, g] <- basis[, whKeep]
-        }
-    }
-    return(basis_mean)
 }
 
 
@@ -169,6 +130,8 @@ summarise <- function(basis, ng_levels) {
 #'  \code{\link[limma]{makeContrasts}} from the package \code{limma}. If given
 #'  as a character string, will be passed to \code{\link[limma]{makeContrasts}}
 #'  to be converted into such a matrix.
+#' @param statistic Which test statistic to use, a likelihood ratio statistic or
+#'  a F-test.
 #' @param center boolean, whether to center the data matrix
 #' @param use_voom_weights boolean, optional, default: TRUE. 
 #'  Whether to use voom weights. See details.
@@ -213,15 +176,23 @@ summarise <- function(basis, ng_levels) {
 setMethod("DE_timecourse","Moanin",
          function(object,
                   contrasts,
-                  center=FALSE,
+                  center=FALSE, statistic=c("ftest","lrt"),
                   use_voom_weights=TRUE){
-    basis <- basis_matrix(object)
-    
+    statistic<-match.arg(statistic)            
+    basis <- basis_matrix(object)    
     ng_labels <- group_variable(object)
     ng <- nlevels(ng_labels)
 
+    # Will make this a matrix, if not already one, 
+    # using limma's makeContrasts. 
+    # So returns a matrix, column for each contrast
     contrasts <- is_contrasts(contrasts, object)
-    
+    if(dim(contrasts)[1] != ng){
+        stop("The contrast coef vector should be of the same size" +
+                 " as the number of groups")
+    }
+
+
     if(use_voom_weights){
         formulaText<-paste0("~",group_variable_name(object)," + ",
                             time_variable_name(object)," + 0")
@@ -245,12 +216,8 @@ setMethod("DE_timecourse","Moanin",
         basis <- t(center_data(t(basis)))
     }
     
-    beta <- fit_splines(data=y, moanin_model=object, weights=weights)
-    
-    if(dim(contrasts)[1] != ng){
-        stop("The contrast coef vector should be of the same size" +
-                 " as the number of groups")
-    }
+    beta <- fit_splines(data=y, design_matrix=basis_matrix(object), weights=weights)
+
     results <- data.frame(row.names=row.names(object))
     for(col in seq_len(ncol(contrasts))){
         contrast <- contrasts[, col]
@@ -258,21 +225,16 @@ setMethod("DE_timecourse","Moanin",
         # Create the name of the column
         contrast_name <- colnames(contrasts)[col]
         contrast_name <- gsub(" ", "", contrast_name, fixed=TRUE)
+                
+        # Right now uses `expand_contrasts` to create full contrast matrix (one per basis function), sort of a hack.
+        # But could let user provide it...
+        contrast_matrix<-expand_contrast(object,contrast)
+        beta_null<-compute_beta_null(object,
+            contrast_matrix=contrast_matrix,beta)
         
-        # Get the number of samples used for this particular contrast:
-        groups_of_interest <- names(contrast)[contrast != 0]
-        n_samples_fit <- sum(group_variable(object) %in% groups_of_interest)
-        n_groups <- length(groups_of_interest)
-        
-        beta_null <- compute_beta_null(basis, beta, contrast)
-        
-        ## FIXME: This assumes a particular form for the formula, which may not be true if user add additional controlling values, for example. 
-        degrees_of_freedom <- dim(basis)[2] / ng    
-        pval <- compute_pvalue(basis, y, beta, beta_null, ng_labels, 
-                              weights=weights,
-                              n_samples=n_samples_fit,
-                              n_groups=n_groups,
-                              degrees_of_freedom=degrees_of_freedom)
+        pval <- compute_pvalue(basis, y, beta, beta_null, 
+                              weights=weights,statistics=statistic,
+                              degrees_of_freedom=nrow(contrast_matrix))
         
         colname_qval <- paste(contrast_name, "_qval", sep="")
         colname_pval <- paste(contrast_name, "_pval", sep="")
@@ -285,6 +247,5 @@ setMethod("DE_timecourse","Moanin",
     }
     
     return(results)
-}
+})
 
-)

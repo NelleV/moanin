@@ -12,4 +12,5 @@
 ^pkgdown
 ^.*[.]md
 ^vignettes/documentation_cache/*.
+^vignettes/testDocumentation.Rmd
 docs

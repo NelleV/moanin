@@ -72,13 +72,7 @@ contrast. If this is the desired output, then the input to
 See examples.}
 }
 \value{
-A \code{data.frame} with three columns for each of the contrasts
-  given in \code{contrasts}, corresponding to the raw p-value of the contrast
-  for that gene (\code{_pval}), the adjusted p-value (\code{_qval}), and the
-  estimate of log-fold-change (\code{_lfc}). The adjusted p-values are
-  FDR-adjusted based on the Benjamini-Hochberg method, as implemented in
-  \code{\link[stats]{p.adjust}}. The adjustment is done across all p-values
-  for all contrasts calculated.
+
 
 \code{create_timepoints_contrasts}: a character vector with each
   element of the vector corresponding to a contrast to be compared.
